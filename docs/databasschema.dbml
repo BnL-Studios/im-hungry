@@ -1,0 +1,24 @@
+
+Project im_hungry {
+  Note: 'Initial database schema for the I\'m Hungry! MVP.'
+}
+
+// Units supported by the MVP
+Enum quantity_unit {
+  g
+  ml
+  pcs
+}
+
+// Food currently available in the user's kitchen
+Table inventory_items {
+  id integer [pk, increment]
+
+  name varchar(120) [not null]
+
+  quantity decimal(10,2) [not null, check: `quantity > 0`]
+
+  unit quantity_unit [not null]
+
+  Note: 'Stores the ingredients and quantities available for AI recipe generation.'
+}
