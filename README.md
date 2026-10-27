@@ -102,11 +102,11 @@ cd im-hungry
 Kopiera den versionshanterade exempelfilen till en **lokal, ignorerad** konfigurationsfil:
 
 ```bash
-cp backend-imhungry/src/main/resources/application-local.properties.example \
-   backend-imhungry/src/main/resources/application-local.properties
+cp backend/src/main/resources/application-local.properties.example \
+   backend/src/main/resources/application-local.properties
 ```
 
-Öppna `backend-imhungry/src/main/resources/application-local.properties` och fyll i anslutningen med uppgifter från **Supabase → Project Settings → Database → Connection pooling**:
+Öppna `backend/src/main/resources/application-local.properties` och fyll i anslutningen med uppgifter från **Supabase → Project Settings → Database → Connection pooling**:
 
 ```properties
 # Värdena nedan är exempel/platshållare – använd teamets riktiga uppgifter.
@@ -125,14 +125,14 @@ spring.datasource.password=<database-password>
 **macOS / Linux**
 
 ```bash
-cd backend-imhungry
+cd backend
 ./mvnw spring-boot:run
 ```
 
 **Windows (PowerShell)**
 
 ```powershell
-cd backend-imhungry
+cd backend
 .\mvnw.cmd spring-boot:run
 ```
 
@@ -169,7 +169,7 @@ im-hungry/
 │   ├── ISSUE_TEMPLATE/             # Mallar för stories och buggar
 │   ├── pull_request_template.md    # Checklista för PR och granskning
 │   └── workflows/ci.yml            # Java/Maven/PostgreSQL-CI
-├── backend-imhungry/
+├── backend/
 │   ├── pom.xml                     # Spring Boot, Java 21 och beroenden
 │   ├── mvnw / mvnw.cmd             # Maven Wrapper
 │   └── src/                        # Källkod, konfiguration och tester
