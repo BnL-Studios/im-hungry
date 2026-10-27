@@ -10,7 +10,7 @@ Dokumentation av viktiga produkt- och teknikbeslut för **I'm Hungry!**. Varje b
 |:--:|---|---|---|
 | **01** | [App-idé och MVP](#beslut-01) | [2026-10-27] | **Gäller** |
 | **02** | [Teknikstack](#beslut-02) | [2026-10-27] | **Gäller** |
-| **03** | [AI-leverantör: Gemini Flash](#beslut-03) | [ÅÅÅÅ-MM-DD] | **Gäller** |
+| **03** | [AI-leverantör: Gemini Flash](#beslut-03) | [2026-10-27] | **Gäller** |
 | **04** | [Databasleverantör: Supabase](#beslut-04) | 2026-10-27 | **Gäller** |
 | **05** | [Utvecklingsflöde: Trunk-Based Development](#beslut-05) | 2026-10-27 | **Gäller** |
 
@@ -85,7 +85,7 @@ React Native ger en native mobilapp för både iOS och Android med samma kodbas,
 <a id="beslut-03"></a>
 ## 03 — AI-leverantör: Gemini Flash
 
-**Datum:** [ÅÅÅÅ-MM-DD] · **Status:** Gäller · **Ersätter:** #3 DeepSeek
+**Datum:** [2026-10-27] · **Status:** Gäller · **Ersätter:** #3 DeepSeek
 
 > **Beslut**  
 > Vi använder **Google Gemini Flash** (t.ex. `gemini-3.8-flash` eller `gemini-3.6-flash`) för receptgenereringen.
