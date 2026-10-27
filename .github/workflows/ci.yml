@@ -37,7 +37,7 @@ jobs:
 
     defaults:
       run:
-        working-directory: backend-imhungry
+        working-directory: backend
 
     env:
       SPRING_PROFILES_ACTIVE: ci
@@ -56,8 +56,8 @@ jobs:
           java-version: '21'
           cache: maven
           cache-dependency-path: |
-            backend-imhungry/pom.xml
-            backend-imhungry/.mvn/wrapper/maven-wrapper.properties
+            backend/pom.xml
+            backend/.mvn/wrapper/maven-wrapper.properties
 
       # Hibernate is configured to use the "imhungry" PostgreSQL schema.
       - name: Create isolated database schema
