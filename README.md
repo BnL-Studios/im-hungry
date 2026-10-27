@@ -54,6 +54,7 @@ cd <projektmapp>
 | [MVP](docs/mvp.md) | Vad som ingår i första versionen |
 | [Databasschema](docs/databasschema.md) | Tabeller och relationer |
 | [Beslutslogg](docs/beslutslogg.md) | Viktiga beslut och varför |
+| [Git-arbetsflöde](docs/git-workflow.md) | Brancher, PR, CI, kodgranskning och squash-merge |
 | [Sprintar](docs/sprintar/) | Planning, standups, review och retro per sprint |
 | [Individuella reflektioner](docs/reflektioner/) | En per person, lämnas in vecka 8 |
 
