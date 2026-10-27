@@ -63,8 +63,10 @@ A small working journey: save ingredients → request a genuinely feasible AI re
 <details>
 <summary>Acceptance criteria</summary>
 
-- I can enter a name, positive quantity, and a unit such as g, ml, or pcs.
-- Invalid entries are rejected; valid entries are saved and appear after reopening the app.
+- [ ] I can enter an ingredient name, a quantity greater than zero, and a supported unit (g, ml or pcs).
+- [ ] Saving a valid ingredient makes its name, quantity and unit appear in my inventory without reopening the app.
+- [ ] If the name is blank or the quantity is zero, negative or not a number, I see a helpful error and nothing is added.
+- [ ] After closing and reopening the app, the ingredient still has the quantity and unit I saved.
 
 </details>
 
@@ -79,8 +81,10 @@ A small working journey: save ingredients → request a genuinely feasible AI re
 <details>
 <summary>Acceptance criteria</summary>
 
-- Stored ingredient names, amounts, and units appear in a mobile list.
-- An empty list is explained; data remains after closing and reopening the app.
+- [ ] When I open inventory, I can see each saved ingredient's name, quantity and unit.
+- [ ] When no ingredients exist, I see a clear empty-state message and a way to add my first item.
+- [ ] After I add or change an ingredient, the list reflects the saved value.
+- [ ] Closing and reopening the app shows the same saved inventory.
 
 </details>
 
@@ -95,9 +99,11 @@ A small working journey: save ingredients → request a genuinely feasible AI re
 <details>
 <summary>Acceptance criteria</summary>
 
-- Using recorded ingredients with supported units, I can request one recipe and see a title, ingredients and basic preparation instructions in the app.
-- The backend sends the current stored inventory to the real AI service and validates the returned ingredients against exact supported names, units and recorded amounts before showing the recipe as feasible.
-- A proposed recipe using unavailable ingredients or excessive quantities is not presented as cookable; the request does not alter inventory.
+- [ ] When I have supported ingredients in inventory, I can request one AI-generated meal idea without retyping my stock.
+- [ ] The result is generated from my recorded ingredients and includes a recipe title and ingredient amounts.
+- [ ] A recipe that requires an ingredient I do not have, or more than I have, is not presented as cookable from my inventory.
+- [ ] Requesting a recipe does not add, remove or consume any inventory items.
+- [ ] If the app cannot produce a recipe within my available amounts, I am told rather than shown an invented feasible result.
 
 </details>
 
@@ -112,8 +118,10 @@ A small working journey: save ingredients → request a genuinely feasible AI re
 <details>
 <summary>Acceptance criteria</summary>
 
-- A valid recipe displays a title, estimated time, required amounts and readable ordered instructions.
-- If an optional field is absent, the UI handles it clearly rather than inventing a value.
+- [ ] A suggested recipe shows a title and a readable list of the ingredient quantities required.
+- [ ] I can follow clearly ordered cooking instructions within the mobile app.
+- [ ] An estimated cooking time is displayed when one is available; an unknown value is not made up.
+- [ ] A recipe missing essential cooking information is not presented as a complete, ready-to-cook recipe.
 
 </details>
 
@@ -128,8 +136,11 @@ A small working journey: save ingredients → request a genuinely feasible AI re
 <details>
 <summary>Acceptance criteria</summary>
 
-- An empty inventory, AI service failure, invalid response or no recipe fitting the recorded stock produces an understandable message.
-- The app never labels an unvalidated recipe as cookable and gives me a way to retry when appropriate.
+- [ ] If I request a recipe with an empty inventory, I see a message explaining that I need to add ingredients first.
+- [ ] If the recipe service fails or takes too long, I see an understandable error and an option to try again.
+- [ ] If no recipe meets the recorded ingredients and amounts, the app explains that no feasible suggestion was found.
+- [ ] A rejected or failed recipe is not misleadingly labelled as cookable.
+- [ ] After any failed request, my saved inventory remains unchanged.
 
 </details>
 
@@ -144,8 +155,10 @@ A small working journey: save ingredients → request a genuinely feasible AI re
 <details>
 <summary>Acceptance criteria</summary>
 
-- I can choose Comfort food, Quick & easy, or Surprise me (default).
-- The chosen mood is sent with the recipe request without overriding ingredient and quantity limits.
+- [ ] I can choose between Comfort food, Quick & easy and Surprise me before generating a recipe.
+- [ ] Surprise me is selected by default, and I can clearly see my current selection.
+- [ ] My selected mood is taken into account for the requested recipe when feasible.
+- [ ] Choosing a mood never permits a recipe to exceed the ingredients and amounts recorded in my inventory.
 
 </details>
 
@@ -160,8 +173,10 @@ A small working journey: save ingredients → request a genuinely feasible AI re
 <details>
 <summary>Acceptance criteria</summary>
 
-- I can replace an existing quantity with another valid positive value.
-- The saved value appears in the inventory and is used by the next recipe request.
+- [ ] I can open an existing inventory item and enter a replacement quantity greater than zero.
+- [ ] The updated quantity appears in inventory after saving.
+- [ ] An invalid or blank amount shows a useful error and keeps the previous saved amount.
+- [ ] The corrected quantity remains after reopening the app and is considered for the next recipe request.
 
 </details>
 
@@ -176,8 +191,10 @@ A small working journey: save ingredients → request a genuinely feasible AI re
 <details>
 <summary>Acceptance criteria</summary>
 
-- I can delete an inventory entry.
-- The deleted entry does not return on restart or appear in future recipe requests.
+- [ ] I can remove a selected ingredient from my inventory.
+- [ ] The removed ingredient no longer appears in my inventory list.
+- [ ] The removal remains in effect after I close and reopen the app.
+- [ ] Subsequent recipe requests do not treat the deleted ingredient as available.
 
 </details>
 
@@ -198,8 +215,10 @@ Valuable additions after the MVP is demonstrated; these are not automatically pa
 <details>
 <summary>Acceptance criteria</summary>
 
-- The existing inventory and selections are reused when I request another idea.
-- Skipping or regenerating a recipe does not alter inventory.
+- [ ] While viewing a suggested recipe, I can request a different suggestion.
+- [ ] My current inventory and selected recipe preferences are reused automatically.
+- [ ] Trying again does not deduct or alter my inventory.
+- [ ] If no further feasible recipe is available, I see an honest explanation rather than an invalid alternative.
 
 </details>
 
@@ -214,8 +233,10 @@ Valuable additions after the MVP is demonstrated; these are not automatically pa
 <details>
 <summary>Acceptance criteria</summary>
 
-- I can select from a small, defined list of styles.
-- The selection influences recommendations when feasible; inventory restrictions still apply.
+- [ ] I can select a cuisine or food style from a short, clearly labelled list.
+- [ ] The selected style is visible before I request a recipe.
+- [ ] The next recommendation follows that style when a suitable recipe exists.
+- [ ] If the style cannot be matched using my stock, the app does not invent missing ingredients.
 
 </details>
 
@@ -230,8 +251,10 @@ Valuable additions after the MVP is demonstrated; these are not automatically pa
 <details>
 <summary>Acceptance criteria</summary>
 
-- I can choose a maximum time before generating a recipe.
-- The result displays its estimated time, and the app does not present an over-limit recipe as matching the filter.
+- [ ] I can choose a maximum cooking time before asking for a recipe.
+- [ ] Recipes presented as meeting my time limit show an estimated preparation/cooking time within it.
+- [ ] A recipe with a longer or unknown time is not falsely labelled as matching the selected limit.
+- [ ] Changing my time limit does not modify inventory.
 
 </details>
 
@@ -246,8 +269,10 @@ Valuable additions after the MVP is demonstrated; these are not automatically pa
 <details>
 <summary>Acceptance criteria</summary>
 
-- I can select a supported serving count.
-- Displayed quantities are sized accordingly and checked against available stock.
+- [ ] I can select a supported number of servings before generating a recipe.
+- [ ] The recipe shows ingredients and amounts for the selected number of servings.
+- [ ] Only recipes with enough available inventory for that serving count are presented as feasible.
+- [ ] If the desired serving count is not possible, I see a clear explanation.
 
 </details>
 
@@ -262,8 +287,10 @@ Valuable additions after the MVP is demonstrated; these are not automatically pa
 <details>
 <summary>Acceptance criteria</summary>
 
-- I can sign up using required account details and receive useful validation feedback.
-- My account is associated with an isolated inventory; no other user's private data is shown.
+- [ ] As a new cook, I can create an account by providing the required registration details.
+- [ ] Missing or invalid registration details show useful feedback before the account is created.
+- [ ] After successful registration, I can access a personal inventory that is separate from other users' data.
+- [ ] Trying to register with credentials already in use produces a safe, actionable response.
 
 </details>
 
@@ -278,8 +305,10 @@ Valuable additions after the MVP is demonstrated; these are not automatically pa
 <details>
 <summary>Acceptance criteria</summary>
 
-- Valid credentials open my personal data; invalid credentials do not.
-- I cannot access another account's data by changing an item identifier or request.
+- [ ] With valid account credentials, I can sign in and access my own inventory.
+- [ ] Incorrect credentials do not sign me in and give a helpful error that does not disclose private account details.
+- [ ] Signing in as one account never reveals ingredients or recipes belonging to another.
+- [ ] After signing in, I can access the same saved items on a supported device.
 
 </details>
 
@@ -294,8 +323,9 @@ Valuable additions after the MVP is demonstrated; these are not automatically pa
 <details>
 <summary>Acceptance criteria</summary>
 
-- My valid authenticated session persists across app restarts.
-- Expired or revoked sessions require authentication again.
+- [ ] My valid authenticated session persists across app restarts.
+- [ ] Expired or revoked sessions require authentication again.
+- [ ] Signing out or revoking my session means the previously saved session does not silently sign me back in.
 
 </details>
 
@@ -310,8 +340,9 @@ Valuable additions after the MVP is demonstrated; these are not automatically pa
 <details>
 <summary>Acceptance criteria</summary>
 
-- A sign-out action ends the local session and returns me to the signed-out view.
-- Previously cached personal information is no longer accessible through the signed-out interface.
+- [ ] A sign-out action ends the local session and returns me to the signed-out view.
+- [ ] Previously cached personal information is no longer accessible through the signed-out interface.
+- [ ] Opening the app after signing out does not restore access to protected account data without signing in.
 
 </details>
 
@@ -326,8 +357,9 @@ Valuable additions after the MVP is demonstrated; these are not automatically pa
 <details>
 <summary>Acceptance criteria</summary>
 
-- I can start a recipe and view its ingredients and steps during cooking.
-- Starting or abandoning a session does not deduct inventory.
+- [ ] I can start a recipe and view its ingredients and steps during cooking.
+- [ ] Starting or abandoning a session does not deduct inventory.
+- [ ] I can leave the cooking view without marking the dish cooked or changing my saved food quantities.
 
 </details>
 
@@ -342,8 +374,9 @@ Valuable additions after the MVP is demonstrated; these are not automatically pa
 <details>
 <summary>Acceptance criteria</summary>
 
-- Before confirming completion, I can see which ingredients and amounts would be deducted.
-- Opening or dismissing the preview never changes stored stock.
+- [ ] Before confirming completion, I can see which ingredients and amounts would be deducted.
+- [ ] Opening or dismissing the preview never changes stored stock.
+- [ ] If a required amount is unavailable or cannot be compared, the preview warns me rather than claiming that enough is in stock.
 
 </details>
 
@@ -358,9 +391,10 @@ Valuable additions after the MVP is demonstrated; these are not automatically pa
 <details>
 <summary>Acceptance criteria</summary>
 
-- After seeing the deduction preview, I can confirm or cancel a cooking completion.
-- Confirmation applies all valid ingredient deductions atomically; insufficient stock blocks the change and no quantity becomes negative.
-- Cancellation or a failed transaction leaves inventory unchanged.
+- [ ] After seeing the deduction preview, I can confirm or cancel a cooking completion.
+- [ ] When I confirm cooking, every available ingredient amount is reduced together; if one cannot be deducted, none of my stock quantities change.
+- [ ] Cancellation or a failed transaction leaves inventory unchanged.
+- [ ] If an amount is unavailable at confirmation time, I see which ingredient needs attention and no ingredient amounts are changed.
 
 </details>
 
@@ -375,8 +409,9 @@ Valuable additions after the MVP is demonstrated; these are not automatically pa
 <details>
 <summary>Acceptance criteria</summary>
 
-- I can change or clear a proposed deduction before confirming.
-- Only validated quantities are deducted; attempts to consume more than recorded stock are blocked or require correction.
+- [ ] I can change or clear a proposed deduction before confirming.
+- [ ] Only validated quantities are deducted; attempts to consume more than recorded stock are blocked or require correction.
+- [ ] Cancelling the edit leaves both the proposed deduction and my recorded inventory unchanged.
 
 </details>
 
@@ -391,8 +426,9 @@ Valuable additions after the MVP is demonstrated; these are not automatically pa
 <details>
 <summary>Acceptance criteria</summary>
 
-- I can explicitly save a displayed recipe.
-- Its recipe content remains available after restarting the app.
+- [ ] I can explicitly save a displayed recipe.
+- [ ] Its recipe content remains available after restarting the app.
+- [ ] Saving the same recipe again does not create an unwanted duplicate in my saved collection.
 
 </details>
 
@@ -407,8 +443,9 @@ Valuable additions after the MVP is demonstrated; these are not automatically pa
 <details>
 <summary>Acceptance criteria</summary>
 
-- I see a saved-recipe list linked to my profile or current test data.
-- Opening an entry shows its full saved ingredients and instructions.
+- [ ] I see a saved-recipe list linked to my profile or current test data.
+- [ ] Opening an entry shows its full saved ingredients and instructions.
+- [ ] When there are no saved recipes, I see a clear empty state rather than a broken list.
 
 </details>
 
@@ -423,8 +460,9 @@ Valuable additions after the MVP is demonstrated; these are not automatically pa
 <details>
 <summary>Acceptance criteria</summary>
 
-- I can unsave a recipe.
-- It disappears from the saved collection while my inventory stays unchanged.
+- [ ] I can unsave a recipe.
+- [ ] It disappears from the saved collection while my inventory stays unchanged.
+- [ ] Removing a recipe from favourites does not delete any ingredient or change previously cooked meals.
 
 </details>
 
@@ -439,8 +477,9 @@ Valuable additions after the MVP is demonstrated; these are not automatically pa
 <details>
 <summary>Acceptance criteria</summary>
 
-- A recent-recipes list shows past suggestions in newest-first order.
-- I can reopen a historical recipe without generating it again.
+- [ ] A recent-recipes list shows past suggestions in newest-first order.
+- [ ] I can reopen a historical recipe without generating it again.
+- [ ] If no suggestions have been stored, the recent-recipes screen explains that the list is empty.
 
 </details>
 
@@ -455,8 +494,9 @@ Valuable additions after the MVP is demonstrated; these are not automatically pa
 <details>
 <summary>Acceptance criteria</summary>
 
-- A cooked-recipes history distinguishes finished meals from merely viewed suggestions.
-- Each entry can be opened for its recipe information.
+- [ ] A cooked-recipes history distinguishes finished meals from merely viewed suggestions.
+- [ ] Each entry can be opened for its recipe information.
+- [ ] A recipe that I only viewed but never completed does not appear as a cooked dish.
 
 </details>
 
@@ -471,8 +511,9 @@ Valuable additions after the MVP is demonstrated; these are not automatically pa
 <details>
 <summary>Acceptance criteria</summary>
 
-- Previously used entries are offered when adding an ingredient.
-- I confirm the new quantity before it changes inventory.
+- [ ] Previously used entries are offered when adding an ingredient.
+- [ ] I confirm the new quantity before it changes inventory.
+- [ ] I can ignore an offered suggestion and type a completely new ingredient instead.
 
 </details>
 
@@ -487,8 +528,9 @@ Valuable additions after the MVP is demonstrated; these are not automatically pa
 <details>
 <summary>Acceptance criteria</summary>
 
-- I can add and remove ingredients from an exclusion list.
-- Recipe suggestions are checked against saved exclusions; this is not an allergy-safety guarantee.
+- [ ] I can add and remove ingredients from an exclusion list.
+- [ ] Recipe suggestions are checked against saved exclusions; this is not an allergy-safety guarantee.
+- [ ] If every feasible recipe contains an excluded ingredient, I am told that no matching meal can be offered.
 
 </details>
 
@@ -503,8 +545,9 @@ Valuable additions after the MVP is demonstrated; these are not automatically pa
 <details>
 <summary>Acceptance criteria</summary>
 
-- Typing part of an ingredient name narrows the list.
-- Clearing the search restores the full list.
+- [ ] Typing part of an ingredient name narrows the list.
+- [ ] Clearing the search restores the full list.
+- [ ] A search that finds nothing displays an empty result state without deleting the underlying items.
 
 </details>
 
@@ -519,8 +562,9 @@ Valuable additions after the MVP is demonstrated; these are not automatically pa
 <details>
 <summary>Acceptance criteria</summary>
 
-- A home view shows the essentials from my account and a clear recipe action.
-- It handles an empty inventory without showing misleading counts.
+- [ ] A home view shows the essentials from my account and a clear recipe action.
+- [ ] It handles an empty inventory without showing misleading counts.
+- [ ] From the home view, I can reach my inventory and the recipe-generation flow without searching through unrelated pages.
 
 </details>
 
@@ -535,8 +579,9 @@ Valuable additions after the MVP is demonstrated; these are not automatically pa
 <details>
 <summary>Acceptance criteria</summary>
 
-- I can request a secure recovery flow for my account.
-- Resetting a password invalidates the reset token and does not reveal whether an email exists.
+- [ ] I can request a secure recovery flow for my account.
+- [ ] Resetting a password invalidates the reset token and does not reveal whether an email exists.
+- [ ] An expired, previously used or invalid recovery link cannot change the account password.
 
 </details>
 
@@ -551,8 +596,9 @@ Valuable additions after the MVP is demonstrated; these are not automatically pa
 <details>
 <summary>Acceptance criteria</summary>
 
-- I can update my password using the required verification.
-- My old password is no longer accepted after a successful change.
+- [ ] I can update my password using the required verification.
+- [ ] My old password is no longer accepted after a successful change.
+- [ ] An invalid current password or unacceptable new password is rejected with useful feedback.
 
 </details>
 
@@ -567,8 +613,9 @@ Valuable additions after the MVP is demonstrated; these are not automatically pa
 <details>
 <summary>Acceptance criteria</summary>
 
-- I can view and change the supported profile fields.
-- Updated details persist and belong only to my account.
+- [ ] I can view and change the supported profile fields.
+- [ ] Updated details persist and belong only to my account.
+- [ ] If an entered profile value is invalid, I can correct it without losing the previously saved information.
 
 </details>
 
@@ -583,8 +630,9 @@ Valuable additions after the MVP is demonstrated; these are not automatically pa
 <details>
 <summary>Acceptance criteria</summary>
 
-- The app provides a deliberate, confirmed account-deletion flow.
-- After processing, the account can no longer sign in and its stored personal data is handled according to the published retention/deletion policy.
+- [ ] The app provides a deliberate, confirmed account-deletion flow.
+- [ ] After processing, the account can no longer sign in and its stored personal data is handled according to the published retention/deletion policy.
+- [ ] If I cancel deletion, my account and inventory remain available.
 
 </details>
 
@@ -599,8 +647,9 @@ Valuable additions after the MVP is demonstrated; these are not automatically pa
 <details>
 <summary>Acceptance criteria</summary>
 
-- Signing in on a second supported device loads the same account inventory.
-- Updates are attributed to the correct account and are not mixed with another user's data.
+- [ ] Signing in on a second supported device loads the same account inventory.
+- [ ] Updates are attributed to the correct account and are not mixed with another user's data.
+- [ ] When I reopen inventory on one device after a successful change on another, I see the updated saved quantities.
 
 </details>
 
@@ -621,8 +670,9 @@ Optional improvements if validated by users and team capacity.
 <details>
 <summary>Acceptance criteria</summary>
 
-- I can select a supported sorting order.
-- Sorting changes presentation, not stored stock.
+- [ ] I can select a supported sorting order.
+- [ ] Sorting changes presentation, not stored stock.
+- [ ] Choosing a different sort order does not remove or alter any ingredient.
 
 </details>
 
@@ -637,8 +687,9 @@ Optional improvements if validated by users and team capacity.
 <details>
 <summary>Acceptance criteria</summary>
 
-- Potential matching entries are shown before saving.
-- I can choose to increase an existing amount or keep a separate item where appropriate.
+- [ ] Potential matching entries are shown before saving.
+- [ ] I can choose to increase an existing amount or keep a separate item where appropriate.
+- [ ] Dismissal of the duplicate warning leaves the existing item and quantity unchanged.
 
 </details>
 
@@ -653,8 +704,9 @@ Optional improvements if validated by users and team capacity.
 <details>
 <summary>Acceptance criteria</summary>
 
-- The add flow suggests common or previously used names matching my input.
-- Suggestions never add quantities automatically.
+- [ ] The add flow suggests common or previously used names matching my input.
+- [ ] Suggestions never add quantities automatically.
+- [ ] If no useful suggestion matches, I can continue entering the name manually.
 
 </details>
 
@@ -669,8 +721,9 @@ Optional improvements if validated by users and team capacity.
 <details>
 <summary>Acceptance criteria</summary>
 
-- Items can have a category such as dairy, vegetables, or pantry.
-- The inventory can display meaningful groupings without hiding uncategorised items.
+- [ ] Items can have a category such as dairy, vegetables, or pantry.
+- [ ] The inventory can display meaningful groupings without hiding uncategorised items.
+- [ ] Items without a category are still accessible in an uncategorised section.
 
 </details>
 
@@ -685,8 +738,9 @@ Optional improvements if validated by users and team capacity.
 <details>
 <summary>Acceptance criteria</summary>
 
-- The app consistently converts only g ↔ kg and ml ↔ l; individual pieces (pcs) are not guessed to be a mass or volume.
-- Unknown, ingredient-dependent or incompatible conversions are rejected rather than guessed.
+- [ ] The app consistently converts only g ↔ kg and ml ↔ l; individual pieces (pcs) are not guessed to be a mass or volume.
+- [ ] Unknown, ingredient-dependent or incompatible conversions are rejected rather than guessed.
+- [ ] If a conversion is unsupported, I see that quantities cannot be safely compared instead of an invented equivalent.
 
 </details>
 
@@ -701,8 +755,9 @@ Optional improvements if validated by users and team capacity.
 <details>
 <summary>Acceptance criteria</summary>
 
-- An optional date can be saved or edited per relevant inventory item.
-- Items without dates remain valid entries.
+- [ ] An optional date can be saved or edited per relevant inventory item.
+- [ ] Items without dates remain valid entries.
+- [ ] An incorrectly formatted or invalid date is not saved as a valid expiry date.
 
 </details>
 
@@ -717,8 +772,9 @@ Optional improvements if validated by users and team capacity.
 <details>
 <summary>Acceptance criteria</summary>
 
-- Dated items are marked based on a clear configurable or documented threshold.
-- Undated items are not inaccurately presented as expired.
+- [ ] Dated items are marked based on a clear configurable or documented threshold.
+- [ ] Undated items are not inaccurately presented as expired.
+- [ ] I can still find all ingredients even when no item is near its expiry date.
 
 </details>
 
@@ -733,8 +789,9 @@ Optional improvements if validated by users and team capacity.
 <details>
 <summary>Acceptance criteria</summary>
 
-- A user can choose to prioritise soon-expiring ingredients.
-- Expiry preference never overrides actual ingredient availability and amounts.
+- [ ] A user can choose to prioritise soon-expiring ingredients.
+- [ ] Expiry preference never overrides actual ingredient availability and amounts.
+- [ ] When there are no dated items near expiry, I get a normal feasible recommendation rather than a made-up urgent item.
 
 </details>
 
@@ -749,8 +806,9 @@ Optional improvements if validated by users and team capacity.
 <details>
 <summary>Acceptance criteria</summary>
 
-- Each ingredient is visibly marked available, insufficient, or missing.
-- Statuses are calculated from stored quantities rather than assumed from AI output.
+- [ ] Each ingredient is visibly marked available, insufficient, or missing.
+- [ ] Statuses are calculated from stored quantities rather than assumed from AI output.
+- [ ] If the app cannot reliably assess an ingredient amount, it is marked unknown rather than available.
 
 </details>
 
@@ -765,8 +823,9 @@ Optional improvements if validated by users and team capacity.
 <details>
 <summary>Acceptance criteria</summary>
 
-- I can switch between strict inventory-only and an explicit flexible mode.
-- Every missing ingredient and amount is clearly disclosed before cooking.
+- [ ] I can switch between strict inventory-only and an explicit flexible mode.
+- [ ] Every missing ingredient and amount is clearly disclosed before cooking.
+- [ ] Turning flexible mode off returns recommendations to strictly inventory-only recipes.
 
 </details>
 
@@ -781,8 +840,9 @@ Optional improvements if validated by users and team capacity.
 <details>
 <summary>Acceptance criteria</summary>
 
-- I can add an item name and optional quantity to a persistent shopping list.
-- A newly added item appears in the list without silently changing my kitchen inventory.
+- [ ] I can add an item name and optional quantity to a persistent shopping list.
+- [ ] A newly added item appears in the list without silently changing my kitchen inventory.
+- [ ] An empty item name cannot be added, and I see an explanation of what to correct.
 
 </details>
 
@@ -797,8 +857,9 @@ Optional improvements if validated by users and team capacity.
 <details>
 <summary>Acceptance criteria</summary>
 
-- I can change the name or amount of an existing shopping-list item.
-- Changes persist without changing kitchen inventory.
+- [ ] I can change the name or amount of an existing shopping-list item.
+- [ ] Changes persist without changing kitchen inventory.
+- [ ] Invalid or blank updates are rejected without replacing the previously saved item.
 
 </details>
 
@@ -813,8 +874,9 @@ Optional improvements if validated by users and team capacity.
 <details>
 <summary>Acceptance criteria</summary>
 
-- I can delete a selected shopping item.
-- The removed item no longer appears on the list, and stored inventory is unchanged.
+- [ ] I can delete a selected shopping item.
+- [ ] The removed item no longer appears on the list, and stored inventory is unchanged.
+- [ ] Removing one list item does not remove any other shopping-list entries.
 
 </details>
 
@@ -829,8 +891,9 @@ Optional improvements if validated by users and team capacity.
 <details>
 <summary>Acceptance criteria</summary>
 
-- I can mark an item bought and distinguish it from unpurchased items.
-- Buying an item does not change inventory until an explicit stock-add action.
+- [ ] I can mark an item bought and distinguish it from unpurchased items.
+- [ ] Buying an item does not change inventory until an explicit stock-add action.
+- [ ] I can clearly distinguish purchased items from remaining items after reopening the list.
 
 </details>
 
@@ -845,8 +908,9 @@ Optional improvements if validated by users and team capacity.
 <details>
 <summary>Acceptance criteria</summary>
 
-- I can explicitly add missing ingredients from a recipe.
-- Items appear with useful amounts where known.
+- [ ] I can explicitly add missing ingredients from a recipe.
+- [ ] Items appear with useful amounts where known.
+- [ ] If all ingredients are already available, the app does not create unnecessary shopping-list entries.
 
 </details>
 
@@ -861,8 +925,9 @@ Optional improvements if validated by users and team capacity.
 <details>
 <summary>Acceptance criteria</summary>
 
-- I can explicitly opt in to individual staple ingredients and quantities.
-- No staple is assumed present unless I have configured it or listed it.
+- [ ] I can explicitly opt in to individual staple ingredients and quantities.
+- [ ] No staple is assumed present unless I have configured it or listed it.
+- [ ] Removing a configured staple stops it from being counted as available in future recipe requests.
 
 </details>
 
@@ -877,8 +942,9 @@ Optional improvements if validated by users and team capacity.
 <details>
 <summary>Acceptance criteria</summary>
 
-- I can maintain a list of excluded dishes or dish types.
-- Suggestions matching those exclusions are filtered or clearly rejected.
+- [ ] I can maintain a list of excluded dishes or dish types.
+- [ ] Suggestions matching those exclusions are filtered or clearly rejected.
+- [ ] Removing an excluded dish makes it eligible for future suggestions again.
 
 </details>
 
@@ -893,8 +959,9 @@ Optional improvements if validated by users and team capacity.
 <details>
 <summary>Acceptance criteria</summary>
 
-- I can enter an optional free-text preference.
-- A custom request cannot bypass inventory constraints or required safety checks.
+- [ ] I can enter an optional free-text preference.
+- [ ] A custom request cannot bypass inventory constraints or required safety checks.
+- [ ] Leaving the custom craving blank still lets me request a recipe normally.
 
 </details>
 
@@ -909,8 +976,9 @@ Optional improvements if validated by users and team capacity.
 <details>
 <summary>Acceptance criteria</summary>
 
-- Supported patterns can be selected and removed.
-- Generated ingredients are checked against the selected pattern where rules are verifiable; no medical guarantee is implied.
+- [ ] Supported patterns can be selected and removed.
+- [ ] Generated ingredients are checked against the selected pattern where rules are verifiable; no medical guarantee is implied.
+- [ ] If no suitable meal satisfies my selected pattern, the app explains the limitation instead of silently ignoring it.
 
 </details>
 
@@ -925,8 +993,9 @@ Optional improvements if validated by users and team capacity.
 <details>
 <summary>Acceptance criteria</summary>
 
-- I can navigate between individual steps and see my place.
-- Leaving the cooking view does not deduct ingredients.
+- [ ] I can navigate between individual steps and see my place.
+- [ ] Leaving the cooking view does not deduct ingredients.
+- [ ] Going forward and backward between steps does not skip or modify the recipe's instructions.
 
 </details>
 
@@ -941,8 +1010,9 @@ Optional improvements if validated by users and team capacity.
 <details>
 <summary>Acceptance criteria</summary>
 
-- A recipe step with a time can start or stop a timer.
-- Timer state is clearly shown; lack of notification permissions is handled gracefully.
+- [ ] A recipe step with a time can start or stop a timer.
+- [ ] Timer state is clearly shown; lack of notification permissions is handled gracefully.
+- [ ] If a step has no duration, the app does not start a guessed timer automatically.
 
 </details>
 
@@ -957,8 +1027,9 @@ Optional improvements if validated by users and team capacity.
 <details>
 <summary>Acceptance criteria</summary>
 
-- Saved recipes can be searched by name.
-- Search results only contain recipes from my collection.
+- [ ] Saved recipes can be searched by name.
+- [ ] Search results only contain recipes from my collection.
+- [ ] A search with no results leaves the saved collection intact and shows a clear empty-result message.
 
 </details>
 
@@ -973,8 +1044,9 @@ Optional improvements if validated by users and team capacity.
 <details>
 <summary>Acceptance criteria</summary>
 
-- I can record simple positive or negative feedback against a recipe.
-- The app does not claim the model has learned preferences unless those ratings are actually used.
+- [ ] I can record simple positive or negative feedback against a recipe.
+- [ ] The app does not claim the model has learned preferences unless those ratings are actually used.
+- [ ] I can change or remove feedback that I previously gave to a recipe.
 
 </details>
 
@@ -989,8 +1061,9 @@ Optional improvements if validated by users and team capacity.
 <details>
 <summary>Acceptance criteria</summary>
 
-- A small list displays distinct recipe summaries with cooking time.
-- Opening a recipe reveals full details, and each option respects inventory rules.
+- [ ] A small list displays distinct recipe summaries with cooking time.
+- [ ] Opening a recipe reveals full details, and each option respects inventory rules.
+- [ ] If too few feasible recipes exist, the app shows only those it can validate and makes the limitation clear.
 
 </details>
 
@@ -1005,8 +1078,9 @@ Optional improvements if validated by users and team capacity.
 <details>
 <summary>Acceptance criteria</summary>
 
-- Suggestions distinguish verified substitutions from uncertain ones.
-- The revised recipe and quantities must be checked again against available stock.
+- [ ] Suggestions distinguish verified substitutions from uncertain ones.
+- [ ] The revised recipe and quantities must be checked again against available stock.
+- [ ] If no trustworthy substitution is available, I am told rather than shown an invented alternative.
 
 </details>
 
@@ -1021,8 +1095,9 @@ Optional improvements if validated by users and team capacity.
 <details>
 <summary>Acceptance criteria</summary>
 
-- A recognised code can prefill available product information for my confirmation.
-- Unrecognised codes allow manual entry; inventory is never changed without my confirmation.
+- [ ] A recognised code can prefill available product information for my confirmation.
+- [ ] Unrecognised codes allow manual entry; inventory is never changed without my confirmation.
+- [ ] Cancelling the scan or confirmation leaves the inventory unchanged.
 
 </details>
 
@@ -1037,8 +1112,9 @@ Optional improvements if validated by users and team capacity.
 <details>
 <summary>Acceptance criteria</summary>
 
-- Nutritional values, when available, are clearly labelled estimates and show a basis or source.
-- Missing or unreliable nutritional data is shown as unavailable rather than invented as exact.
+- [ ] Nutritional values, when available, are clearly labelled estimates and show a basis or source.
+- [ ] Missing or unreliable nutritional data is shown as unavailable rather than invented as exact.
+- [ ] Nutrition values do not appear as exact figures when the required underlying ingredient data is unavailable.
 
 </details>
 
@@ -1053,8 +1129,9 @@ Optional improvements if validated by users and team capacity.
 <details>
 <summary>Acceptance criteria</summary>
 
-- I can assign or remove one saved recipe for a selected day in a simple seven-day view.
-- Planned meals persist without deducting any ingredients until cooking is explicitly confirmed.
+- [ ] I can assign or remove one saved recipe for a selected day in a simple seven-day view.
+- [ ] Planned meals persist without deducting any ingredients until cooking is explicitly confirmed.
+- [ ] Removing a planned meal from a day does not delete the saved recipe itself.
 
 </details>
 
@@ -1075,8 +1152,9 @@ Deliberately excluded from this course delivery window; retain for later product
 <details>
 <summary>Acceptance criteria</summary>
 
-- Only authorised administrator accounts can open administration views.
-- Ordinary users cannot access administrative data through UI or API routes.
+- [ ] Only authorised administrator accounts can open administration views.
+- [ ] When I am signed in as a regular user, administrator information is unavailable to me.
+- [ ] An unauthorised visitor sees no administrator-only information.
 
 </details>
 
@@ -1091,8 +1169,9 @@ Deliberately excluded from this course delivery window; retain for later product
 <details>
 <summary>Acceptance criteria</summary>
 
-- The list and count reflect registered accounts and support basic filtering.
-- Only essential account metadata is exposed to admins with a legitimate need.
+- [ ] The list and count reflect registered accounts and support basic filtering.
+- [ ] Only essential account metadata is exposed to admins with a legitimate need.
+- [ ] A non-administrator cannot browse registered-account information.
 
 </details>
 
@@ -1107,8 +1186,9 @@ Deliberately excluded from this course delivery window; retain for later product
 <details>
 <summary>Acceptance criteria</summary>
 
-- Recent activity or last-login indicators are available only to authorised staff.
-- Tracking, retention, and access follow the service's published privacy rules.
+- [ ] Recent activity or last-login indicators are available only to authorised staff.
+- [ ] Tracking, retention, and access follow the service's published privacy rules.
+- [ ] If an account has never signed in, it is shown as having no recorded login rather than a fabricated date.
 
 </details>
 
@@ -1123,8 +1203,9 @@ Deliberately excluded from this course delivery window; retain for later product
 <details>
 <summary>Acceptance criteria</summary>
 
-- The report defines exactly what qualifies as an active user.
-- Metrics can be viewed for a selected time range without exposing ingredient lists or recipe text.
+- [ ] The report defines exactly what qualifies as an active user.
+- [ ] Metrics can be viewed for a selected time range without exposing ingredient lists or recipe text.
+- [ ] When there is no usage data for a period, the report makes that clear rather than implying measured activity.
 
 </details>
 
@@ -1139,8 +1220,9 @@ Deliberately excluded from this course delivery window; retain for later product
 <details>
 <summary>Acceptance criteria</summary>
 
-- The report distinguishes generation requests from completed cooking sessions.
-- Counts use aggregated activity and do not require displaying personal pantry contents.
+- [ ] The report distinguishes generation requests from completed cooking sessions.
+- [ ] Counts use aggregated activity and do not require displaying personal pantry contents.
+- [ ] A recipe viewed or generated but not completed does not count as a cooked meal.
 
 </details>
 
@@ -1155,8 +1237,9 @@ Deliberately excluded from this course delivery window; retain for later product
 <details>
 <summary>Acceptance criteria</summary>
 
-- Trends can be reviewed by an authorised admin for a chosen period.
-- Charts show consistent labelled definitions and avoid misleading incomplete periods.
+- [ ] Trends can be reviewed by an authorised admin for a chosen period.
+- [ ] Charts show consistent labelled definitions and avoid misleading incomplete periods.
+- [ ] Periods with no observations are clearly distinguished from missing or incomplete reporting.
 
 </details>
 
@@ -1171,8 +1254,9 @@ Deliberately excluded from this course delivery window; retain for later product
 <details>
 <summary>Acceptance criteria</summary>
 
-- I can create a household and become its owner or initial member.
-- The household has its own persistent inventory, separate from other households.
+- [ ] I can create a household and become its owner or initial member.
+- [ ] The household has its own persistent inventory, separate from other households.
+- [ ] Creating a household does not give its members access to the inventory of unrelated households.
 
 </details>
 
@@ -1187,8 +1271,9 @@ Deliberately excluded from this course delivery window; retain for later product
 <details>
 <summary>Acceptance criteria</summary>
 
-- When I belong to a household, I can open its existing shared ingredient list.
-- People who are not authorised household members cannot read that inventory.
+- [ ] When I belong to a household, I can open its existing shared ingredient list.
+- [ ] People who are not authorised household members cannot read that inventory.
+- [ ] If I do not belong to any household, I see a helpful explanation instead of someone else's food list.
 
 </details>
 
@@ -1203,8 +1288,9 @@ Deliberately excluded from this course delivery window; retain for later product
 <details>
 <summary>Acceptance criteria</summary>
 
-- An authorised member can save a quantity update to the shared inventory.
-- Other members reading the household inventory see the latest committed change; outsiders cannot update it.
+- [ ] An authorised member can save a quantity update to the shared inventory.
+- [ ] Other members reading the household inventory see the latest committed change; outsiders cannot update it.
+- [ ] An invalid update to shared stock is rejected and the previously saved amount is preserved.
 
 </details>
 
@@ -1219,8 +1305,9 @@ Deliberately excluded from this course delivery window; retain for later product
 <details>
 <summary>Acceptance criteria</summary>
 
-- I can send or create one limited-purpose invitation to an existing household.
-- Only someone accepting a valid invitation gains membership; expired or invalid invitations grant no access.
+- [ ] I can send or create one limited-purpose invitation to an existing household.
+- [ ] Only someone accepting a valid invitation gains membership; expired or invalid invitations grant no access.
+- [ ] Accepting an invitation for a different household does not reveal data from other groups.
 
 </details>
 
@@ -1235,8 +1322,9 @@ Deliberately excluded from this course delivery window; retain for later product
 <details>
 <summary>Acceptance criteria</summary>
 
-- I can revoke a member’s household access after confirming the action.
-- Revoked members cannot read or update the household inventory.
+- [ ] I can revoke a member’s household access after confirming the action.
+- [ ] Revoked members cannot read or update the household inventory.
+- [ ] Removing a member does not delete the household inventory or the remaining members.
 
 </details>
 
@@ -1251,8 +1339,9 @@ Deliberately excluded from this course delivery window; retain for later product
 <details>
 <summary>Acceptance criteria</summary>
 
-- A selected or captured image produces a reviewable list of probable ingredient names.
-- The user must correct or confirm each item and amount before stock changes; uncertain recognition never silently alters inventory.
+- [ ] A selected or captured image produces a reviewable list of probable ingredient names.
+- [ ] The user must correct or confirm each item and amount before stock changes; uncertain recognition never silently alters inventory.
+- [ ] When the image is unclear, I can correct or discard the proposed ingredients before saving.
 
 </details>
 
@@ -1267,8 +1356,9 @@ Deliberately excluded from this course delivery window; retain for later product
 <details>
 <summary>Acceptance criteria</summary>
 
-- One clearly documented input format (such as a simple CSV with names and quantities) can be previewed before import.
-- Unrecognised entries can be corrected or excluded; only confirmed entries update inventory.
+- [ ] One clearly documented input format (such as a simple CSV with names and quantities) can be previewed before import.
+- [ ] Unrecognised entries can be corrected or excluded; only confirmed entries update inventory.
+- [ ] Cancelling an import preview leaves the current inventory exactly as it was.
 
 </details>
 
