@@ -154,7 +154,7 @@ Supabase ger oss en hanterad PostgreSQL-miljö och minskar behovet av att själv
 **Datum:** 2026-10-27 · **Status:** Gäller
 
 > **Beslut**  
-> Vi följer **Trunk-Based Development (TBD)** med `main` som gemensam huvudgren. Vi arbetar i små, kortlivade branches och integrerar ändringar regelbundet via pull requests.
+> Vi följer **Trunk-Based Development (TBD)** med `main` som gemensam huvudgren. Vi arbetar i små, kortlivade branches och integrerar ändringar regelbundet via pull requests. Vi använder **Squash and merge** som huvudregel.
 
 ### Bakgrund
 
@@ -174,7 +174,8 @@ Täta integrationer och mindre ändringar minskar risken för stora merge-konfli
 
 - **Huvudgren:** `main` är vår trunk och ska hållas i fungerande skick. Vi använder ingen långlivad `develop`-gren.
 - **Branches:** Varje avgränsad ändring görs på en kortlivad branch som utgår från aktuell `main`. Vi hämtar ändringar från `main` regelbundet så att våra branches inte glider isär.
-- **Pull requests:** Vi öppnar små pull requests och låter den andra teammedlemmen granska innan merge, i enlighet med gruppens överenskomna kodgranskningsregler och eventuellt branchskydd.
+- **Pull requests:** Vi öppnar små pull requests och låter den andra teammedlemmen granska innan merge. Enligt gruppkontraktet granskar vi inom 24 timmar och mergar inte vår egen PR. Branchskyddet på `main` ska kräva minst ett godkännande.
+- **Merge-strategi:** **Squash and merge** är standard: en PR blir en sammanhållen commit på `main`. Andra merge-metoder används bara efter en gemensam överenskommelse.
 - **Integrering:** Färdiga, granskade ändringar mergas tillbaka till `main` så snart som möjligt, i stället för att hållas till slutet av en sprint.
 - **Ofärdigt arbete:** Större funktioner delas upp i mindre, säkra leveranser. Funktioner som ännu inte är redo att exponeras hålls avstängda eller isolerade så att `main` fortsätter fungera.
-- **Kvalitet:** Varje merge ska uppfylla teamets Definition of Done och relevanta kontroller. Arbetsflödet följs upp vid sprint-retrospektiv och justeras vid behov.
+- **Kvalitet:** Varje merge ska uppfylla teamets Definition of Done och relevanta CI-kontroller. Stegen beskrivs i [Git-arbetsflödet](git-workflow.md). Arbetsflödet följs upp vid sprint-retrospektiv och justeras vid behov.
