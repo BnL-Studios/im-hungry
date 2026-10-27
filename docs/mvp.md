@@ -1,68 +1,39 @@
 # MVP
 
-<!--
-  INSTRUKTION
-  MVP:n är den minsta versionen av produkten som löser kärnproblemet och går att visa för en användare.
-  Den ska fungera hela vägen: frontend, backend och databas där data sparas.
-  Sikta på att MVP:n är klar efter ungefär sprint 2–3.
-  Listan "Ingår inte" är lika viktig som "Ingår". Den hjälper er att säga nej till saker under projektet.
-  Om "Ingår" har mer än 5–8 punkter är MVP:n troligen inte minimal.
--->
-
 ## Användare
 
-<!-- Vem är användaren? Var konkreta. -->
-
-> **Exempel:** Studenter som delar lägenhet.
-
-
+Studenter och unga vuxna som lagar mat hemma och ofta har några råvaror tillgängliga men svårt att komma på vad de ska laga. Den första versionen testas av en person åt gången, utan personliga konton.
 
 ## Problem
 
-<!-- Vilket är det viktigaste problemet användaren har? Välj ett. -->
-
-> **Exempel:** Det är oklart vem som ska göra vad, och det blir bråk om disken.
-
-
+Användaren har mat hemma men vet inte **vad hen kan laga av just de råvaror och mängder som finns tillgängliga**. Att leta efter recept manuellt tar tid och leder ofta till recept som kräver ytterligare inköp.
 
 ## Beskrivning
 
-<!-- Ett stycke: vad gör applikationen och hur löser den problemet? -->
-
-> **Exempel:** Sysslo är en webbapp där ett hushåll kan lägga in sina sysslor, fördela dem mellan sig och bocka av dem när de är gjorda. Alla i hushållet ser direkt vem som har vad.
-
-
+**I'm Hungry!** är en mobilapp där användaren registrerar sina råvaror och mängder i ett enkelt digitalt matförråd, väljer ett grundläggande mat-humör och får **ett AI-genererat recept** som går att laga med det som finns hemma. Appen visar receptets ingredienser och tillagningssteg. Matförrådet sparas i en databas via en backend så att informationen finns kvar när appen öppnas igen.
 
 ## Ingår i MVP:n
 
-> **Exempel:**
-> - Skapa ett hushåll och lägga till medlemmar
-> - Lägga till sysslor
-> - Tilldela en syssla till en person
-> - Markera en syssla som gjord
-> - Se en lista över vem som har vad
-
--
--
--
+- **Se matförrådet:** visa en enkel lista över sparade råvaror med mängd och enhet, även när listan är tom.
+- **Lägga till råvaror:** ange namn, positiv mängd och enhet (t.ex. g, ml eller st) och spara via backend till databas.
+- **Korrigera matförrådet:** ändra en registrerad mängd eller ta bort en råvara, med bestående ändringar.
+- **Välja mat-humör:** ett litet fördefinierat urval, exempelvis *Comfort food*, *Quick & easy* och *Surprise me*.
+- **Få ett recept med AI:** skicka aktuellt matförråd och valt humör till AI via backend och föreslå **ett** recept utifrån enbart tillgängliga råvaror och mängder.
+- **Läsa receptet:** visa titel, uppskattad tillagningstid, ingrediensmängder och tydliga steg; visa ett begripligt meddelande om recept inte kan tas fram.
 
 ## Ingår inte i MVP:n
 
-> **Exempel:**
-> - Inloggning med Google
-> - Återkommande sysslor
-> - Påminnelser och notiser
-> - Poängsystem och statistik
-> - Mobilapp
-
--
--
--
+- Registrering, inloggning, automatisk inloggning, kontoinställningar och lösenordshantering (MVP:n använder en avgränsad testprofil, inte ett publikt delat konto).
+- En separat startsida/dashboard och avancerad navigering.
+- Smart sökning, sortering, kategorier, automatisk igenkänning av vanliga varor, streckkodsskanning och utgångsdatum.
+- Fler receptförslag i följd, receptsamlingar, favoriter och historik.
+- Starta matlagning, markera recept som tillagat och automatiskt dra av använda ingredienser.
+- Avancerade matpreferenser: kök/stil, allergier, ogillade råvaror eller rätter, portionsval och egna instruktioner.
+- Inköpslistor, måltidsplanering, notiser och näringsberäkning.
+- Administratörsvy, användarstatistik, rapporter och delade hushåll.
 
 ## Ändringar
 
-<!-- Om MVP:n ändras under projektet: skriv vad och varför. Det är helt normalt och bra underlag för reflektionen. -->
-
 | Datum | Ändring | Varför |
 |---|---|---|
-| | | |
+| 2026-10-27 | Första versionen enligt kursens MVP-mall. | Avgränsa projektet till den minsta fungerande användarresan och kunna testa kärnnyttan under sprint 2–3. |
