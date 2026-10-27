@@ -12,6 +12,17 @@ out/
 .env.*
 !.env.example
 
+# Lokala Spring-inställningar med databasuppgifter och API-nycklar.
+# application-local.properties skapas lokalt av var och en; exempelfilen ska vara kvar i repot.
+application-local.*
+!application-local.properties.example
+
+# Certifikat och nycklar
+*.pem
+*.key
+*.p12
+*.jks
+
 # Loggar
 *.log
 
