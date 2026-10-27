@@ -11,6 +11,8 @@ Dokumentation av viktiga produkt- och teknikbeslut för **I'm Hungry!**. Varje b
 | **01** | [App-idé och MVP](#beslut-01) | [2026-10-27] | **Gäller** |
 | **02** | [Teknikstack](#beslut-02) | [2026-10-27] | **Gäller** |
 | **03** | [AI-leverantör: Gemini Flash](#beslut-03) | [ÅÅÅÅ-MM-DD] | **Gäller** |
+| **04** | [Databasleverantör: Supabase](#beslut-04) | 2026-10-27 | **Gäller** |
+| **05** | [Utvecklingsflöde: Trunk-Based Development](#beslut-05) | 2026-10-27 | **Gäller** |
 
 ---
 
@@ -56,7 +58,7 @@ AI-integrationen blir en egen post i loggen när vi valt leverantör/API.
 **Datum:** [2026-10-27] · **Status:** Gäller
 
 > **Beslut**  
-> React Native i frontend, Spring Boot i backend och PostgreSQL som databas.
+> React Native i frontend, Spring Boot i backend och PostgreSQL som databas. PostgreSQL driftas via **Supabase** enligt [beslut 04](#beslut-04).
 
 ### Bakgrund
 
@@ -76,7 +78,7 @@ React Native ger en native mobilapp för både iOS och Android med samma kodbas,
 
 - Frontend (JavaScript/TypeScript) och backend (Java) är olika språk, så vi behöver hålla API-kontraktet tydligt mellan dem [byt ut om någon i gruppen redan kan Java/Spring].
 - [Om relevant: "X behöver lära sig Spring Boot – vi parprogrammerar första sprinten."]
-- Vi behöver också sätta upp lokal PostgreSQL tidigt så alla kan köra projektet.
+- Vi behöver tidigt ordna en fungerande PostgreSQL-miljö för teamet. Den gemensamma databasen driftas via Supabase enligt [beslut 04](#beslut-04); en lokal PostgreSQL-instans kan användas vid behov för utveckling och test.
 
 ---
 
@@ -110,3 +112,69 @@ Gemini Flash-modellerna ingår i Geminis **kostnadsfria API-nivå** (”Free Tie
 - **Begränsningar på gratisnivån:** **Gratisnivån är hastighetsbegränsad.** Exakta RPM/RPD-siffror publiceras inte längre öppet, utan syns per projekt i Google AI Studios rate-limit-konsol[reference:4]. Vi behöver hantera 429-svar (t.ex. köa eller backoff) och får räkna med att gratisnivån kan ta slut vid mycket användning.
 - **Dataanvändning:** På gratisnivån får Google använda prompts och svar för att förbättra sina produkter[reference:5][reference:6]. Vi skickar därför **inte** känsliga personuppgifter – bara livsmedelslistor. Skulle vi senare behöva mer kapacitet eller dataskydd flyttar vi projektet till betald nivå (genom att koppla fakturering).
 - **Utbytbar AI-tjänst:** AI-anropet läggs bakom ett eget tjänstelager i backend så att vi kan byta modell eller leverantör utan att röra frontend.
+
+
+---
+
+<a id="beslut-04"></a>
+## 04 — Databasleverantör: Supabase
+
+**Datum:** 2026-10-27 · **Status:** Gäller · **Relaterat:** [Beslut 02 – Teknikstack](#beslut-02)
+
+> **Beslut**  
+> Vi använder **Supabase som leverantör för vår PostgreSQL-databas**. PostgreSQL är fortfarande databastekniken och Spring Boot är fortsatt appens backend.
+
+### Bakgrund
+
+Vi har valt PostgreSQL i teknikstacken men behöver även bestämma var databasen ska köras och hur teamet ska komma åt en gemensam utvecklingsmiljö.
+
+### Alternativ
+
+- Drifta PostgreSQL själva, lokalt eller på en egen server.
+- Använda en annan hanterad PostgreSQL-tjänst.
+- **Använda Supabase som hanterad PostgreSQL-leverantör (valt).**
+
+### Motivering
+
+Supabase ger oss en hanterad PostgreSQL-miljö och minskar behovet av att själva sätta upp och underhålla databasservern. Det gör det enklare för ett team på två personer att fokusera på applikationens funktioner och arbeta mot en gemensam databas under kursen.
+
+### Konsekvenser
+
+- **Arkitektur:** React Native kommunicerar med Spring Boot-backendens API. Backend ansvarar för att läsa och ändra data i PostgreSQL via Supabase. Mobilappen ska inte innehålla databasens anslutningsuppgifter.
+- **Konfiguration och säkerhet:** Databasens autentiseringsuppgifter och anslutningsinformation hålls utanför versionshanteringen och konfigureras som hemligheter eller miljövariabler.
+- **Databasschema:** Vi dokumenterar tabeller och relationer i `docs/databasschema.md` och behåller DBML-källan. När vi börjar implementera databasen använder vi versionshanterade migrationer för schemaändringar.
+- **Miljöer:** Teamet behöver komma överens om hur utvecklings- och testdata hanteras. En separat testmiljö eller lokal PostgreSQL kan användas för att undvika att testkörningar förstör delad data.
+- **Avgränsning:** Valet av Supabase som databasleverantör innebär **inte** att vi automatiskt väljer Supabase Auth, Storage eller direkt åtkomst från mobilappen. Sådana tjänster kräver egna beslut om vi senare behöver dem.
+
+---
+
+<a id="beslut-05"></a>
+## 05 — Utvecklingsflöde: Trunk-Based Development
+
+**Datum:** 2026-10-27 · **Status:** Gäller
+
+> **Beslut**  
+> Vi följer **Trunk-Based Development (TBD)** med `main` som gemensam huvudgren. Vi arbetar i små, kortlivade branches och integrerar ändringar regelbundet via pull requests.
+
+### Bakgrund
+
+Vi är två utvecklare som bygger samma applikation under en Scrum-kurs. Vi behöver ett enkelt Git-arbetsflöde som underlättar samarbete, kodgranskning och kontinuerlig integrering utan att ändringar samlas i långlivade grenar.
+
+### Alternativ
+
+- GitFlow med separata, mer långlivade `develop`- och release-grenar.
+- Arbete direkt på `main` utan pull-request-granskning.
+- **Trunk-Based Development med små, kortlivade branches och pull requests (valt).**
+
+### Motivering
+
+Täta integrationer och mindre ändringar minskar risken för stora merge-konflikter och gör det enklare för oss att granska varandras kod. Det passar ett litet team som behöver kunna visa fungerande resultat under varje sprint.
+
+### Konsekvenser
+
+- **Huvudgren:** `main` är vår trunk och ska hållas i fungerande skick. Vi använder ingen långlivad `develop`-gren.
+- **Branches:** Varje avgränsad ändring görs på en kortlivad branch som utgår från aktuell `main`. Vi hämtar ändringar från `main` regelbundet så att våra branches inte glider isär.
+- **Pull requests:** Vi öppnar små pull requests och låter den andra teammedlemmen granska innan merge, i enlighet med gruppens överenskomna kodgranskningsregler och eventuellt branchskydd.
+- **Integrering:** Färdiga, granskade ändringar mergas tillbaka till `main` så snart som möjligt, i stället för att hållas till slutet av en sprint.
+- **Ofärdigt arbete:** Större funktioner delas upp i mindre, säkra leveranser. Funktioner som ännu inte är redo att exponeras hålls avstängda eller isolerade så att `main` fortsätter fungera.
+- **Kvalitet:** Varje merge ska uppfylla teamets Definition of Done och relevanta kontroller. Arbetsflödet följs upp vid sprint-retrospektiv och justeras vid behov.
