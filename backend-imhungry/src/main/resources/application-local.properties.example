@@ -1,0 +1,8 @@
+# Kopiera den här filen till application-local.properties (samma mapp) och fyll i
+# uppgifterna från Supabase: Project Settings -> Database -> Connection pooling.
+# application-local.properties är gitignorerad.
+#
+# Användarnamnet har formen postgres.<project-ref>. Lösenordet är det du satte
+# (eller återställde) för databasen.
+spring.datasource.username=postgres.<project-ref>
+spring.datasource.password=<ditt-lösenord>
