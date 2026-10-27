@@ -10,24 +10,18 @@
 
 En story är klar när:
 
-> **Exempel (Sysslos version 1):**
-> 1. Alla acceptanskriterier är uppfyllda och testade för hand.
-> 2. Koden ligger i `main` via en pull request.
-> 3. Pull requesten är granskad och godkänd av minst en annan i teamet.
-> 4. Applikationen startar och körs utan fel efter mergen.
-> 5. Det finns inga `console.log`, utkommenterad kod eller TODO kvar i ändringen.
-> 6. Kortet på boarden är flyttat till "Klart".
-> 7. README eller `docs/` är uppdaterad om ändringen påverkar hur man startar eller använder projektet.
-
-1.
-2.
-3.
-4.
-5.
+1. Alla acceptanskriterier är uppfyllda och testade för hand.
+2. Koden ligger i `main` via en pull request som granskats och godkänts av minst en annan i teamet.
+3. Backend och app bygger utan fel, och flödet som ändringen gäller fungerar mot en riktig backend efter mergen.
+4. Befintliga automatiska tester går igenom, och ny logik i backend har minst ett test som täcker den.
+5. Inga hemligheter finns i git – Gemini-API-nyckeln och databasuppgifterna ligger i miljövariabler/`.env`, och AI-anropet görs från Spring Boot, aldrig direkt från appen.
+6. Ändringar i databasschemat är gjorda som en migrering som går att köra från scratch på en tom databas.
+7. Det finns inga `console.log`, `System.out.println`, utkommenterad kod eller TODO kvar i ändringen.
+8. Kortet på boarden är flyttat till "Klart", och README eller `docs/` är uppdaterad om ändringen påverkar hur man startar eller använder projektet.
 
 ## Versioner
 
 | Version | Datum | Ändring | Varför (från vilken retro?) |
 |---|---|---|---|
-| 1 | | Första versionen | |
+| 1 | [ÅÅÅÅ-MM-DD] | Första versionen | – |
 | | | | |
