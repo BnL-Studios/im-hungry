@@ -5,7 +5,7 @@ Detta är Expo/React Native-projektet för [I'm Hungry!](../README.md).
 ## Starta utvecklingsmiljön
 
 ```bash
-cd app
+cd mobile
 npm ci
 npx expo start
 ```
@@ -27,7 +27,7 @@ Detta är den **beslutade designen**, inte en uppgift om att funktionerna redan 
 ```bash
 npm ci
 npx expo start
-npx tsc --noEmit  # först när TypeScript-källkod finns
+npx tsc --noEmit  # först när TypeScript-källkod finns i src/
 ```
 
 När Drizzle är installerat ska dess faktiska migrationskommandon dokumenteras här. Lägg aldrig hemliga API-nycklar i Expo-miljövariabler som skickas till appen; särskilt inte `EXPO_PUBLIC_*`.
