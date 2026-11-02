@@ -1,231 +1,133 @@
 # I'm Hungry!
 
-**Från råvaror till middag.** I'm Hungry! är en planerad mobilapp som hjälper den som lagar mat hemma att hålla koll på sina råvaror och få AI-genererade recept utifrån **det som faktiskt finns tillgängligt**.
+**Från råvaror till middag.** I'm Hungry! är en mobilapp som ska hjälpa hemmakockar att hålla koll på vad de har hemma och få AI-genererade receptförslag utifrån tillgängliga råvaror och mängder.
 
-Projektet utvecklas av **BnL Studios** som ett Scrum-projekt inom utbildningen till fullstackutvecklare.
+Projektet byggs av **BnL Studios** inom en Scrum-kurs. Det är under utveckling, inte en färdig app.
 
-> **Projektstatus – under utveckling.** Repositoriet innehåller just nu ett Spring Boot-grundprojekt, PostgreSQL-/Supabase-konfiguration, ett första databasschema, dokumentation och GitHub Actions-CI. Mobilappen och funktionerna för matförråd och receptgenerering är **ännu inte implementerade**. Funktionerna nedan beskriver målet för MVP:n, inte en färdig produkt.
+> **Aktuell arkitektur (2026-11-02):** React Native + Expo + TypeScript. Matförrådet lagras **lokalt på telefonen** med **SQLite och Drizzle ORM**. När användaren begär ett recept skickar appen bara råvaror, mängder och valt mat-humör till en **Supabase Edge Function**, som validerar begäran och anropar AI med en serverlagrad nyckel. **Supabase används inte som matförrådsdatabas.** Edge Function och Drizzle-integrationen är ännu planerade, inte implementerade.
 
-## Innehåll
+## Mål och MVP
 
-- [Idé och målgrupp](#idé-och-målgrupp)
-- [MVP – första fungerande versionen](#mvp--första-fungerande-versionen)
-- [Teknik och arkitektur](#teknik-och-arkitektur)
-- [Kom igång lokalt](#kom-igång-lokalt)
-- [Testning och CI](#testning-och-ci)
-- [Projektstruktur](#projektstruktur)
-- [Arbetssätt och GitHub-board](#arbetssätt-och-github-board)
-- [Dokumentation](#dokumentation)
-- [Team](#team)
+Målgrupp: studenter och andra som ofta har råvaror hemma men svårt att bestämma vad de kan laga med just de mängderna.
 
-## Idé och målgrupp
-
-Många har redan mat hemma men vet inte vad de kan laga med de ingredienser och mängder som finns. Att leta efter recept manuellt tar tid, och förslagen kräver ofta råvaror som saknas.
-
-**I'm Hungry!** ska göra vägen från råvaror till en möjlig måltid kortare:
-
-1. Registrera vilka råvaror som finns hemma och hur mycket som finns av varje.
-2. Välj ett enkelt mat-humör.
-3. Få ett receptförslag anpassat till det sparade matförrådet.
-4. Läs ingrediensmängder och steg direkt i appen.
-
-**Primär målgrupp:** studenter och unga vuxna som lagar mat hemma. Den första versionen använder en avgränsad demonstrationsprofil, **utan inloggning eller separata användarkonton**.
-
-## MVP – första fungerande versionen
-
-MVP:n är avsiktligt begränsad till en sammanhängande användarresa från **registrerade råvaror** till **ett läsbart recept**.
-
-| Funktion | Förväntat beteende i MVP:n |
+| Ingår i MVP:n | Hur det ska fungera |
 |---|---|
-| Se matförrådet | Visa sparade råvaror, mängder och enheter samt ett begripligt tomt läge. |
-| Lägg till råvara | Ange namn, positiv mängd och enhet (t.ex. g, ml eller st) och spara beständigt via backend. |
-| Ändra eller ta bort | Korrigera mängd eller ta bort en råvara; ändringen finns kvar i databasen. |
-| Välj mat-humör | Välj exempelvis *Comfort food*, *Quick & easy* eller *Surprise me*. |
-| Generera recept | Be AI föreslå **ett** recept med utgångspunkt i tillgängliga råvaror **och mängder**, via backend. |
-| Visa resultat och fel | Visa titel, tillagningstid, ingredienser och steg, eller ett begripligt meddelande om inget giltigt recept kan erbjudas. |
+| Matförråd | Visa, lägga till, korrigera och ta bort råvaror med mängd och enhet. |
+| Lokal lagring | Inventariet finns kvar efter omstart och kan hanteras utan internet. |
+| Mat-humör | Välj t.ex. *Comfort food*, *Quick & easy* eller *Surprise me*. |
+| Ett receptförslag | Skicka en begäran till Edge Function och visa ett AI-genererat recept utifrån råvarorna som finns. |
+| Resultat och fel | Visa recepttitel, tid, ingredienser, mängder och steg, eller ett begripligt felmeddelande. |
 
-**Ingår inte i MVP:n:** konton/inloggning, favoriter och recepthistorik, avancerade filter och matpreferenser, inköpslistor, streckkodsskanning, automatisk avräkning av råvaror efter matlagning eller delning mellan hushåll. Sådant finns i den prioriterade backloggen för senare utveckling.
+Utanför MVP:n: användarkonton, molnsynkronisering, favoriter, recepthistorik, automatiska avdrag ur matförrådet, avancerade preferenser, inköpslistor och streckkodsskanning. **Inventariet fungerar offline; receptgenerering kräver internet.** Lokal data synkroniseras inte mellan enheter och kan förloras vid avinstallation.
 
-Se [fullständig MVP-definition](docs/mvp.md), [produktbacklogg med user stories och acceptanskriterier](docs/USER_STORIES.md) samt [GitHub Projects-boarden](https://github.com/orgs/BnL-Studios/projects/1).
+Se [MVP](docs/mvp.md) och [Product Backlog](docs/USER_STORIES.md).
 
 ## Teknik och arkitektur
 
-| Del | Teknik | Roll/status |
+| Del | Val | Status |
 |---|---|---|
-| Mobilapp | React Native (JavaScript/TypeScript) | **Vald, ännu inte skapad i repot** |
-| Backend | Java 21, Spring Boot 4.1.2, Maven | Grundprojekt med konfiguration och ett första test finns |
-| API | REST via Spring Boot | Planerad kommunikation mellan app och backend |
-| Databas | PostgreSQL hos Supabase | Vald och konfigurerad som databasleverantör |
-| Databasåtkomst | Spring Data JPA / Hibernate | Finns som beroende och konfiguration i backend |
-| AI | Google Gemini Flash | Vald leverantör; integrationen är inte byggd ännu |
-| CI | GitHub Actions | Bygger och testar backend med en isolerad PostgreSQL-instans |
-| Projektstyrning | GitHub Issues och GitHub Projects | Scrum-board, prioritering och spårning av arbete |
+| Mobilapp | React Native, Expo SDK 58, TypeScript och Expo Router | Expo-projekt finns i `app/` |
+| Lokal databas | Expo SQLite | Planerad integration |
+| ORM och migrationer | Drizzle ORM + Drizzle Kit | Vald men inte installerad |
+| Recept-gateway | Supabase Edge Functions (Deno/TypeScript) | Vald design, ännu inte byggd |
+| AI-tjänst | Gemini Flash enligt beslut 03; möjlighet att byta leverantör | Integration inte byggd |
+| CI | GitHub Actions för mobilapp | Förslag ingår i denna dokumentuppdatering |
+| Process | Scrum, trunk-based development, granskade PR:er, squash merge | Dokumenterat |
 
-**Planerad kommunikationsväg:**
-
-```text
-React Native-app (mobil)
-        |
-        | HTTP / REST
-        v
-Spring Boot-backend
-        |               \
-        |                \--> Gemini Flash (receptförslag)
-        v
-PostgreSQL via Supabase (matförråd)
+```mermaid
+flowchart TD
+    subgraph Phone[Användarens telefon]
+      App[Expo / React Native UI]
+      Logic[Operationer och repositories med Drizzle]
+      DB[(Lokal SQLite)]
+      App --> Logic --> DB
+    end
+    App -->|HTTPS: matförråd + humör, endast vid receptbegäran| Edge[Supabase Edge Function]
+    Edge -->|Serverlagrad API-nyckel| AI[Gemini / vald AI-tjänst]
+    AI -->|Strukturerat recept| Edge
+    Edge -->|Validerat svar| App
 ```
 
-Mobilappen ska **inte** ansluta direkt till databasen eller innehålla AI-/databashemligheter. Backend ansvarar för åtkomst, validering och AI-anrop. Recept skapas vid behov och sparas inte permanent i MVP:n.
+**Viktig säkerhetsgräns:** API-nyckeln lagras bara som hemlighet i Edge Function, aldrig i appen. Funktionens indata och AI-svar måste valideras. Utan användarinloggning behöver en publik Edge Function dessutom begränsa missbruk och kostnader (t.ex. rate limiting, kvoter och övervakning) innan den görs publikt tillgänglig. Klienten ska kontrollera receptets mängder mot sitt lokala inventarie; funktionens begäran är inte bevis för vad som faktiskt är lagrat på telefonen.
 
-Teknikvalen och motiveringarna finns i [beslutsloggen](docs/beslutslogg.md). Databasschemat är fortfarande ett [utkast](docs/databasschema.md), med redigerbar [DBML-källa](docs/databasschema.dbml).
+Läs [arkitekturen och dataintegritet](docs/arkitektur.md), [databasschemat](docs/databasschema.md) och [beslutsloggen](docs/beslutslogg.md).
 
-## Kom igång lokalt
+## Kom igång
 
-Instruktionerna nedan gäller det **backendprojekt som finns idag**. Det finns ännu ingen frontend att installera eller starta. För att starta backend mot teamets Supabase-databas behöver du behörighet och anslutningsuppgifter från teamet.
-
-### Förutsättningar
-
-- **Git** för att klona repot.
-- **JDK 21** installerat och tillgängligt i terminalen (`java -version`).
-- Nätverksåtkomst till Supabase och **giltiga databasuppgifter** för projektet.
-- Du behöver inte installera Maven separat: repot innehåller Maven Wrapper (`mvnw`).
-
-### 1. Klona repot
+**Krav:** Git, Node.js och npm samt simulator/emulator eller mobil med stöd för Expo. Projektet har en `package-lock.json`, så använd `npm ci` för reproducerbar installation.
 
 ```bash
 git clone https://github.com/BnL-Studios/im-hungry.git
-cd im-hungry
+cd im-hungry/app
+npm ci
+npx expo start
 ```
 
-### 2. Konfigurera databasanslutningen
+Välj i Expo-terminalen om du vill köra i simulator, emulator eller på en telefon. Beroende på vilka native-moduler som tillkommer kan en **development build** behövas. Se [Expo-dokumentationen](https://docs.expo.dev/get-started/start-developing/).
 
-Kopiera den versionshanterade exempelfilen till en **lokal, ignorerad** konfigurationsfil:
+**Aktuellt läge:** Expo-grundprojektet finns på GitHub, men Drizzle/SQLite-lagret och Edge Function är ännu inte implementerade. Instruktioner för deras installation, migrationskommandon och miljövariabler läggs till när implementationen finns. Ingen Supabase-databas, Java-installation eller Spring Boot-server krävs enligt den nya designen.
 
-```bash
-cp backend/src/main/resources/application-local.properties.example \
-   backend/src/main/resources/application-local.properties
-```
-
-Öppna `backend/src/main/resources/application-local.properties` och fyll i anslutningen med uppgifter från **Supabase → Project Settings → Database → Connection pooling**:
-
-```properties
-# Värdena nedan är exempel/platshållare – använd teamets riktiga uppgifter.
-spring.datasource.url=jdbc:postgresql://<pooler-host>:5432/postgres?sslmode=require&currentSchema=imhungry
-spring.datasource.username=postgres.<project-ref>
-spring.datasource.password=<database-password>
-```
-
-- Använd Supabases **session pooler** och dess faktiska värd, port och användarnamn. Använd inte en påhittad anslutningsadress.
-- Backend använder PostgreSQL-schemat `imhungry` (inte standardschemat `public`). Schemat måste finnas i databasen innan anslutningen kan användas. Behörig teammedlem kan skapa det med `CREATE SCHEMA IF NOT EXISTS imhungry;` i Supabases SQL-editor.
-- Spring Boot använder profilen `local` som standard; `application-local.properties` läses då in och skriver över relevanta värden i `application.properties`.
-- **Committa aldrig** din lokala konfiguration, lösenord, `.env`-filer eller API-nycklar. `application-local.properties` omfattas av repots `.gitignore`.
-
-### 3. Starta backend
-
-**macOS / Linux**
-
-```bash
-cd backend
-./mvnw spring-boot:run
-```
-
-**Windows (PowerShell)**
-
-```powershell
-cd backend
-.\mvnw.cmd spring-boot:run
-```
-
-Spring Boot använder normalt **http://localhost:8080** om ingen annan port har konfigurerats. Backend är ännu ett grundprojekt utan implementerade inventarie- eller receptendpoints, så det finns inte ett färdigt användarflöde att testa efter uppstart.
-
-### Vanliga problem
-
-| Problem | Kontrollera |
-|---|---|
-| Java-version eller startfel | Kör `java -version` och säkerställ JDK 21. |
-| Databasanslutning nekas | Pooler-värd, port, användarnamn, lösenord och nätverksåtkomst. |
-| Schema- eller tabellfel | PostgreSQL-schemat `imhungry` måste finnas; inventariefunktionerna och deras persistens är ännu inte implementerade. |
-| Saknade lokala inställningar | Kontrollera att filen heter `application-local.properties` och ligger under `src/main/resources/`. |
-
-> **Viktigt för utveckling och test:** Den lokala backendkonfigurationen kan ansluta till teamets **delade** Supabase-databas. Kör inte databastester som kan ändra data mot den miljön. CI använder i stället en separat, tillfällig PostgreSQL-instans.
+**Legacy:** Vid kontroll av fjärrlagrade `main` den 2 november 2026 fanns fortfarande en `backend/`-mapp med Spring Boot-kod, trots beslutet att inte använda den. Den är **inte en del av aktuell målarkitektur** och ska tas bort i en separat granskad ändring om den fortfarande finns kvar. Denna dokumentuppdatering raderar ingen kod.
 
 ## Testning och CI
 
-GitHub Actions kör [`.github/workflows/ci.yml`](.github/workflows/ci.yml) automatiskt vid pull requests mot `main` och vid pushar till `main`.
+- Kör `npm ci` i `app/` för att installera enligt låsfilen.
+- När TypeScript-källkod finns: kör `npx tsc --noEmit` från `app/`.
+- När testverktyg installerats: testa verksamhetslogik, SQLite CRUD och uppgradering av migrationer.
+- CI-förslaget i `.github/workflows/ci.yml` kontrollerar installation och TypeScript och ska utökas med tester när de införs.
 
-I nuläget använder jobbet **Backend (Java 21)** Maven och PostgreSQL i en isolerad GitHub Actions-miljö. Det behöver inte Supabase- eller Gemini-hemligheter.
+**Branch protection:** Om GitHub fortfarande kräver den gamla statuskontrollen **Backend (Java 21)** måste administratören ersätta den med den nya mobilkontrollen **Mobile (Node 22)** innan backend-jobbet försvinner. Annars kan pull requests blockeras trots godkänd ny CI.
 
-Testsviten innehåller för närvarande ett grundläggande Spring Boot-test för att starta applikationskontexten; mer funktionell testtäckning tillkommer när features implementeras.
-
-För lokal körning av `./mvnw verify` behöver testmiljön vara korrekt konfigurerad, med en **separat testdatabas**, så att teamets data inte påverkas.
-
-[Se arbetsflöden och körningar i GitHub Actions](https://github.com/BnL-Studios/im-hungry/actions).
+[GitHub Actions](https://github.com/BnL-Studios/im-hungry/actions) · [Git-arbetsflöde](docs/git-workflow.md)
 
 ## Projektstruktur
 
 ```text
 im-hungry/
-├── .github/
-│   ├── ISSUE_TEMPLATE/             # Mallar för stories och buggar
-│   ├── pull_request_template.md    # Checklista för PR och granskning
-│   └── workflows/ci.yml            # Java/Maven/PostgreSQL-CI
-├── backend/
-│   ├── pom.xml                     # Spring Boot, Java 21 och beroenden
-│   ├── mvnw / mvnw.cmd             # Maven Wrapper
-│   └── src/                        # Källkod, konfiguration och tester
+├── app/                         # Expo-mobilapp (finns)
+│   ├── app.json
+│   ├── package.json
+│   └── src/                    # Planerad: skärmar, features, datalager
 ├── docs/
-│   ├── USER_STORIES.md             # Prioriterad produktbacklogg
-│   ├── mvp.md                      # Scope för första versionen
-│   ├── databasschema.md           # Diagram och tabellbeskrivning
-│   ├── databasschema.dbml         # Redigerbar databasskiss
-│   ├── bilder/                     # Bland annat databasschema.png
-│   ├── beslutslogg.md             # Arkitektur- och processbeslut
-│   ├── git-workflow.md            # Teamets Git/PR/merge-rutiner
-│   ├── gruppkontrakt.md           # Överenskommelser om samarbete
-│   ├── definition-of-done.md      # Gemensamma kvalitetskrav
-│   ├── sprintar/                  # Sprintmallar och sprintdokumentation
-│   └── reflektioner/              # Individuella reflektioner
+│   ├── arkitektur.md           # Lokal SQLite + Supabase Edge Function
+│   ├── databasschema.md       # Databasskiss (SQLite)
+│   ├── databasschema.dbml     # Redigerbar DBML
+│   ├── mvp.md
+│   ├── USER_STORIES.md
+│   ├── beslutslogg.md
+│   ├── definition-of-done.md
+│   ├── git-workflow.md
+│   ├── gruppkontrakt.md
+│   ├── sprintar/
+│   └── reflektioner/
+├── .github/workflows/ci.yml    # Mobil CI (föreslagen uppdatering)
 └── README.md
 ```
 
-## Arbetssätt och GitHub-board
+**Planerad när implementationen startar:** `app/src/database/` för Drizzle-schema, databasinitiering och migrationer; `app/src/features/inventory/` för lokala CRUD-operationer; `supabase/functions/generate-recipe/` för Edge Function. Dessa kataloger är **inte** implementerade genom den här dokumentuppdateringen.
 
-Vi använder **Scrum** och **trunk-based development**:
-
-- `main` är vår gemensamma, fungerande huvudbranch.
-- Vi arbetar i **små, kortlivade branches** som utgår från uppdaterad `main`.
-- Ändringar går via **pull requests** med minst **en annan teammedlems godkännande** och gröna CI-kontroller.
-- **Squash and merge** är vår normala merge-metod.
-- PR:er granskas inom **24 timmar** och **ingen mergar sin egen PR**, enligt gruppkontraktet.
-- Koppla gärna PR till dess issue med `Closes #nummer` när arbetet färdigställer ett kort.
-
-**Länkar:** [GitHub Project-board](https://github.com/orgs/BnL-Studios/projects/1) · [Issues](https://github.com/BnL-Studios/im-hungry/issues) · [Pull requests](https://github.com/BnL-Studios/im-hungry/pulls) · [Detaljerad Git-guide](docs/git-workflow.md).
-
-Sprintdokumentationen ligger i [`docs/sprintar/`](docs/sprintar/). Där finns mallar för planning, standup, review och retro.
-
-## Dokumentation
-
-| Dokument | Innehåll |
-|---|---|
-| [MVP](docs/mvp.md) | Målgrupp, problem, första funktionerna och tydliga avgränsningar |
-| [User stories / Product backlog](docs/USER_STORIES.md) | Prioritering (MoSCoW), estimering och acceptanskriterier |
-| [Databasschema](docs/databasschema.md) · [DBML](docs/databasschema.dbml) | Diagram, tabeller och redigerbar källkod |
-| [Beslutslogg](docs/beslutslogg.md) | Val av teknik, databasleverantör, AI och utvecklingsflöde |
-| [Git-arbetsflöde](docs/git-workflow.md) | Stegen från issue och branch till granskad squash-merge |
-| [Gruppkontrakt](docs/gruppkontrakt.md) | Tillgänglighet, kommunikation och gemensamma regler |
-| [Definition of Done](docs/definition-of-done.md) | Vad en färdig story måste uppfylla |
-| [Sprintdokumentation](docs/sprintar/) | Planering, standups, reviews och retrospektiv |
-| [Individuella reflektioner](docs/reflektioner/) | Underlag för individuella kursreflektioner |
-
-## Team
+## Team och arbetsflöde
 
 | Namn | GitHub |
 |---|---|
 | Benjamin Simmons | [@SimmoM8](https://github.com/SimmoM8) |
 | Leo Spenner | [@spennerr](https://github.com/spennerr) |
 
-**Organisation:** [BnL Studios](https://github.com/BnL-Studios) · **Repository:** [BnL-Studios/im-hungry](https://github.com/BnL-Studios/im-hungry)
+Vi använder kortlivade branches från `main`, pull requests, minst en annan persons godkännande, och **Squash and merge** som standard. Enligt [gruppkontraktet](docs/gruppkontrakt.md) granskar vi PR:er inom 24 timmar och mergar inte våra egna PR:er.
 
----
+[GitHub Project-board](https://github.com/orgs/BnL-Studios/projects/1) · [Issues](https://github.com/BnL-Studios/im-hungry/issues) · [Pull requests](https://github.com/BnL-Studios/im-hungry/pulls)
 
-*Detta är ett utbildningsprojekt under aktiv utveckling. Dokumentationen uppdateras när MVP, databasschema och implementation förändras.*
+## Dokumentation
+
+| Dokument | Syfte |
+|---|---|
+| [MVP](docs/mvp.md) | Omfattning och avgränsningar |
+| [Product Backlog](docs/USER_STORIES.md) | User stories och acceptanskriterier |
+| [Arkitektur](docs/arkitektur.md) | Ansvar, dataflöden, AI-gateway och säkerhet |
+| [Databasschema](docs/databasschema.md) · [DBML](docs/databasschema.dbml) | Lokal SQLite-modell |
+| [Beslutslogg](docs/beslutslogg.md) | Tidigare och gällande teknikbeslut |
+| [Git-arbetsflöde](docs/git-workflow.md) | Branches, PR, CI och squash merge |
+| [Definition of Done](docs/definition-of-done.md) | Kvalitetskrav per story |
+| [Gruppkontrakt](docs/gruppkontrakt.md) | Teamregler |
+| [Sprintdokumentation](docs/sprintar/) | Planning, standup, review, retro |
+| [Individuella reflektioner](docs/reflektioner/) | Kursreflektioner |

@@ -1,24 +1,15 @@
-
+// Utkast: lokal SQLite på mobilen. Drizzle-schema och migrationer
+// blir teknisk sanningskälla när de implementeras.
 Project im_hungry {
-  Note: 'Initial database schema for the I\'m Hungry! MVP.'
+  database_type: 'SQLite'
+  Note: 'Lokalt matförråd i MVP. Supabase Edge Function används enbart som AI-gateway.'
 }
 
-// Units supported by the MVP
-Enum quantity_unit {
-  g
-  ml
-  pcs
-}
-
-// Food currently available in the user's kitchen
 Table inventory_items {
   id integer [pk, increment]
+  name text [not null]
+  quantity real [not null, note: 'Mängd > 0; valideras i appen och med SQLite CHECK i migrationen']
+  unit text [not null, note: 'g, ml eller pcs; valideras i appen och med SQLite CHECK i migrationen']
 
-  name varchar(120) [not null]
-
-  quantity decimal(10,2) [not null, check: `quantity > 0`]
-
-  unit quantity_unit [not null]
-
-  Note: 'Stores the ingredients and quantities available for AI recipe generation.'
+  Note: 'En tabell per appinstallation, ingen synkronisering eller receptlagring i MVP.'
 }
