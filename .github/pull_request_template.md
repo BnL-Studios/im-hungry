@@ -16,10 +16,10 @@
 - [ ] Branchen utgår från uppdaterad `main` och PR:en har `main` som mål.
 - [ ] Ändringen är avgränsad, och jag har läst min egen diff.
 - [ ] Relevanta acceptanskriterier har testats manuellt.
-- [ ] Backend/app bygger och befintliga tester passerar (inklusive GitHub Actions-CI).
-- [ ] Ny backendlogik har relevant testtäckning enligt vår Definition of Done.
+- [ ] Mobilappens CI och relevanta tester passerar (inklusive GitHub Actions-CI).
+- [ ] Ny eller ändrad logik har relevant testtäckning enligt vår Definition of Done.
 - [ ] Inga hemligheter, temporär felsökningskod eller oavsiktliga filer ingår.
-- [ ] Databasschema ändras med en migrering om det är relevant.
+- [ ] Lokal SQLite-modell uppdateras med Drizzle-schema och migration när det är relevant.
 - [ ] README/`docs/` är uppdaterade om arbetssätt eller användning påverkas.
 
 Se hela vår [Definition of Done](https://github.com/BnL-Studios/im-hungry/blob/main/docs/definition-of-done.md) och [Git-arbetsflöde](https://github.com/BnL-Studios/im-hungry/blob/main/docs/git-workflow.md).
