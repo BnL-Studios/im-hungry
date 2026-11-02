@@ -25,4 +25,4 @@
 
 Ingen `users`-tabell behövs eftersom varje appinstallation har sitt eget matförråd. Recept genereras vid behov via en **Supabase Edge Function**, men recepten och AI-anropen kräver inte några nya SQLite-tabeller i MVP:n. Funktionen lagrar inte matförrådet i Supabase.
 
-Vid implementationen blir `app/src/database/schema.ts` och versionshanterade Drizzle Kit-migrationer den tekniska sanningskällan. Uppdatera diagrammet när modellen ändras.
+Vid implementationen blir `mobile/src/database/schema.ts` och versionshanterade Drizzle Kit-migrationer den tekniska sanningskällan. Uppdatera diagrammet när modellen ändras.
