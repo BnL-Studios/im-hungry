@@ -1,5 +1,6 @@
 # Beroenden
 node_modules/
+.expo/
 
 # Byggfiler
 dist/
