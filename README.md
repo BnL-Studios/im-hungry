@@ -26,7 +26,7 @@ Se [MVP](docs/mvp.md) och [Product Backlog](docs/USER_STORIES.md).
 
 | Del | Val | Status |
 |---|---|---|
-| Mobilapp | React Native, Expo SDK 58, TypeScript och Expo Router | Expo-projekt finns i `app/` |
+| Mobilapp | React Native, Expo SDK 58, TypeScript och Expo Router | Expo-projekt finns i `mobile/` |
 | Lokal databas | Expo SQLite | Planerad integration |
 | ORM och migrationer | Drizzle ORM + Drizzle Kit | Vald men inte installerad |
 | Recept-gateway | Supabase Edge Functions (Deno/TypeScript) | Vald design, ännu inte byggd |
@@ -58,25 +58,25 @@ Läs [arkitekturen och dataintegritet](docs/arkitektur.md), [databasschemat](doc
 
 ```bash
 git clone https://github.com/BnL-Studios/im-hungry.git
-cd im-hungry/app
+cd im-hungry/mobile
 npm ci
 npx expo start
 ```
 
 Välj i Expo-terminalen om du vill köra i simulator, emulator eller på en telefon. Beroende på vilka native-moduler som tillkommer kan en **development build** behövas. Se [Expo-dokumentationen](https://docs.expo.dev/get-started/start-developing/).
 
-**Aktuellt läge:** Expo-grundprojektet finns på GitHub, men Drizzle/SQLite-lagret och Edge Function är ännu inte implementerade. Instruktioner för deras installation, migrationskommandon och miljövariabler läggs till när implementationen finns. Ingen Supabase-databas, Java-installation eller Spring Boot-server krävs enligt den nya designen.
+**Aktuellt läge:** Expo-grundprojektet finns under `mobile/`, men Drizzle/SQLite-lagret och Edge Function är ännu inte implementerade. Instruktioner för deras installation, migrationskommandon och miljövariabler läggs till när implementationen finns. Ingen Supabase-databas, Java-installation eller Spring Boot-server krävs enligt den nya designen.
 
-**Legacy:** Vid kontroll av fjärrlagrade `main` den 2 november 2026 fanns fortfarande en `backend/`-mapp med Spring Boot-kod, trots beslutet att inte använda den. Den är **inte en del av aktuell målarkitektur** och ska tas bort i en separat granskad ändring om den fortfarande finns kvar. Denna dokumentuppdatering raderar ingen kod.
+**Legacy:** Spring Boot-koden avvecklas i PR #104. Ingen Java-server eller molndatabas behövs för matförrådet i målarkitekturen.
 
 ## Testning och CI
 
-- Kör `npm ci` i `app/` för att installera enligt låsfilen.
-- När TypeScript-källkod finns: kör `npx tsc --noEmit` från `app/`.
+- Kör `npm ci` i `mobile/` för att installera enligt låsfilen.
+- När TypeScript-källkod finns: kör `npx tsc --noEmit` från `mobile/`.
 - När testverktyg installerats: testa verksamhetslogik, SQLite CRUD och uppgradering av migrationer.
-- CI-förslaget i `.github/workflows/ci.yml` kontrollerar installation och TypeScript och ska utökas med tester när de införs.
+- [GitHub Actions-CI](.github/workflows/ci.yml) installerar beroenden och kontrollerar Expo-projektet. TypeScript-kontrollen körs så snart det finns appkällkod; tester läggs till när de implementeras.
 
-**Branch protection:** Om GitHub fortfarande kräver den gamla statuskontrollen **Backend (Java 21)** måste administratören ersätta den med den nya mobilkontrollen **Mobile (Node 22)** innan backend-jobbet försvinner. Annars kan pull requests blockeras trots godkänd ny CI.
+**Branch protection:** Den gamla statuskontrollen **Backend (Java 21)** ersätts i CI med **Mobile (Node 22)**. Om `Backend (Java 21)` fortfarande är obligatorisk i GitHub måste en administratör byta till den nya kontrollen efter första gröna körningen. Detta sker inte automatiskt.
 
 [GitHub Actions](https://github.com/BnL-Studios/im-hungry/actions) · [Git-arbetsflöde](docs/git-workflow.md)
 
@@ -84,7 +84,7 @@ Välj i Expo-terminalen om du vill köra i simulator, emulator eller på en tele
 
 ```text
 im-hungry/
-├── app/                         # Expo-mobilapp (finns)
+├── mobile/                         # Expo-mobilapp (finns)
 │   ├── app.json
 │   ├── package.json
 │   └── src/                    # Planerad: skärmar, features, datalager
@@ -100,11 +100,11 @@ im-hungry/
 │   ├── gruppkontrakt.md
 │   ├── sprintar/
 │   └── reflektioner/
-├── .github/workflows/ci.yml    # Mobil CI (föreslagen uppdatering)
+├── .github/workflows/ci.yml    # Mobil CI
 └── README.md
 ```
 
-**Planerad när implementationen startar:** `app/src/database/` för Drizzle-schema, databasinitiering och migrationer; `app/src/features/inventory/` för lokala CRUD-operationer; `supabase/functions/generate-recipe/` för Edge Function. Dessa kataloger är **inte** implementerade genom den här dokumentuppdateringen.
+**Planerad när implementationen startar:** `mobile/src/database/` för Drizzle-schema, databasinitiering och migrationer; `mobile/src/features/inventory/` för lokala CRUD-operationer; `supabase/functions/generate-recipe/` för Edge Function. Dessa kataloger är **inte** implementerade genom den här dokumentuppdateringen.
 
 ## Team och arbetsflöde
 
