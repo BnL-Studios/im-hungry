@@ -218,7 +218,7 @@ Lokala inventarieoperationer ska fungera utan internet. Drizzle ger enhetligt Ty
 - En SQLite-databas finns per appinstallation; ingen kontosynk eller automatisk återställning i MVP:n.
 - Schema och migrationer blir teknisk sanningskälla **när de är implementerade**. [Databasschemat](databasschema.md) är fortfarande ett utkast.
 - Validera mängd och enhet både i kod och med SQLite-begränsningar. Testa migrering från befintlig databas utan dataförlust.
-- De gamla backendfilerna tas bort i en separat granskad ändring. Anpassa CI och eventuella obligatoriska statuskontroller samtidigt.
+- De gamla backendfilerna tas bort i PR #104 tillsammans med flytten till `mobile/`. CI byts till mobilkontroller; eventuella obligatoriska statuskontroller under branch protection måste också uppdateras av en administratör.
 
 ---
 
