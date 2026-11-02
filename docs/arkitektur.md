@@ -53,8 +53,8 @@ flowchart TD
 ## 4. Planerad mappstruktur
 
 ```text
-app/src/
-  app/                         # Expo Router
+mobile/src/
+  app/                         # Expo Router (under mobile/src/)
   features/
     inventory/                 # UI, operationer, repository
     recipes/                   # UI, anropsklient, svarskontroll
@@ -62,7 +62,7 @@ app/src/
     client.ts                  # Expo SQLite + Drizzle
     schema.ts                  # Drizzle-schema (sanningskälla när implementerat)
     migrations.ts              # Initiering och uppgradering
-app/drizzle/                   # Genererade SQL-migrationer och metadata
+mobile/drizzle/                   # Genererade SQL-migrationer och metadata
 supabase/functions/
   generate-recipe/             # Deno/TypeScript, validering + AI-gateway
 ```
