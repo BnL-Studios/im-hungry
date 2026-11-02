@@ -7,7 +7,7 @@ export const inventoryItems = sqliteTable(
     id: integer('id').primaryKey({ autoIncrement: true }),
     name: text('name').notNull(),
     quantity: real('quantity').notNull(),
-    unit: text('unit', { enum: ['g', 'ml', 'quantity'] }).notNull(),
+    unit: text('unit', { enum: ['g', 'ml', 'qty'] }).notNull(),
   },
   (table) => [
     check('inventory_items_quantity_positive', sql`${table.quantity} > 0`),
