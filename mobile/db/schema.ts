@@ -11,7 +11,7 @@ export const inventoryItems = sqliteTable(
   },
   (table) => [
     check('inventory_items_quantity_positive', sql`${table.quantity} > 0`),
-    check('inventory_items_unit_allowed', sql`${table.unit} in ('g', 'ml', 'quantity')`),
+    check('inventory_items_unit_allowed', sql`${table.unit} in ('g', 'ml', 'qty')`),
   ],
 );
 
