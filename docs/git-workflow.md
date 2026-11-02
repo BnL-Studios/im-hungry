@@ -1,143 +1,73 @@
 # Git-arbetsflöde
 
-> **Snabbversion:** Vi använder **trunk-based development**. `main` ska alltid fungera. Varje kort får en kortlivad branch, ändringar går in via granskad pull request och vi använder **Squash and merge** som standard. Ingen mergar sin egen PR.
+> **Snabbversion:** Trunk-Based Development. `main` ska alltid fungera. Vi skapar små kortlivade branches, använder PR-granskning och **Squash and merge** som standard. Ingen mergar sin egen PR.
 
-Det här dokumentet beskriver **hur** vi arbetar i Git och GitHub. [Gruppkontraktet](gruppkontrakt.md) beskriver ansvar och samarbete, [Definition of Done](definition-of-done.md) beskriver kvalitetskraven och [beslutsloggen](beslutslogg.md#beslut-05) beskriver **varför** vi valt arbetssättet.
+Se [gruppkontrakt](gruppkontrakt.md), [Definition of Done](definition-of-done.md), [beslutslogg](beslutslogg.md#beslut-05) och [GitHub-boarden](https://github.com/orgs/BnL-Studios/projects/1).
 
-## Översikt
+## Från kort till färdig ändring
 
-```text
-GitHub-kort → uppdaterad main → kortlivad branch → små commits
-           → pull request → CI + granskning → Squash and merge till main
-           → stäng kortet → ta bort branch
-```
+1. Välj ett kort på boarden och ta ansvar för det.
+2. Börja från den senaste `main` och skapa en branch, t.ex. `feature/20-add-ingredient`, `fix/42-invalid-quantity` eller `docs/sqlite-architecture`.
+3. Gör små commits och synka regelbundet med `main`.
+4. Kontrollera ändringen lokalt och öppna en PR mot `main`. Skriv `Closes #20` om hela kortet löses, annars `Refs #20`.
+5. Granska egen diff, fyll i PR-mallen och be den andra teammedlemmen granska inom 24 timmar.
+6. Låt CI gå igenom; åtgärda eventuella fel och begär ny granskning efter ändringar.
+7. När granskningen är godkänd och CI är grön: **granskaren** väljer normalt **Squash and merge** och tar bort fjärrbranchen.
+8. Uppdatera boarden, hämta senaste `main` och börja på nästa kort.
 
-| Regel | Så gör vi |
-|---|---|
-| Huvudgren | `main` är vår enda långlivade gren och ska alltid fungera. |
-| Direkta pushar | Vi pushar inte direkt till `main`. |
-| Brancher | Skapas från uppdaterad `main`, en avgränsad uppgift per branch. |
-| Livslängd | Helst timmar eller några dagar, **inte** en hel sprint. |
-| PR | Liten och fokuserad, med koppling till ett GitHub-issue. |
-| Granskning | Den andra teammedlemmen granskar inom **24 timmar**. |
-| Merge | **Squash and merge** är standard. Den som skrivit PR:en mergar den **inte** själv. |
-| CI | Bygg och tester ska vara gröna före merge. |
-
-## 1. Välj ett kort och skapa en branch
-
-Tilldela dig själv ett kort på vår [GitHub Project-board](https://github.com/orgs/BnL-Studios/projects/1). Kontrollera acceptanskriterier och eventuella beroenden.
-
-Börja med att kontrollera arbetskatalogen. Spara eller lägg undan ocommittade ändringar **innan** du byter branch.
+## Exempelkommandon
 
 ```bash
 git status
 git switch main
 git pull --ff-only origin main
 git switch -c feature/20-add-ingredient
-```
-
-Använd namnen `typ/issue-kort-beskrivning` när ett issue finns:
-
-| Typ | Exempel |
-|---|---|
-| Ny funktion / user story | `feature/20-add-ingredient` |
-| Felrättning | `fix/42-invalid-quantity` |
-| Tekniskt arbete | `chore/ci-backend` |
-| Dokumentation | `docs/git-workflow` |
-
-Använd små bokstäver, bindestreck och inga å/ä/ö. Vi har ingen separat `develop`-branch.
-
-## 2. Arbeta i små steg
-
-Bygg en avgränsad del i taget. Kontrollera vad som har ändrats innan du committar:
-
-```bash
-git status
+# ... arbeta ...
 git diff
-git add <fil>
-git commit -m "feat: add ingredient form validation"
+git add mobile/src/features/inventory
+git commit -m "feat: add ingredient persistence"
 git push -u origin feature/20-add-ingredient
 ```
 
-Byt `<fil>` och branchnamnet mot dina faktiska värden. Skriv tydliga, korta commit-meddelanden. Undvik att committa `.env`, API-nycklar, lösenord, byggfiler eller beroenden.
-
-Synka ofta med `main`, särskilt före en PR:
+Före PR: 
 
 ```bash
-# Stå i din feature-branch; se till att lokala ändringar är säkrade.
 git fetch origin
-git merge origin/main
+git merge origin/main  # kör från feature-branchen
 ```
 
-Lös eventuella konflikter tillsammans med den som ändrat samma del. Starta appen och testa efteråt. Dela hellre stora stories i mindre levererbara delar än att hålla en branch öppen länge.
-
-## 3. Öppna en pull request
-
-Pusha din branch och öppna en PR mot **`main`**. Använd [PR-mallen](../.github/pull_request_template.md):
-
-1. Beskriv **vad** ändringen gör och **hur** den testas.
-2. Koppla PR:en till dess issue med exempelvis `Closes #20`. Då kan GitHub stänga kortet vid merge. Om PR:en bara är en del av arbetet, skriv hellre `Refs #20`.
-3. Granska själv fliken **Files changed** och kontrollera [Definition of Done](definition-of-done.md).
-4. Begär granskning från den **andra** teammedlemmen.
-
-Gör PR:er så små att de går att läsa och testa utan lång väntetid. Om du behöver dela upp en story, se till att varje merge lämnar `main` fungerande.
-
-## 4. CI och kodgranskning
-
-GitHub Actions kör [CI-workflowen](../.github/workflows/ci.yml) automatiskt för PR:er till `main` och efter push till `main`.
-
-**Just nu testar CI backend (Java 21 / Spring Boot / Maven)** mot en **tillfällig PostgreSQL-databas i GitHub Actions**, inte vår delade Supabase-databas. Frontend-kontroller läggs till när frontend-projektet finns.
-
-**PR-författaren:**
-- Ser till att CI blir grön och att acceptanskriterierna är testade.
-- Rättar fel på samma branch och pushar igen.
-- Begär ny granskning efter ändringar.
-
-**Granskaren:**
-- Granskar inom **24 timmar** enligt gruppkontraktet.
-- Läser diffen, testar relevanta flöden och kontrollerar acceptanskriterier / DoD.
-- Väljer **Approve** eller **Request changes**. En kommentar är inte samma sak som ett godkännande.
-- Mergar först när granskningen är godkänd och CI passerar.
-
-Om CI är röd: öppna fliken **Checks/Actions**, läs felet, rätta det på branchen och låt kontrollen köras igen. Försök inte gå runt kontrollen med en direkt push till `main`.
-
-När CI är stabil ska statuskontrollen **Backend (Java 21)** också göras obligatorisk i GitHubs branch protection för `main`. Detta kräver en separat inställning i GitHub.
-
-## 5. Squash and merge
-
-Vi använder **Squash and merge** som standard: en färdig PR blir en sammanhållen commit på `main`, även om arbetet i branchen hade flera små commits.
-
-1. Granskaren bekräftar att minst ett godkännande finns, att CI är grön och att PR:en kan mergas.
-2. Granskaren väljer **Squash and merge** (inte vanlig merge som standard).
-3. Skriv en tydlig slutlig commit-rubrik, exempelvis `feat: add ingredient to inventory (#20)`.
-4. Verifiera att mergen lyckades, stäng/uppdatera kortet och ta bort fjärrbranchen.
-
-Avvikelse från squash görs bara när teamet har ett tydligt skäl och kommer överens om det.
-
-### Efter squash-merge
+Efter verifierad squash-merge (och **bara** när branchen inte innehåller kvarvarande arbete):
 
 ```bash
 git switch main
 git pull --ff-only origin main
-
-# Ta bara bort den lokala branchen när PR:en är bekräftat mergad
-# och du inte har något kvar där som behöver sparas.
 git branch -D feature/20-add-ingredient
 ```
 
-**Obs:** Efter squash-merge kan `git branch -d` neka borttagning eftersom branchens ursprungliga commits inte finns i `main` som samma commits. `-D` är därför avsiktligt här, **endast efter att mergen har verifierats**.
+Vid squash-merge kan `git branch -d` neka borttagning eftersom branchcommits inte finns identiska i `main`; `-D` får användas **endast när mergen verifierats**.
 
-## 6. När något går fel
+## CI och den nya mobilarkitekturen
 
-| Situation | Åtgärd |
+Mål: GitHub Actions installerar beroenden i `mobile/`, kör TypeScript-kontroll och därefter lämpliga enhetstester samt databastester när dessa finns. **Inga Supabase- eller Gemini-hemligheter krävs för vanliga mobilkontroller.** AI-gatewayen testas separat med mockat AI-svar och säker konfiguration.
+
+**Övergång:** PR #104 avvecklar legacy-Spring Boot och byter CI till **Mobile (Node 22)**. När den nya kontrollen har körts grönt måste en GitHub-administratör ersätta eventuellt obligatorisk **Backend (Java 21)** med **Mobile (Node 22)** i branch protection. Annars kan PR-merge blockeras trots grön ny CI. GitHub-inställningen uppdateras **inte** automatiskt av `ci.yml`.
+
+## Kodgranskning
+
+- Kontrollera user story och acceptanskriterierna.
+- Prova ändringen på relevant mobilplattform och läs koden, särskilt dataflöden och migrationsändringar.
+- Validera offlinebeteende för matförråd och nätverks-/AI-fel för receptflödet.
+- Kontrollera att inga privata API-nycklar ligger i mobildelen.
+- Skriv konkreta kommentarer; använd **Approve** eller **Request changes**. Kommentarer ensamma räknas inte som godkännande.
+
+## Om något går fel
+
+| Problem | Åtgärd |
 |---|---|
-| Konflikt mot `main` | Kör `git fetch origin` och `git merge origin/main` på din branch. Lös konflikter och testa igen. |
-| CI misslyckas | Läs loggar, rätta och pusha. Merge först när testerna passerar. |
-| Godkännande blev inaktuellt | Be den andra teammedlemmen granska de nya ändringarna igen. |
-| En stor story tar för lång tid | Dela upp den i mindre, fungerande deländringar. |
-| `main` går sönder efter merge | Meddela teamet omedelbart; prioritera att rätta eller återställa ändringen via PR. |
-| En databasändring behövs | Samordna så att ni inte ändrar schemat parallellt; gör versionshanterade migrationer när de införs. |
+| Konflikt mot `main` | Hämta senaste `main`, lös konflikten i branchen och testa igen. |
+| CI misslyckas | Läs GitHub Actions-loggen, rätta på branchen och pusha igen. |
+| Migrationskonflikt | Samordna schemaändringar; granska ordning och testuppgraderingar. |
+| Ändringen växer | Dela i mindre fungerande vertikala delar. |
+| `main` går sönder | Informera teamet och prioritera en fix eller revert via PR. |
 
-## Ansvar och uppföljning
-
-Det här dokumentet ändras när teamet beslutar att justera arbetssättet. Viktiga beslut dokumenteras även i [beslutsloggen](beslutslogg.md). På retrospektivet utvärderar vi bland annat PR-storlek, granskningshastighet, CI-fel och merge-konflikter.
+Följ upp branchlivslängd, väntetid på PR-granskning och CI-problem vid retrospektivet.

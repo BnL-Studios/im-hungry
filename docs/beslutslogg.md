@@ -2,6 +2,8 @@
 
 Dokumentation av viktiga produkt- och teknikbeslut för **I'm Hungry!**. Varje beslut beskriver bakgrund, övervägda alternativ, motivering och konsekvenser.
 
+> **Aktuellt (2026-11-02):** Vi använder lokal Expo SQLite + Drizzle ORM för inventariet och Supabase Edge Function för AI. Spring Boot/PostgreSQL är ersatta teknikval. Historiska beslut finns kvar nedan.
+
 > **Att komplettera:** Text inom hakparenteser (`[...]`) är ännu inte färdigställd. Datum och källhänvisningar behöver också ses över där de är ofullständiga.
 
 ## Översikt
@@ -9,10 +11,12 @@ Dokumentation av viktiga produkt- och teknikbeslut för **I'm Hungry!**. Varje b
 | Nr | Beslut | Datum | Status |
 |:--:|---|---|---|
 | **01** | [App-idé och MVP](#beslut-01) | [2026-10-27] | **Gäller** |
-| **02** | [Teknikstack](#beslut-02) | [2026-10-27] | **Gäller** |
-| **03** | [AI-leverantör: Gemini Flash](#beslut-03) | [2026-10-27] | **Gäller** |
-| **04** | [Databasleverantör: Supabase](#beslut-04) | 2026-10-27 | **Gäller** |
+| **02** | [Tidigare teknikstack](#beslut-02) | [2026-10-27] | **Ersatt av 06** |
+| **03** | [AI-leverantör: Gemini Flash](#beslut-03) | [ÅÅÅÅ-MM-DD] | **Gäller** |
+| **04** | [Databasleverantör: Supabase](#beslut-04) | 2026-10-27 | **Ersatt av 06** |
 | **05** | [Utvecklingsflöde: Trunk-Based Development](#beslut-05) | 2026-10-27 | **Gäller** |
+| **06** | [Lokal mobilarkitektur: Expo, SQLite och Drizzle](#beslut-06) | 2026-11-02 | **Gäller** |
+| **07** | [AI-gateway: Supabase Edge Function](#beslut-07) | 2026-11-02 | **Gäller (målarkitektur)** |
 
 ---
 
@@ -53,9 +57,11 @@ AI-integrationen blir en egen post i loggen när vi valt leverantör/API.
 ---
 
 <a id="beslut-02"></a>
-## 02 — Teknikstack: React Native, Spring Boot och PostgreSQL
+## 02 — Tidigare teknikstack: React Native, Spring Boot och PostgreSQL
 
-**Datum:** [2026-10-27] · **Status:** Gäller
+**Datum:** [2026-10-27] · **Status:** Ersatt av [beslut 06](#beslut-06)
+
+> **Historisk beskrivning:** Avsnittet nedan visar tidigare val; se beslut 06 för aktuellt teknikval.
 
 > **Beslut**  
 > React Native i frontend, Spring Boot i backend och PostgreSQL som databas. PostgreSQL driftas via **Supabase** enligt [beslut 04](#beslut-04).
@@ -85,7 +91,7 @@ React Native ger en native mobilapp för både iOS och Android med samma kodbas,
 <a id="beslut-03"></a>
 ## 03 — AI-leverantör: Gemini Flash
 
-**Datum:** [2026-10-27] · **Status:** Gäller · **Ersätter:** #3 DeepSeek
+**Datum:** [ÅÅÅÅ-MM-DD] · **Status:** Gäller · **Ersätter:** #3 DeepSeek
 
 > **Beslut**  
 > Vi använder **Google Gemini Flash** (t.ex. `gemini-3.8-flash` eller `gemini-3.6-flash`) för receptgenereringen.
@@ -119,7 +125,9 @@ Gemini Flash-modellerna ingår i Geminis **kostnadsfria API-nivå** (”Free Tie
 <a id="beslut-04"></a>
 ## 04 — Databasleverantör: Supabase
 
-**Datum:** 2026-10-27 · **Status:** Gäller · **Relaterat:** [Beslut 02 – Teknikstack](#beslut-02)
+**Datum:** 2026-10-27 · **Status:** Ersatt av [beslut 06](#beslut-06)
+
+> **Historisk beskrivning:** Supabase används inte längre som inventariedatabas. Supabase Edge Function används däremot enligt beslut 07. · **Relaterat:** [Beslut 02 – Teknikstack](#beslut-02)
 
 > **Beslut**  
 > Vi använder **Supabase som leverantör för vår PostgreSQL-databas**. PostgreSQL är fortfarande databastekniken och Spring Boot är fortsatt appens backend.
@@ -154,7 +162,7 @@ Supabase ger oss en hanterad PostgreSQL-miljö och minskar behovet av att själv
 **Datum:** 2026-10-27 · **Status:** Gäller
 
 > **Beslut**  
-> Vi följer **Trunk-Based Development (TBD)** med `main` som gemensam huvudgren. Vi arbetar i små, kortlivade branches och integrerar ändringar regelbundet via pull requests. Vi använder **Squash and merge** som huvudregel.
+> Vi följer **Trunk-Based Development (TBD)** med `main` som gemensam huvudgren. Vi arbetar i små, kortlivade branches och integrerar ändringar regelbundet via pull requests. **Squash and merge är standard.**
 
 ### Bakgrund
 
@@ -175,7 +183,76 @@ Täta integrationer och mindre ändringar minskar risken för stora merge-konfli
 - **Huvudgren:** `main` är vår trunk och ska hållas i fungerande skick. Vi använder ingen långlivad `develop`-gren.
 - **Branches:** Varje avgränsad ändring görs på en kortlivad branch som utgår från aktuell `main`. Vi hämtar ändringar från `main` regelbundet så att våra branches inte glider isär.
 - **Pull requests:** Vi öppnar små pull requests och låter den andra teammedlemmen granska innan merge. Enligt gruppkontraktet granskar vi inom 24 timmar och mergar inte vår egen PR. Branchskyddet på `main` ska kräva minst ett godkännande.
-- **Merge-strategi:** **Squash and merge** är standard: en PR blir en sammanhållen commit på `main`. Andra merge-metoder används bara efter en gemensam överenskommelse.
+- **Merge-strategi:** **Squash and merge** är standard så att en PR blir en sammanhållen commit på `main`. Avvikelser sker efter teamets överenskommelse.
 - **Integrering:** Färdiga, granskade ändringar mergas tillbaka till `main` så snart som möjligt, i stället för att hållas till slutet av en sprint.
 - **Ofärdigt arbete:** Större funktioner delas upp i mindre, säkra leveranser. Funktioner som ännu inte är redo att exponeras hålls avstängda eller isolerade så att `main` fortsätter fungera.
 - **Kvalitet:** Varje merge ska uppfylla teamets Definition of Done och relevanta CI-kontroller. Stegen beskrivs i [Git-arbetsflödet](git-workflow.md). Arbetsflödet följs upp vid sprint-retrospektiv och justeras vid behov.
+
+---
+
+<a id="beslut-06"></a>
+## 06 — Lokal mobilarkitektur: Expo, SQLite och Drizzle ORM
+
+**Datum:** 2026-11-02 · **Status:** Gäller · **Ersätter:** [02](#beslut-02) och [04](#beslut-04)
+
+> **Beslut**  
+> React Native + Expo + TypeScript används för mobilappen. Matförrådet sparas **lokalt i Expo SQLite** och databasåtkomsten hanteras med **Drizzle ORM**. Drizzle Kit genererar migrationsfiler som versionshanteras och tillämpas i appen.
+
+### Bakgrund
+
+Den tidigare Spring Boot-/PostgreSQL-stackens extra drift och API-lager ger inte proportionell nytta för MVP:ns lilla lokala matförråd.
+
+### Övervägda alternativ
+
+- Behålla Spring Boot och Supabase PostgreSQL.
+- Expo SQLite med handskriven SQL och egen migrationshantering.
+- **Expo SQLite med Drizzle ORM och Drizzle Kit (valt).**
+
+### Motivering
+
+Lokala inventarieoperationer ska fungera utan internet. Drizzle ger enhetligt TypeScript-schema, typade frågor och en tydlig migrationsprocess, samtidigt som SQLite ansvarar för faktisk lagring och transaktioner.
+
+### Konsekvenser
+
+- UI-anrop går via verksamhetsoperationer till repositories/Drizzle, inte direkt via SQL i komponenter.
+- En SQLite-databas finns per appinstallation; ingen kontosynk eller automatisk återställning i MVP:n.
+- Schema och migrationer blir teknisk sanningskälla **när de är implementerade**. [Databasschemat](databasschema.md) är fortfarande ett utkast.
+- Validera mängd och enhet både i kod och med SQLite-begränsningar. Testa migrering från befintlig databas utan dataförlust.
+- De gamla backendfilerna tas bort i PR #104 tillsammans med flytten till `mobile/`. CI byts till mobilkontroller; eventuella obligatoriska statuskontroller under branch protection måste också uppdateras av en administratör.
+
+---
+
+<a id="beslut-07"></a>
+## 07 — Receptgenerering via Supabase Edge Function
+
+**Datum:** 2026-11-02 · **Status:** Gäller som målarkitektur, ej implementerat
+
+> **Beslut**  
+> Vid receptbegäran skickar Expo-appen **endast inventariet och valt mat-humör** till en **Supabase Edge Function (Deno/TypeScript)**. Funktionen validerar indata, anropar Gemini med en **serverlagrad privat API-nyckel** och returnerar ett validerat strukturerat recept. Matförrådet lagras fortfarande bara lokalt i SQLite.
+
+### Bakgrund
+
+AI-recept kräver en säker anropsväg. En privat AI-nyckel som byggs in i en distribuerad mobilapp kan extraheras. Samtidigt vill teamet inte drifta en egen långlivad applikationsserver.
+
+### Övervägda alternativ
+
+- Anropa Gemini direkt från mobilen med privat nyckel (**bortvalt av säkerhetsskäl**).
+- Egen Spring Boot-/Node-server som AI-gateway.
+- On-device AI utan internet (utanför MVP:ns nuvarande omfattning).
+- **Supabase Edge Function som serverlös AI-gateway (valt).**
+
+### Motivering
+
+En Edge Function kan förvara AI-nyckeln på serversidan och gör det möjligt att validera och begränsa API-anrop utan att introducera en egen databas eller en omfattande backend.
+
+### Konsekvenser
+
+- **Dataflöde:** SQLite → appens begäran (råvaror, mängder, enheter, mat-humör) → Edge Function → AI → funktion → app. Begäran görs bara när användaren vill ha recept.
+- **Onlinekrav:** Receptgenerering kräver uppkoppling. Matförrådet fungerar offline.
+- **Säkerhet:** Lägg AI-nyckeln i Supabase-funktionens hemlighetshantering. Validera förfrågningsstorlek, tillåtna värden och AI-svarets format; hantera fel och kvotgränser.
+- **Skydd mot missbruk:** MVP:n saknar användarkonton. En publik Edge Function kan missbrukas; säkra rate limiting, kvoter, övervakning och en rimlig anropskontroll **innan publik lansering**. En publik Supabase-nyckel är inte hemlig och garanterar inte tillåtna användare.
+- **Korrekthet:** Funktionen kan kontrollera AI:s recept mot de **inskickade** ingredienserna men känner inte den lokala databasens faktiska saldo. Mobilappen måste kontrollera receptet mot sitt lokala inventarie innan det visas som genomförbart.
+- **Dataminimering:** Skicka inte användarkonto eller andra personuppgifter i onödan.
+- **Framtid:** AI-leverantören kan bytas bakom funktionen utan att mobilappens lokala datalager ändras.
+
+Detaljer finns i [arkitekturdokumentet](arkitektur.md).

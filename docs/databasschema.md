@@ -1,5 +1,6 @@
-
 # Databasschema
+
+> **Status:** Utkast baserat på Must-stories. Den faktiska tabellen och migrationerna är ännu inte implementerade. **SQLite finns på telefonen**, inte i Supabase.
 
 ## Diagram
 
@@ -9,19 +10,19 @@
 
 | Tabell | Innehåll |
 |---|---|
-| `inventory_items` | Stores the ingredients currently available in the user's kitchen, including their names, quantities, and measurement units. |
+| `inventory_items` | Lokalt tillgängliga råvaror med namn, mängd och enhet. |
 
-The `inventory_items` table contains the following fields:
-
-| Field | Type | Description |
+| Fält | SQLite-typ | Regel |
 |---|---|---|
-| `id` | INTEGER | Primary key, uniquely identifies each inventory item. |
-| `name` | VARCHAR(120) | Name of the ingredient. Required. |
-| `quantity` | DECIMAL(10,2) | Available amount. Must be greater than zero. |
-| `unit` | ENUM | Measurement unit: `g`, `ml`, or `pcs`. |
+| `id` | `INTEGER` | Primärnyckel. |
+| `name` | `TEXT` | Obligatoriskt råvarunamn. |
+| `quantity` | `REAL` | Obligatorisk mängd större än 0. |
+| `unit` | `TEXT` | Endast `g`, `ml` eller `pcs`. |
 
-The MVP uses a single demonstration inventory without individual user accounts.
+**Validering:** Drizzle ger typer och genererar SQL-migrationer, men korrekt indata måste också säkerställas med runtime-validering och SQLite-`CHECK`-begränsningar. Modellen kan vid implementationen utökas med till exempel tidsstämplar. Valet av `REAL` för mängder är preliminärt och kan omprövas om exakt decimalhantering krävs.
 
-Recipes are generated on demand using the current inventory and are not persisted in the MVP.
+## Koppling till MVP
 
-This schema is an initial draft based on the Must Have user stories. It will be updated as requirements evolve.
+Ingen `users`-tabell behövs eftersom varje appinstallation har sitt eget matförråd. Recept genereras vid behov via en **Supabase Edge Function**, men recepten och AI-anropen kräver inte några nya SQLite-tabeller i MVP:n. Funktionen lagrar inte matförrådet i Supabase.
+
+Vid implementationen blir `mobile/src/database/schema.ts` och versionshanterade Drizzle Kit-migrationer den tekniska sanningskällan. Uppdatera diagrammet när modellen ändras.
