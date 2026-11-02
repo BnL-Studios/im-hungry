@@ -47,7 +47,7 @@
         },
         "inventory_items_unit_allowed": {
           "name": "inventory_items_unit_allowed",
-          "value": "\"inventory_items\".\"unit\" in ('g', 'ml', 'quantity')"
+          "value": "\"inventory_items\".\"unit\" in ('g', 'ml', 'qty')"
         }
       }
     }
