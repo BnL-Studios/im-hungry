@@ -63,7 +63,7 @@ A small working journey: save ingredients → request a genuinely feasible AI re
 <details>
 <summary>Acceptance criteria</summary>
 
-- [ ] I can enter an ingredient name, a quantity greater than zero, and a supported unit (g, ml or pcs).
+- [ ] I can enter an ingredient name, a quantity greater than zero, and a supported unit (g, ml or quantity).
 - [ ] Saving a valid ingredient makes its name, quantity and unit appear in my inventory without reopening the app.
 - [ ] If the name is blank or the quantity is zero, negative or not a number, I see a helpful error and nothing is added.
 - [ ] After closing and reopening the app, the ingredient still has the quantity and unit I saved.
@@ -738,7 +738,7 @@ Optional improvements if validated by users and team capacity.
 <details>
 <summary>Acceptance criteria</summary>
 
-- [ ] The app consistently converts only g ↔ kg and ml ↔ l; individual pieces (pcs) are not guessed to be a mass or volume.
+- [ ] The app consistently converts only g ↔ kg and ml ↔ l; counted items (quantity) are not guessed to be a mass or volume.
 - [ ] Unknown, ingredient-dependent or incompatible conversions are rejected rather than guessed.
 - [ ] If a conversion is unsupported, I see that quantities cannot be safely compared instead of an invented equivalent.
 
