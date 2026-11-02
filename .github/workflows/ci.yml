@@ -6,7 +6,6 @@ on:
   push:
     branches: [main]
 
-# CI only needs to read the repository. No Supabase or AI secrets are required.
 permissions:
   contents: read
 
@@ -15,58 +14,38 @@ concurrency:
   cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 jobs:
-  backend:
-    name: Backend (Java 21)
+  mobile:
+    name: Mobile (Node 22)
     runs-on: ubuntu-latest
-
-    # Isolated, disposable test database; never connect CI to shared Supabase.
-    services:
-      postgres:
-        image: postgres:17
-        env:
-          POSTGRES_USER: postgres
-          POSTGRES_PASSWORD: postgres
-          POSTGRES_DB: imhungry_ci
-        ports:
-          - 5432:5432
-        options: >-
-          --health-cmd "pg_isready -U postgres -d imhungry_ci"
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
-
     defaults:
       run:
-        working-directory: backend
-
-    env:
-      SPRING_PROFILES_ACTIVE: ci
-      DB_URL: jdbc:postgresql://localhost:5432/imhungry_ci?currentSchema=imhungry
-      DB_USERNAME: postgres
-      DB_PASSWORD: postgres
+        working-directory: mobile
 
     steps:
       - name: Check out repository
-        uses: actions/checkout@v7
+        uses: actions/checkout@v4
 
-      - name: Set up Java 21
-        uses: actions/setup-java@v6
+      - name: Set up Node.js 22
+        uses: actions/setup-node@v4
         with:
-          distribution: temurin
-          java-version: '21'
-          cache: maven
-          cache-dependency-path: |
-            backend/pom.xml
-            backend/.mvn/wrapper/maven-wrapper.properties
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: mobile/package-lock.json
 
-      # Hibernate is configured to use the "imhungry" PostgreSQL schema.
-      - name: Create isolated database schema
+      - name: Install locked dependencies
+        run: npm ci
+
+      - name: Validate Expo project configuration
         run: |
-          PGPASSWORD="$DB_PASSWORD" psql \
-            --host=localhost \
-            --username="$DB_USERNAME" \
-            --dbname=imhungry_ci \
-            --command='CREATE SCHEMA IF NOT EXISTS imhungry;'
+          node -e "const p = require('./package.json'); if (!p.dependencies?.expo || !p.dependencies?.['expo-router']) process.exit(1)"
+          node -e "JSON.parse(require('node:fs').readFileSync('./app.json', 'utf8'))"
 
-      - name: Build and run backend tests
-        run: bash ./mvnw --batch-mode --no-transfer-progress verify
+      - name: Check TypeScript when source code is present
+        run: |
+          if [ -d src ] && [ -n "$(find src -type f \( -name '*.ts' -o -name '*.tsx' \) -print -quit)" ]; then
+            npx tsc --noEmit
+          else
+            echo "No app TypeScript sources yet; typecheck will run when src/ exists."
+          fi
+
+# Add unit tests, SQLite migration checks, and Edge Function tests as those parts are implemented.
