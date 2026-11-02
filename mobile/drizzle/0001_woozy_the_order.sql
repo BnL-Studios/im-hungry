@@ -5,7 +5,7 @@ CREATE TABLE `__new_inventory_items` (
 	`quantity` real NOT NULL,
 	`unit` text NOT NULL,
 	CONSTRAINT "inventory_items_quantity_positive" CHECK("__new_inventory_items"."quantity" > 0),
-	CONSTRAINT "inventory_items_unit_allowed" CHECK("__new_inventory_items"."unit" in ('g', 'ml', 'st'))
+	CONSTRAINT "inventory_items_unit_allowed" CHECK("__new_inventory_items"."unit" in ('g', 'ml', 'quantity'))
 );
 --> statement-breakpoint
 INSERT INTO `__new_inventory_items`("id", "name", "quantity", "unit") SELECT "id", "name", "quantity", "unit" FROM `inventory_items`;--> statement-breakpoint

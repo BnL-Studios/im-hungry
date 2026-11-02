@@ -7,11 +7,11 @@ export const inventoryItems = sqliteTable(
     id: integer('id').primaryKey({ autoIncrement: true }),
     name: text('name').notNull(),
     quantity: real('quantity').notNull(),
-    unit: text('unit', { enum: ['g', 'ml', 'st'] }).notNull(),
+    unit: text('unit', { enum: ['g', 'ml', 'quantity'] }).notNull(),
   },
   (table) => [
     check('inventory_items_quantity_positive', sql`${table.quantity} > 0`),
-    check('inventory_items_unit_allowed', sql`${table.unit} in ('g', 'ml', 'st')`),
+    check('inventory_items_unit_allowed', sql`${table.unit} in ('g', 'ml', 'quantity')`),
   ],
 );
 

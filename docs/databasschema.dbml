@@ -9,7 +9,7 @@ Table inventory_items {
   id integer [pk, increment]
   name text [not null]
   quantity real [not null, note: 'Mängd > 0; valideras i appen och med SQLite CHECK i migrationen']
-  unit text [not null, note: 'g, ml eller st; valideras i appen och med SQLite CHECK i migrationen']
+  unit text [not null, note: 'g, ml eller quantity; valideras i appen och med SQLite CHECK i migrationen']
 
   Note: 'En tabell per appinstallation, ingen synkronisering eller receptlagring i MVP.'
 }

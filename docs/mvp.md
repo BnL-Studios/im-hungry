@@ -15,7 +15,7 @@ Användaren har mat hemma men vet inte **vad hen kan laga av just de råvaror oc
 ## Ingår i MVP:n
 
 - **Se matförrådet:** visa sparade råvaror med mängd och enhet; stöd för tom lista.
-- **Lägga till råvaror:** ange namn, positiv mängd och enhet (t.ex. g, ml eller st); lagra lokalt i SQLite.
+- **Lägga till råvaror:** ange namn, positiv mängd och enhet (t.ex. g, ml eller quantity); lagra lokalt i SQLite.
 - **Korrigera matförrådet:** ändra mängd eller ta bort råvara med bestående ändringar.
 - **Välja mat-humör:** ett litet urval, exempelvis *Comfort food*, *Quick & easy* och *Surprise me*.
 - **Få ett recept med AI:** skicka det aktuella matförrådet och mat-humöret via Edge Function till AI och få **ett** recept utifrån enbart tillgängliga råvaror och mängder.
