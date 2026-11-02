@@ -24,7 +24,7 @@ git pull --ff-only origin main
 git switch -c feature/20-add-ingredient
 # ... arbeta ...
 git diff
-git add app/src/features/inventory
+git add mobile/src/features/inventory
 git commit -m "feat: add ingredient persistence"
 git push -u origin feature/20-add-ingredient
 ```
@@ -48,9 +48,9 @@ Vid squash-merge kan `git branch -d` neka borttagning eftersom branchcommits int
 
 ## CI och den nya mobilarkitekturen
 
-Mål: GitHub Actions installerar beroenden i `app/`, kör TypeScript-kontroll och därefter lämpliga enhetstester samt databastester när dessa finns. **Inga Supabase- eller Gemini-hemligheter krävs för vanliga mobilkontroller.** AI-gatewayen testas separat med mockat AI-svar och säker konfiguration.
+Mål: GitHub Actions installerar beroenden i `mobile/`, kör TypeScript-kontroll och därefter lämpliga enhetstester samt databastester när dessa finns. **Inga Supabase- eller Gemini-hemligheter krävs för vanliga mobilkontroller.** AI-gatewayen testas separat med mockat AI-svar och säker konfiguration.
 
-**Övergång:** Den fjärrlagrade `main` hade vid kontroll fortfarande `backend/` och statuskontrollen **Backend (Java 21)**. Om den är obligatorisk under branch protection måste en GitHub-administratör **först ersätta** den med **Mobile (Node 22)** när den nya kontrollen körts grönt, och därefter ta bort legacy-jobbet och backend-koden. Annars blockeras PR-merge. Inställningen i GitHub uppdateras **inte** automatiskt genom att ändra `ci.yml`.
+**Övergång:** PR #104 avvecklar legacy-Spring Boot och byter CI till **Mobile (Node 22)**. När den nya kontrollen har körts grönt måste en GitHub-administratör ersätta eventuellt obligatorisk **Backend (Java 21)** med **Mobile (Node 22)** i branch protection. Annars kan PR-merge blockeras trots grön ny CI. GitHub-inställningen uppdateras **inte** automatiskt av `ci.yml`.
 
 ## Kodgranskning
 
