@@ -1,12 +1,8 @@
 ## Vad gör den här pull requesten?
 
-<!-- Beskriv kort vad som ändras och varför. Håll PR:en avgränsad till en uppgift. -->
-
-**Kopplat issue:** <!-- Skriv t.ex. Closes #20 när PR:en färdigställer hela kortet, annars Refs #20. -->
+**Kopplat issue:** 
 
 ## Hur testar man ändringen?
-
-<!-- Ge granskaren konkreta steg för att verifiera acceptanskriterierna. -->
 
 1.
 2.
@@ -25,8 +21,6 @@
 Se hela vår [Definition of Done](https://github.com/BnL-Studios/im-hungry/blob/main/docs/definition-of-done.md) och [Git-arbetsflöde](https://github.com/BnL-Studios/im-hungry/blob/main/docs/git-workflow.md).
 
 ## Till granskaren
-
-<!-- Fyll gärna på med frågor eller särskilda risker att granska. -->
 
 - Granska mot acceptanskriterierna och Definition of Done.
 - Kontrollera att CI är grön; begär ändringar om något behöver rättas.
