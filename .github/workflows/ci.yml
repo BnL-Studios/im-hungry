@@ -40,12 +40,7 @@ jobs:
           node -e "const p = require('./package.json'); if (!p.dependencies?.expo || !p.dependencies?.['expo-router']) process.exit(1)"
           node -e "JSON.parse(require('node:fs').readFileSync('./app.json', 'utf8'))"
 
-      - name: Check TypeScript when source code is present
-        run: |
-          if [ -d src ] && [ -n "$(find src -type f \( -name '*.ts' -o -name '*.tsx' \) -print -quit)" ]; then
-            npx tsc --noEmit
-          else
-            echo "No app TypeScript sources yet; typecheck will run when src/ exists."
-          fi
+      - name: Typecheck
+        run: npx tsc --noEmit
 
 # Add unit tests, SQLite migration checks, and Edge Function tests as those parts are implemented.

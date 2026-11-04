@@ -6,17 +6,7 @@ import { migrate } from 'drizzle-orm/expo-sqlite/migrator';
 import migrations from '../../drizzle/migrations';
 
 async function onInit(db: SQLiteDatabase): Promise<void> {
-
-  await db.execAsync(`
-    CREATE TABLE IF NOT EXISTS "__drizzle_migrations" (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      hash text NOT NULL,
-      created_at numeric
-    );
-  `);
-
-  const drizzleDb = drizzle(db);
-  await migrate(drizzleDb, migrations);
+  await migrate(drizzle(db), migrations);
 }
 
 export function DatabaseProvider({ children }: { children: ReactNode }) {
