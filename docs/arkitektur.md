@@ -1,6 +1,6 @@
 # Arkitektur — lokal databas och AI-gateway
 
-**Status:** Beslutad målarkitektur, implementation pågår ännu inte. **Datum:** 2026-11-02.
+**Status:** Datalagret är implementerat; receptflödet återstår. **Uppdaterad:** 2026-11-04.
 
 ## Översikt
 
@@ -50,24 +50,25 @@ flowchart TD
 - **Dataminimering:** Skicka inte identitet, enhets-ID eller andra personuppgifter för receptbegäran när det inte behövs.
 - **Offline-fel:** Visa tydligt när AI-funktionen inte kan nås. Matförrådet ska fortsätta fungera.
 
-## 4. Planerad mappstruktur
+## 4. Mappstruktur
 
 ```text
-mobile/src/
-  app/                         # Expo Router (under mobile/src/)
-  features/
-    inventory/                 # UI, operationer, repository
-    recipes/                   # UI, anropsklient, svarskontroll
-  database/
-    client.ts                  # Expo SQLite + Drizzle
-    schema.ts                  # Drizzle-schema (sanningskälla när implementerat)
-    migrations.ts              # Initiering och uppgradering
-mobile/drizzle/                   # Genererade SQL-migrationer och metadata
+mobile/
+  src/
+    app/                       # Expo Router: endast routes
+    screens/                   # Skärmkomponenter (tom tills vidare)
+    features/
+      inventory/               # UI, operationer, repository
+      recipes/                 # UI, anropsklient, svarskontroll
+    db/
+      provider.tsx             # SQLiteProvider + migrationer vid start
+      schema.ts                # Drizzle-schema (sanningskälla)
+  drizzle/                     # Genererade SQL-migrationer och metadata
 supabase/functions/
   generate-recipe/             # Deno/TypeScript, validering + AI-gateway
 ```
 
-Mapparna ovan är **planerade**, inte en lista över redan implementerade filer.
+Routes i `src/app/` hålls tunna: de importerar skärmar från `src/screens/` och domänlogik från `src/features/`. `db/` innehåller allt som rör databasen, så skärmar och features slipper SQL. `screens/` och `features/` är tomma till dess att första skärmen byggs, och `supabase/` skapas när receptflödet startar.
 
 ## 5. Teknisk verifiering
 

@@ -1,22 +1,7 @@
-# Beroenden
-node_modules/
-.expo/
-
-# Byggfiler
-dist/
-build/
-target/
-out/
-
 # Miljövariabler och hemligheter. Checka aldrig in dessa.
 .env
 .env.*
 !.env.example
-
-# Lokala Spring-inställningar med databasuppgifter och API-nycklar.
-# application-local.properties skapas lokalt av var och en; exempelfilen ska vara kvar i repot.
-application-local.*
-!application-local.properties.example
 
 # Certifikat och nycklar
 *.pem

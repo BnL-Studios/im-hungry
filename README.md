@@ -4,7 +4,7 @@
 
 Projektet byggs av **BnL Studios** inom en Scrum-kurs. Det är under utveckling, inte en färdig app.
 
-> **Aktuell arkitektur (2026-11-02):** React Native + Expo + TypeScript. Matförrådet lagras **lokalt på telefonen** med **SQLite och Drizzle ORM**. När användaren begär ett recept skickar appen bara råvaror, mängder och valt mat-humör till en **Supabase Edge Function**, som validerar begäran och anropar AI med en serverlagrad nyckel. **Supabase används inte som matförrådsdatabas.** Edge Function och Drizzle-integrationen är ännu planerade, inte implementerade.
+> **Aktuell arkitektur (2026-11-04):** React Native + Expo + TypeScript. Matförrådet lagras **lokalt på telefonen** med **SQLite och Drizzle ORM**. När användaren begär ett recept skickar appen bara råvaror, mängder och valt mat-humör till en **Supabase Edge Function**, som validerar begäran och anropar AI med en serverlagrad nyckel. **Supabase används inte som matförrådsdatabas.** Drizzle-schemat och migrationerna är implementerade; Edge Function och receptflödet är ännu inte byggda.
 
 ## Mål och MVP
 
@@ -26,12 +26,12 @@ Se [MVP](docs/mvp.md) och [Product Backlog](docs/USER_STORIES.md).
 
 | Del | Val | Status |
 |---|---|---|
-| Mobilapp | React Native, Expo SDK 58, TypeScript och Expo Router | Expo-projekt finns i `mobile/` |
-| Lokal databas | Expo SQLite | Planerad integration |
-| ORM och migrationer | Drizzle ORM + Drizzle Kit | Vald men inte installerad |
+| Mobilapp | React Native, Expo SDK 58, TypeScript och Expo Router | Implementerad i `mobile/` |
+| Lokal databas | Expo SQLite | Implementerad |
+| ORM och migrationer | Drizzle ORM + Drizzle Kit | Implementerade; två migrationer |
 | Recept-gateway | Supabase Edge Functions (Deno/TypeScript) | Vald design, ännu inte byggd |
 | AI-tjänst | Gemini Flash enligt beslut 03; möjlighet att byta leverantör | Integration inte byggd |
-| CI | GitHub Actions för mobilapp | Förslag ingår i denna dokumentuppdatering |
+| CI | GitHub Actions för mobilapp | Kör typkontroll vid PR och push till `main` |
 | Process | Scrum, trunk-based development, granskade PR:er, squash merge | Dokumenterat |
 
 ```mermaid
@@ -65,16 +65,17 @@ npx expo start
 
 Välj i Expo-terminalen om du vill köra i simulator, emulator eller på en telefon. Beroende på vilka native-moduler som tillkommer kan en **development build** behövas. Se [Expo-dokumentationen](https://docs.expo.dev/get-started/start-developing/).
 
-**Aktuellt läge:** Expo-grundprojektet finns under `mobile/`, men Drizzle/SQLite-lagret och Edge Function är ännu inte implementerade. Instruktioner för deras installation, migrationskommandon och miljövariabler läggs till när implementationen finns. Ingen Supabase-databas, Java-installation eller Spring Boot-server krävs enligt den nya designen.
+**Aktuellt läge:** Expo-appen finns under `mobile/`. Datalagret är på plats med Drizzle-schema, två migrationer och `CHECK`-begränsningar för mängd och enhet. Nästa steg är matförrådets skärmar (US-01–US-04); Edge Function och receptflödet återstår.
 
-**Legacy:** Spring Boot-koden avvecklas i PR #104. Ingen Java-server eller molndatabas behövs för matförrådet i målarkitekturen.
+**Legacy:** Spring Boot-koden är borttagen. Ingen Java-server eller molndatabas behövs för matförrådet i målarkitekturen.
 
 ## Testning och CI
 
 - Kör `npm ci` i `mobile/` för att installera enligt låsfilen.
-- När TypeScript-källkod finns: kör `npx tsc --noEmit` från `mobile/`.
+- Kör `npx tsc --noEmit` från `mobile/` för typkontroll.
+- Kör `npx expo-doctor` för att kontrollera beroenden och konfiguration.
 - När testverktyg installerats: testa verksamhetslogik, SQLite CRUD och uppgradering av migrationer.
-- [GitHub Actions-CI](.github/workflows/ci.yml) installerar beroenden och kontrollerar Expo-projektet. TypeScript-kontrollen körs så snart det finns appkällkod; tester läggs till när de implementeras.
+- [GitHub Actions-CI](.github/workflows/ci.yml) installerar beroenden, validerar Expo-konfigurationen och typkontrollerar appkällkoden vid PR och push till `main`. Tester läggs till när de implementeras.
 
 **Branch protection:** Den gamla statuskontrollen **Backend (Java 21)** ersätts i CI med **Mobile (Node 22)**. Om `Backend (Java 21)` fortfarande är obligatorisk i GitHub måste en administratör byta till den nya kontrollen efter första gröna körningen. Detta sker inte automatiskt.
 
@@ -84,14 +85,19 @@ Välj i Expo-terminalen om du vill köra i simulator, emulator eller på en tele
 
 ```text
 im-hungry/
-├── mobile/                         # Expo-mobilapp (finns)
+├── mobile/                     # Expo-mobilapp
 │   ├── app.json
 │   ├── package.json
-│   └── src/                    # Planerad: skärmar, features, datalager
+│   ├── drizzle/                # Genererade SQL-migrationer
+│   └── src/
+│       ├── app/                # Routes (Expo Router)
+│       ├── db/                 # Drizzle-schema och databasprovider
+│       ├── features/           # Domänlogik per funktion (tom tills vidare)
+│       └── screens/            # Skärmkomponenter (tom tills vidare)
 ├── docs/
 │   ├── arkitektur.md           # Lokal SQLite + Supabase Edge Function
-│   ├── databasschema.md       # Databasskiss (SQLite)
-│   ├── databasschema.dbml     # Redigerbar DBML
+│   ├── databasschema.md        # Databasschema (SQLite)
+│   ├── databasschema.dbml      # Redigerbar DBML
 │   ├── mvp.md
 │   ├── USER_STORIES.md
 │   ├── beslutslogg.md
@@ -100,11 +106,14 @@ im-hungry/
 │   ├── gruppkontrakt.md
 │   ├── sprintar/
 │   └── reflektioner/
-├── .github/workflows/ci.yml    # Mobil CI
+├── .github/
+│   ├── workflows/ci.yml        # Mobil CI
+│   ├── ISSUE_TEMPLATE/
+│   └── pull_request_template.md
 └── README.md
 ```
 
-**Planerad när implementationen startar:** `mobile/src/database/` för Drizzle-schema, databasinitiering och migrationer; `mobile/src/features/inventory/` för lokala CRUD-operationer; `supabase/functions/generate-recipe/` för Edge Function. Dessa kataloger är **inte** implementerade genom den här dokumentuppdateringen.
+**Var kod hamnar:** `mobile/src/app/` innehåller endast routes; varje fil där blir en skärm. `mobile/src/db/` har Drizzle-schema och databasprovider, och `mobile/drizzle/` de genererade migrationerna. `mobile/src/screens/` och `mobile/src/features/` är reserverade men tomma. `supabase/functions/generate-recipe/` byggs när receptflödet startar.
 
 ## Team och arbetsflöde
 
