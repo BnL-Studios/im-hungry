@@ -3,7 +3,7 @@ import { ActivityIndicator, View } from 'react-native';
 import { SQLiteProvider, type SQLiteDatabase } from 'expo-sqlite';
 import { drizzle } from 'drizzle-orm/expo-sqlite';
 import { migrate } from 'drizzle-orm/expo-sqlite/migrator';
-import migrations from '../drizzle/migrations';
+import migrations from '../../drizzle/migrations';
 
 async function onInit(db: SQLiteDatabase): Promise<void> {
 
