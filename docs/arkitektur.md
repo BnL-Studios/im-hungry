@@ -62,6 +62,11 @@ mobile/
       recipes/                 # UI, anropsklient, svarskontroll (senare)
     db/
       client.ts                # Memoiserad Drizzle-instans (useDatabase)
+    screens/                   # Skärmkomponenter (tom tills vidare)
+    features/
+      inventory/               # UI, operationer, repository
+      recipes/                 # UI, anropsklient, svarskontroll
+    db/
       provider.tsx             # SQLiteProvider + migrationer vid start
       schema.ts                # Drizzle-schema (sanningskälla)
   drizzle/                     # Genererade SQL-migrationer och metadata
