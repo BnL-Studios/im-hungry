@@ -17,9 +17,11 @@ Starta i simulator/emulator eller på en mobil. En development build kan behöva
 ```text
 src/
   app/          # Routes (Expo Router). Varje fil blir en skärm.
-  screens/      # Skärmkomponenter (tom tills vidare)
-  features/     # Domänlogik per funktion, t.ex. inventory/ (tom tills vidare)
+  screens/      # Skärmkomponenter (US-02)
+  features/
+    inventory/  # Enheter, validering och repository för matförrådet
   db/
+    client.ts     # Memoiserad Drizzle-instans (useDatabase)
     provider.tsx  # SQLiteProvider, kör migrationer vid start
     schema.ts     # Drizzle-schema (sanningskälla)
 drizzle/        # Genererade SQL-migrationer och metadata
@@ -33,7 +35,7 @@ Routes i `src/app/` hålls tunna och importerar skärmar och logik från `src/sc
 - **Matförråd:** SQLite på telefonen via `expo-sqlite` och **Drizzle ORM**. Fungerar offline.
 - **Migrationer:** Drizzle Kit-genererade, versionshanterade filer i `drizzle/`. De körs vid appstart innan databasfrågor utförs.
 - **Recept:** Endast vid receptbegäran skickas inventariet och valt mat-humör via HTTPS till en **Supabase Edge Function**, som anropar AI med en serverlagrad hemlig nyckel. Edge Function är ännu inte byggd.
-- **Enheter:** `g`, `ml` och `quantity`. Databasen stoppar mängder som inte är positiva och enheter utanför listan.
+- **Enheter:** `g`, `ml` och `qty` (visas som `st` i gränssnittet). Databasen stoppar mängder som inte är positiva och enheter utanför listan.
 
 ## Databas och migrationer
 
@@ -50,9 +52,12 @@ Migrationerna committas tillsammans med schemaändringen och får aldrig radera 
 ```bash
 npm ci                 # installera enligt låsfilen
 npx expo start         # starta utvecklingsservern
+npm test               # kör Vitest (validering och migrationer)
 npx tsc --noEmit       # typkontroll
 npx expo-doctor        # kontrollera beroenden och konfiguration
 npx expo install --check  # visa SDK-avvikande paket
 ```
+
+`validation.test.ts` testar inmatningsreglerna. `migrations.test.ts` kör de riktiga SQL-migrationerna mot en temporär SQLite-databas och kontrollerar att `CHECK`-begränsningarna stoppar ogiltiga rader.
 
 Lägg aldrig hemliga API-nycklar i Expo-miljövariabler som skickas till appen, särskilt inte `EXPO_PUBLIC_*`.

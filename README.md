@@ -91,9 +91,9 @@ im-hungry/
 │   ├── drizzle/                # Genererade SQL-migrationer
 │   └── src/
 │       ├── app/                # Routes (Expo Router)
-│       ├── db/                 # Drizzle-schema och databasprovider
-│       ├── features/           # Domänlogik per funktion (tom tills vidare)
-│       └── screens/            # Skärmkomponenter (tom tills vidare)
+│       ├── db/                 # Drizzle-klient, schema och provider
+│       ├── features/inventory/ # Delat datalager för matförrådet
+│       └── screens/            # Skärmkomponenter (US-02)
 ├── docs/
 │   ├── arkitektur.md           # Lokal SQLite + Supabase Edge Function
 │   ├── databasschema.md        # Databasschema (SQLite)
@@ -113,7 +113,7 @@ im-hungry/
 └── README.md
 ```
 
-**Var kod hamnar:** `mobile/src/app/` innehåller endast routes; varje fil där blir en skärm. `mobile/src/db/` har Drizzle-schema och databasprovider, och `mobile/drizzle/` de genererade migrationerna. `mobile/src/screens/` och `mobile/src/features/` är reserverade men tomma. `supabase/functions/generate-recipe/` byggs när receptflödet startar.
+**Var kod hamnar:** `mobile/src/app/` innehåller endast routes; varje fil där blir en skärm. `mobile/src/db/` har Drizzle-klient, schema och databasprovider, och `mobile/drizzle/` de genererade migrationerna. `mobile/src/features/inventory/` har det delade datalagret för matförrådet, och `mobile/src/screens/` fylls på när skärmarna byggs. `supabase/functions/generate-recipe/` byggs när receptflödet startar.
 
 ## Team och arbetsflöde
 

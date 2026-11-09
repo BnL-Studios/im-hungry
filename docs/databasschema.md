@@ -17,9 +17,9 @@
 | `id` | `INTEGER` | Primärnyckel. |
 | `name` | `TEXT` | Obligatoriskt råvarunamn. |
 | `quantity` | `REAL` | Obligatorisk mängd större än 0. |
-| `unit` | `TEXT` | Endast `g`, `ml` eller `quantity`. |
+| `unit` | `TEXT` | Endast `g`, `ml` eller `qty`; `qty` visas som `st` i gränssnittet. |
 
-**Validering:** Drizzle ger typer och genererar SQL-migrationer. Utöver det finns två `CHECK`-begränsningar i databasen: `inventory_items_quantity_positive` (`quantity > 0`) och `inventory_items_unit_allowed` (endast `g`, `ml` eller `quantity`). Runtime-validering i appen ska ge begripliga fel innan en insert försöker köras. Modellen kan senare utökas med till exempel tidsstämplar. Valet av `REAL` för mängder är preliminärt och kan omprövas om exakt decimalhantering krävs.
+**Validering:** Drizzle ger typer och genererar SQL-migrationer. Utöver det finns två `CHECK`-begränsningar i databasen: `inventory_items_quantity_positive` (`quantity > 0`) och `inventory_items_unit_allowed` (endast `g`, `ml` eller `qty`). `qty` är det interna tokenet för styck och visas som `st` i appen. Runtime-validering i appen ska ge begripliga fel innan en insert försöker köras. Modellen kan senare utökas med till exempel tidsstämplar. Valet av `REAL` för mängder är preliminärt och kan omprövas om exakt decimalhantering krävs.
 
 ## Koppling till MVP
 

@@ -56,11 +56,12 @@ flowchart TD
 mobile/
   src/
     app/                       # Expo Router: endast routes
-    screens/                   # Skärmkomponenter (tom tills vidare)
+    screens/                   # Skärmkomponenter
     features/
-      inventory/               # UI, operationer, repository
-      recipes/                 # UI, anropsklient, svarskontroll
+      inventory/               # Enheter, validering, repository
+      recipes/                 # UI, anropsklient, svarskontroll (senare)
     db/
+      client.ts                # Memoiserad Drizzle-instans (useDatabase)
       provider.tsx             # SQLiteProvider + migrationer vid start
       schema.ts                # Drizzle-schema (sanningskälla)
   drizzle/                     # Genererade SQL-migrationer och metadata
@@ -68,7 +69,7 @@ supabase/functions/
   generate-recipe/             # Deno/TypeScript, validering + AI-gateway
 ```
 
-Routes i `src/app/` hålls tunna: de importerar skärmar från `src/screens/` och domänlogik från `src/features/`. `db/` innehåller allt som rör databasen, så skärmar och features slipper SQL. `screens/` och `features/` är tomma till dess att första skärmen byggs, och `supabase/` skapas när receptflödet startar.
+Routes i `src/app/` hålls tunna: de importerar skärmar från `src/screens/` och domänlogik från `src/features/`. `db/` innehåller allt som rör databasen, så skärmar och features slipper SQL. `features/inventory/` har det delade datalagret för matförrådet. `screens/` fylls på när skärmarna byggs, och `supabase/` skapas när receptflödet startar.
 
 ## 5. Teknisk verifiering
 

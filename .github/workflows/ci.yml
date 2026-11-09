@@ -43,4 +43,7 @@ jobs:
       - name: Typecheck
         run: npx tsc --noEmit
 
-# Add unit tests, SQLite migration checks, and Edge Function tests as those parts are implemented.
+      - name: Test
+        run: npm test
+
+# Edge Function tests get added when the recipe flow starts.
