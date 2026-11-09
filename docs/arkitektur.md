@@ -55,8 +55,8 @@ flowchart TD
 ```text
 mobile/
   src/
-    app/                       # Expo Router: endast routes
-    screens/                   # Skärmkomponenter
+    app/                       # Expo Router: endast routes (index, new)
+    screens/                   # Skärmkomponenter (AddIngredientScreen)
     features/
       inventory/               # Enheter, validering, repository
       recipes/                 # UI, anropsklient, svarskontroll (senare)
@@ -69,7 +69,7 @@ supabase/functions/
   generate-recipe/             # Deno/TypeScript, validering + AI-gateway
 ```
 
-Routes i `src/app/` hålls tunna: de importerar skärmar från `src/screens/` och domänlogik från `src/features/`. `db/` innehåller allt som rör databasen, så skärmar och features slipper SQL. `features/inventory/` har det delade datalagret för matförrådet. `screens/` fylls på när skärmarna byggs, och `supabase/` skapas när receptflödet startar.
+Routes i `src/app/` hålls tunna: de importerar skärmar från `src/screens/` och domänlogik från `src/features/`. `db/` innehåller allt som rör databasen, så skärmar och features slipper SQL. `features/inventory/` har det delade datalagret för matförrådet. `app/new.tsx` visar `screens/AddIngredientScreen.tsx`, som validerar och sparar via det delade datalagret. `supabase/` skapas när receptflödet startar.
 
 ## 5. Teknisk verifiering
 

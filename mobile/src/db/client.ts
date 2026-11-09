@@ -8,10 +8,6 @@ export function createDatabase(sqlite: SQLiteDatabase) {
 
 export type AppDatabase = ReturnType<typeof createDatabase>;
 
-/**
- * Returnerar en stabil Drizzle-instans för den öppna SQLite-databasen.
- * Stabiliteten är viktig för useLiveQuery, som annars prenumererar om vid varje render.
- */
 export function useDatabase(): AppDatabase {
   const sqlite = useSQLiteContext();
 

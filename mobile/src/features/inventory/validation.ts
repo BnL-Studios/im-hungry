@@ -8,7 +8,6 @@ export type FieldErrors = Partial<Record<IngredientField, string>>;
 export type IngredientInput = {
   name: string;
   quantity: string;
-  /** Medvetet string: formulärdata är inte betrodd förrän den validerats. */
   unit: string;
 };
 
@@ -20,10 +19,6 @@ const NAME_MAX_LENGTH = 80;
 const QUANTITY_MAX = 1_000_000;
 const QUANTITY_PATTERN = /^[+-]?\d+(?:[.,]\d+)?$/;
 
-/**
- * Validerar och normaliserar råvaruformuläret. Ren funktion utan React och SQLite,
- * så att reglerna kan testas snabbt och återanvändas av fler skärmar.
- */
 export function parseIngredientInput(
   input: IngredientInput,
 ): ParseIngredientResult {

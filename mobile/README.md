@@ -16,8 +16,8 @@ Starta i simulator/emulator eller på en mobil. En development build kan behöva
 
 ```text
 src/
-  app/          # Routes (Expo Router). Varje fil blir en skärm.
-  screens/      # Skärmkomponenter (US-02)
+  app/          # Routes (Expo Router). new.tsx visar AddIngredientScreen.
+  screens/      # Skärmkomponenter (AddIngredientScreen)
   features/
     inventory/  # Enheter, validering och repository för matförrådet
   db/
@@ -27,7 +27,7 @@ src/
 drizzle/        # Genererade SQL-migrationer och metadata
 ```
 
-Routes i `src/app/` hålls tunna och importerar skärmar och logik från `src/screens/` och `src/features/`. Allt som inte är en route ska ligga utanför `src/app/`.
+Routes i `src/app/` hålls tunna och importerar skärmar och logik från `src/screens/` och `src/features/`. Allt som inte är en route ska ligga utanför `src/app/`. `app/new.tsx` är en tunn route som visar `screens/AddIngredientScreen.tsx`; formuläret validerar med `features/inventory/validation.ts` och sparar via `features/inventory/repository.ts`.
 
 ## Arkitektur
 
