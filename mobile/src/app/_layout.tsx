@@ -7,12 +7,8 @@ export default function RootLayout() {
     <DatabaseProvider>
       <Stack>
         <Stack.Screen
-          name="index"
-          options={{ title: "Matförråd" }}
-        />
-        <Stack.Screen
-          name="ingredients"
-          options={{ title: "Ingredients" }}
+          name="(tabs)"
+          options={{ headerShown: false }}
         />
       </Stack>
     </DatabaseProvider>
