@@ -18,7 +18,7 @@ export default function TabLayout() {
                         <Ionicons
                             name={focused ? "home" : "home-outline"}
                             size={size}
-                            color={color}
+                            color={typeof color === "string" ? color : "#64748b"}
                         />
                     ),
                 }}
@@ -32,7 +32,7 @@ export default function TabLayout() {
                         <Ionicons
                             name={focused ? "basket" : "basket-outline"}
                             size={size}
-                            color={color}
+                            color={typeof color === "string" ? color : "#64748b"}
                         />
                     ),
                 }}

@@ -43,7 +43,7 @@ describe("SQLite-migrationer", () => {
     db.close();
   });
 
-  const invalidRows: Array<[string, number, string]> = [
+  const invalidRows: [string, number, string][] = [
     ["noll", 0, "g"],
     ["negativ mängd", -1, "g"],
     ["okänd enhet", 1, "kg"],

@@ -1,15 +1,10 @@
 import {
   Suspense,
-  useEffect,
-  useState,
+  useSyncExternalStore,
   type ReactNode,
 } from "react";
 
-import {
-  ActivityIndicator,
-  Platform,
-  View,
-} from "react-native";
+import { ActivityIndicator, View } from "react-native";
 import { SQLiteProvider, type SQLiteDatabase } from 'expo-sqlite';
 import { drizzle } from 'drizzle-orm/expo-sqlite';
 import { migrate } from 'drizzle-orm/expo-sqlite/migrator';
@@ -79,22 +74,22 @@ async function onInit(db: SQLiteDatabase): Promise<void> {
 }
 
 
+const subscribe = () => () => {};
+const getClientSnapshot = () => true;
+const getServerSnapshot = () => false;
+
 export function DatabaseProvider({
   children,
 }: {
   children: ReactNode;
 }) {
-  // Native apps can initialize SQLite immediately.
-  // Web must wait until React mounts in the browser.
-  const [ready, setReady] = useState(
-    Platform.OS !== "web"
+  // During static web prerendering, don't open the browser-owned SQLite database.
+  // On native and after browser hydration, initialize the real database.
+  const isClient = useSyncExternalStore(
+    subscribe,
+    getClientSnapshot,
+    getServerSnapshot,
   );
-
-  useEffect(() => {
-    if (Platform.OS === "web") {
-      setReady(true);
-    }
-  }, []);
 
   const loading = (
     <View
@@ -108,7 +103,7 @@ export function DatabaseProvider({
     </View>
   );
 
-  if (!ready) {
+  if (!isClient) {
     return loading;
   }
 
@@ -125,4 +120,3 @@ export function DatabaseProvider({
     </Suspense>
   );
 }
-

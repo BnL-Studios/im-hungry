@@ -27,7 +27,7 @@ export default function IngredientsScreen({ ingredients }: Props) {
                 )}
                 ListEmptyComponent={
                     <Text style={styles.empty}>
-                        You haven't added any ingredients yet.
+                        {"You haven't added any ingredients yet."}
                     </Text>
                 }
             />
