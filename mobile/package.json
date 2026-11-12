@@ -4,6 +4,7 @@
   "main": "expo-router/entry",
   "dependencies": {
     "@expo/ui": "~58.0.27",
+    "@expo/vector-icons": "^15.0.2",
     "drizzle-orm": "^0.45.4",
     "expo": "~58.0.23",
     "expo-constants": "~58.0.13",
@@ -34,6 +35,8 @@
     "@types/react": "~19.3.0",
     "babel-plugin-inline-import": "^3.0.0",
     "drizzle-kit": "^0.31.11",
+    "eslint": "^9.0.0",
+    "eslint-config-expo": "~58.0.4",
     "typescript": "~6.0.3",
     "vitest": "^5.1.0"
   },
