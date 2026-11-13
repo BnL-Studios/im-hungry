@@ -10,6 +10,13 @@ export default function RootLayout() {
           name="(tabs)"
           options={{ headerShown: false }}
         />
+        <Stack.Screen
+          name="add-ingredient"
+          options={{
+            presentation: "modal",
+            title: "Lägg till råvara",
+          }}
+        />
       </Stack>
     </DatabaseProvider>
   );

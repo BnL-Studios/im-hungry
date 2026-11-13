@@ -27,7 +27,7 @@ export default function TabLayout() {
             <Tabs.Screen
                 name="ingredients"
                 options={{
-                    title: "Ingredients",
+                    title: "Råvaror",
                     tabBarIcon: ({ color, size, focused }) => (
                         <Ionicons
                             name={focused ? "basket" : "basket-outline"}

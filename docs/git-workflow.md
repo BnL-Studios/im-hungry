@@ -46,11 +46,18 @@ git branch -D feature/20-add-ingredient
 
 Vid squash-merge kan `git branch -d` neka borttagning eftersom branchcommits inte finns identiska i `main`; `-D` får användas **endast när mergen verifierats**.
 
-## CI och den nya mobilarkitekturen
+## CI och mobilarkitekturen
 
-Mål: GitHub Actions installerar beroenden i `mobile/`, kör TypeScript-kontroll och därefter lämpliga enhetstester samt databastester när dessa finns. **Inga Supabase- eller Gemini-hemligheter krävs för vanliga mobilkontroller.** AI-gatewayen testas separat med mockat AI-svar och säker konfiguration.
+CI-workflowen [`ci.yml`](../.github/workflows/ci.yml) kör på **Node 22** och gör följande vid PR och push till `main`:
 
-**Övergång:** PR #104 avvecklar legacy-Spring Boot och byter CI till **Mobile (Node 22)**. När den nya kontrollen har körts grönt måste en GitHub-administratör ersätta eventuellt obligatorisk **Backend (Java 21)** med **Mobile (Node 22)** i branch protection. Annars kan PR-merge blockeras trots grön ny CI. GitHub-inställningen uppdateras **inte** automatiskt av `ci.yml`.
+1. `npm ci` i `mobile/`.
+2. Validerar att `package.json` har `expo`/`expo-router` och att `app.json` är giltig JSON.
+3. `npx tsc --noEmit`.
+4. `npm test` (Vitest: validering, enheter och riktiga SQL-migrationer).
+
+**Inga Supabase- eller Gemini-hemligheter krävs för mobilkontrollerna.** AI-gatewayen är inte byggd; när den byggs ska den testas separat med mockat AI-svar och säker konfiguration. Lint (`npm run lint`) körs lokalt men ingår inte i CI ännu.
+
+**Branch protection:** PR #104 är mergad och legacy-Spring Boot är borttagen. CI-kontrollen heter **Mobile (Node 22)**. Om branch protection fortfarande kräver den gamla kontrollen **Backend (Java 21)** måste en GitHub-administratör byta till **Mobile (Node 22)**. Annars kan PR-merge blockeras trots grön ny CI. GitHub-inställningen uppdateras **inte** automatiskt av `ci.yml`.
 
 ## Kodgranskning
 
@@ -71,3 +78,5 @@ Mål: GitHub Actions installerar beroenden i `mobile/`, kör TypeScript-kontroll
 | `main` går sönder | Informera teamet och prioritera en fix eller revert via PR. |
 
 Följ upp branchlivslängd, väntetid på PR-granskning och CI-problem vid retrospektivet.
+
+**Senast uppdaterad:** 2026-11-13 (sprint 1).

@@ -1,9 +1,11 @@
 # I'm Hungry! — Prioritised Product Backlog
 
 > **Product goal:** Help home cooks answer *“What can I make with what I already have?”* quickly and reliably.  
-> **MVP definition:** [`MVP.md`](MVP.md)  
+> **MVP definition:** [`mvp.md`](mvp.md)<br>
 > **Current delivery scope:** Two-person Scrum course; `Won't` means *not this time*, not rejected forever.  
-> **Updated:** 2026-10-27
+> **Updated:** 2026-11-13 (sprint 1)
+
+> **Sprint 1 status (2026-11-13):** US-01 (View my inventory) and US-02 (Add an ingredient) are implemented on the `add-ingredient` branch and await review/merge. US-03, US-04 and the recipe stories are not started. The backlog below remains the full product scope, not a status list.
 
 ## Priority and size overview
 
@@ -56,14 +58,14 @@ A small working journey: save ingredients → request a genuinely feasible AI re
 
 ### 01 · US-02 — Add an ingredient
 
-**Must · M · Inventory**
+**Must · M · Inventory · Implemented in sprint 1 (awaiting merge)**
 
 > As a home cook, I want to record an ingredient with the quantity I have, so that it can be considered for recipes.
 
 <details>
 <summary>Acceptance criteria</summary>
 
-- [ ] I can enter an ingredient name, a quantity greater than zero, and a supported unit (g, ml or quantity).
+- [ ] I can enter an ingredient name, a quantity greater than zero, and a supported unit (g, ml or pieces — shown as `st`, stored internally as `qty`).
 - [ ] Saving a valid ingredient makes its name, quantity and unit appear in my inventory without reopening the app.
 - [ ] If the name is blank or the quantity is zero, negative or not a number, I see a helpful error and nothing is added.
 - [ ] After closing and reopening the app, the ingredient still has the quantity and unit I saved.
@@ -74,7 +76,7 @@ A small working journey: save ingredients → request a genuinely feasible AI re
 
 ### 02 · US-01 — View my inventory
 
-**Must · M · Inventory**
+**Must · M · Inventory · Implemented in sprint 1 (awaiting merge)**
 
 > As a home cook, I want to see the ingredients and amounts I have at home, so that I can understand what the app can cook with.
 

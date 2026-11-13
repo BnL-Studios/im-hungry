@@ -1,15 +1,16 @@
-// Utkast: lokal SQLite på mobilen. Drizzle-schema och migrationer
-// blir teknisk sanningskälla när de implementeras.
+// Implementerad lokal SQLite-modell för I'm Hungry!.
+// Drizzle-schemat i mobile/src/db/schema.ts och migrationerna i mobile/drizzle/
+// är den tekniska sanningskällan. Uppdatera den här filen när modellen ändras.
 Project im_hungry {
   database_type: 'SQLite'
-  Note: 'Lokalt matförråd i MVP. Supabase Edge Function används enbart som AI-gateway.'
+  Note: 'Lokalt matförråd i MVP. En tabell per appinstallation. Supabase Edge Function är planerad som AI-gateway och lagrar inte inventariet.'
 }
 
 Table inventory_items {
-  id integer [pk, increment]
-  name text [not null]
-  quantity real [not null, note: 'Mängd > 0; valideras i appen och med SQLite CHECK i migrationen']
-  unit text [not null, note: 'g, ml eller qty (qty visas som st i appen); valideras i appen och med SQLite CHECK i migrationen']
+  id integer [pk, increment, note: 'AUTOINCREMENT']
+  name text [not null, note: 'Råvarans namn. Längd/trimning valideras i appen (max 80 tecken).']
+  quantity real [not null, note: 'CHECK inventory_items_quantity_positive: quantity > 0']
+  unit text [not null, note: 'CHECK inventory_items_unit_allowed: g, ml eller qty. qty visas som st i gränssnittet.']
 
-  Note: 'En tabell per appinstallation, ingen synkronisering eller receptlagring i MVP.'
+  Note: 'Lokal tabell för matförrådet. Två migrationer: 0000 skapar tabellen, 0001 lägger till CHECK och bevarar rader.'
 }
