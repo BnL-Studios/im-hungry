@@ -1,68 +1,40 @@
-# Daily standup: sprint N
+# Daily standup: sprint 1
 
-<!--
-  INSTRUKTION
-  Håll standupen muntligt, max 15 minuter. Logga sedan kort här, en rad per person.
-  Det ska ta två minuter att fylla i. Stödord räcker.
-  Lägg till ett nytt avsnitt för varje dag, nyaste dagen längst ner.
-  Hinder löses inte på standupen. Skriv vem som hjälper till, och ta det efteråt.
-  Närvaro: Ja / Nej / Sen / Distans.
--->
+> **Status (2026-11-13):**
 
-> **Exempel (Sysslo, sprint 1):**
->
-> ### Tisdag 2026-11-03
->
-> | Namn | Närvaro | Igår | Idag | Hinder |
-> |---|---|---|---|---|
-> | Amir | Ja | Sprint planning | Projektskelett #9 | – |
-> | Sara | Ja | Sprint planning | Skapa hushåll #3, backend | – |
-> | Jonas | Distans | Sprint planning | Lista sysslor #7 | – |
-> | Lina | Ja | Sprint planning | Formulär ny syssla #4 | Vet inte hur datum ska skickas. Jonas hjälper efter standup. |
-
----
-
-## Måndag ÅÅÅÅ-MM-DD
+## Måndag 2026-11-09
 
 | Namn | Närvaro | Igår | Idag | Hinder |
 |---|---|---|---|---|
-| | | | | |
-| | | | | |
-| | | | | |
-| | | | | |
+| Benjamin | Ej loggat | – | Sprint planning; review-utkast (#115) | – |
+| Leo | Ej loggat | – | Sprint planning; inventory contract (#117) | – |
 
-## Tisdag ÅÅÅÅ-MM-DD
+## Tisdag 2026-11-10
 
-| Namn | Närvaro | Igår | Idag | Hinder |
-|---|---|---|---|---|
-| | | | | |
-| | | | | |
-| | | | | |
-| | | | | |
+Inga commits i repot och ingen standup loggad.
 
-## Onsdag ÅÅÅÅ-MM-DD
+## Onsdag 2026-11-11
+
+Inga commits i repot och ingen standup loggad.
+
+## Torsdag 2026-11-12
 
 | Namn | Närvaro | Igår | Idag | Hinder |
 |---|---|---|---|---|
-| | | | | |
-| | | | | |
-| | | | | |
-| | | | | |
+| Benjamin | Ej loggat | – | Flikar Home/Råvaror och SQLite-stöd för webb (#120) | – |
+| Leo | Ej loggat | – | Beroendeuppdatering (#121); förberedde add-ingredient-flödet | – |
 
-## Torsdag ÅÅÅÅ-MM-DD
+## Fredag 2026-11-13
 
 | Namn | Närvaro | Igår | Idag | Hinder |
 |---|---|---|---|---|
-| | | | | |
-| | | | | |
-| | | | | |
-| | | | | |
+| Benjamin | Ej loggat | Flikar och webbstöd | Planerat: granska add-ingredient när PR är öppen | – |
+| Leo | Ej loggat | Beroenden och förberedelse | Implementerade add-ingredient, fixade knappbuggen och uppdaterade dokumentationen | Väntar på review/merge |
 
-## Fredag ÅÅÅÅ-MM-DD
+## Nästa steg
 
-| Namn | Närvaro | Igår | Idag | Hinder |
-|---|---|---|---|---|
-| | | | | |
-| | | | | |
-| | | | | |
-| | | | | |
+- Granska och merga branchen `add-ingredient`.
+- Logga standup varje dag från sprint 2.
+- Uppdatera dokumentationen i samma PR som koden.
+
+**Senast uppdaterad:** 2026-11-13 (sprint 1).

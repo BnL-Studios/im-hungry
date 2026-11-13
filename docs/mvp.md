@@ -12,6 +12,20 @@ Användaren har mat hemma men vet inte **vad hen kan laga av just de råvaror oc
 
 **I'm Hungry!** är en mobilapp där användaren registrerar sina råvaror och mängder i ett digitalt matförråd. Matförrådet sparas **lokalt i SQLite på telefonen** med Expo SQLite och Drizzle ORM och kan hanteras utan nätverk. Användaren väljer ett mat-humör och begär **ett** recept från AI. Då skickar appen bara den nödvändiga inventarielistan och humöret via HTTPS till en **Supabase Edge Function**, som validerar begäran och anropar AI med en hemlig nyckel som aldrig finns i mobilappen. Receptet visas i appen och sparas inte permanent i MVP:n.
 
+## Status i sprint 1 (2026-11-13)
+
+Sprint 1 pågår. Matförrådets första vertikala del är implementerad på branchen `add-ingredient` och väntar på granskning/merge:
+
+| Område | Status |
+|---|---|
+| Se matförrådet (US-01) | Implementerat: listan läser från lokal SQLite, visar tomt läge och fel. |
+| Lägga till råvara (US-02) | Implementerat: modal, validering och sparning via det delade inventory-lagret. |
+| Korrigera/ta bort (US-03/US-04) | Inte påbörjat. |
+| Mat-humör (US-06) | Inte påbörjat. |
+| Recept via Edge Function/AI (US-05 m.fl.) | Inte påbörjat; ingen `supabase/`-kod finns. |
+
+Se [sprint 1](sprintar/sprint-1/planning.md) och [arkitekturen](arkitektur.md).
+
 ## Ingår i MVP:n
 
 - **Se matförrådet:** visa sparade råvaror med mängd och enhet; stöd för tom lista.
@@ -41,3 +55,4 @@ Användaren har mat hemma men vet inte **vad hen kan laga av just de råvaror oc
 |---|---|---|
 | 2026-10-27 | Första MVP-avgränsningen enligt kursmallen. | Hålla kärnresan liten och vertikal. |
 | 2026-11-02 | Lokal SQLite + Drizzle för matförråd, Supabase Edge Function för AI. | Offline-inventarie utan egen backend/databasserver och säker serverlagring av AI-nyckeln. |
+| 2026-11-13 | Sprint 1-status tillagd; US-01/US-02 implementerade, receptflödet kvar. | Dokumentationen ska spegla faktiskt läge i sprint 1. |

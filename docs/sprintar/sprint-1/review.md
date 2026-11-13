@@ -14,61 +14,64 @@
   Demot ska köras på riktigt, inte med skärmdumpar. Testa det innan.
 -->
 
-**Datum:** 2026-11-09 (planerat reviewdatum)  
+**Datum:** 2026-11-16 (planerat)
 **Deltagare:** Benjamin Simmons, Leo Spenner och läraren (planerat)
 
 ## Del 1: Förberedelse
 
 ### Sprintmål
 
-Att användaren ska kunna **se sitt matförråd och lägga till råvaror i mobilappen**. Detta är en sammanfattning av de två stories som valdes i sprintplaneringen; sprintmålet är inte slutligt formulerat i `planning.md`.
+Användaren kan navigera mellan **Home** och **Råvaror**, se sitt matförråd från lokal SQLite och lägga till en råvara med namn, mängd och enhet.
 
-**Uppnåddes sprintmålet?** **Delvis.** Benjamin har byggt delen för att visa matförrådet (US-01) och Leo har byggt delen för att lägga till en råvara (US-02), men lösningarna ligger ännu inte tillsammans i `main`. Navigering mellan vyerna, integration av kod och anslutningen till den lokala databasen återstår. Därför är hela användarflödet och dess acceptanskriterier ännu inte klara.
+**Uppnåddes sprintmålet?** **Delvis.** Funktionen är implementerad på branchen `add-ingredient`, men den är ännu inte granskad och mergad till `main`. Enligt Definition of Done räknas stories som klara först efter granskad PR och merge.
 
 ### Blev klart
 
-| Issue | Story | Visas av |
-|---|---|---|
-| – | Inga av sprintens två user stories är ännu klara enligt Definition of Done och mergade till `main`. | – |
+Inga stories är formellt klara enligt Definition of Done ännu: branchen `add-ingredient` är inte granskad och mergad.
 
-**Färdigutvecklade delar som ännu inte räknas som klara stories:**
+**Tekniskt delsteg på `main`:** Expo-grundprojekt, flikar, lokal SQLite med Drizzle, två migrationer, testuppsättning och CI.
 
-- **Benjamin:** Implementerat arbetet för att visa matförrådet (UI-delen av [US-01 / #21](https://github.com/BnL-Studios/im-hungry/issues/21)) i sin egen utveckling.
-- **Leo:** Implementerat arbetet för att lägga till råvaror (UI-delen av [US-02 / #20](https://github.com/BnL-Studios/im-hungry/issues/20)) i sin egen utveckling.
-- **På `main`:** Expo-grundprojekt samt SQLite-/Drizzle-uppsättning med schema och migrationshantering. Denna infrastruktur är ett färdigt tekniskt delsteg, inte en färdig inventariefunktion.
+### Nästan klart — väntar review/merge
+
+| Issue | Story | Status | Visas av |
+|---|---|---|---|
+| [#21](https://github.com/BnL-Studios/im-hungry/issues/21) | US-01 – Visa matförrådet | Implementerad på branch; väntar review/merge. | Benjamin |
+| [#20](https://github.com/BnL-Studios/im-hungry/issues/20) | US-02 – Lägg till råvara | Implementerad på branch; väntar review/merge. | Leo |
 
 ### Blev inte klart
 
 | Issue | Story | Varför inte klar | Vad händer med den? |
 |---|---|---|---|
-| [#21](https://github.com/BnL-Studios/im-hungry/issues/21) | US-01 – Visa matförrådet (Benjamin) | Koden är ännu inte integrerad och mergad. Inventarievyn behöver kopplas till SQLite/Drizzle. | Sammanföra bådas kod, skapa navigering till matförrådet, ansluta vyn till databasen, testa acceptanskriterierna och öppna/granska PR. |
-| [#20](https://github.com/BnL-Studios/im-hungry/issues/20) | US-02 – Lägg till råvara (Leo) | Koden är ännu inte integrerad och mergad. Inventarievyn behöver kopplas till SQLite/Drizzle. | Sammanföra bådas kod, koppla formuläret till databasen och inventarievyn, testa giltig/ogiltig inmatning och persistens, öppna/granska PR. |
+| – | US-03 – Korrigera mängd | Inte påbörjad; sprinten fokuserade på lista + tillägg. | Nästa sprint. |
+| – | US-04 – Ta bort råvara | Inte påbörjad; kräver raderingsflöde och bekräftelse. | Nästa sprint. |
+| – | US-05/US-68/US-67 – Receptflödet | Kräver Edge Function, AI-nyckel och validering av AI-svar. | Efter inventariets CRUD. |
+| – | US-06 – Mat-humör | Inte påbörjad. | Nästa sprint eller senare. |
 
-**Gemensamt kvarvarande arbete:** Flytta/anpassa och sammanföra de två kodlösningarna, skapa appens navigation/tabbar, koppla båda funktionerna till samma SQLite-datalager och testa hela användarresan. Först därefter kan de två stories markeras som klara enligt acceptanskriterier och Definition of Done. Vi har ännu inte skapat PR:er för dessa två funktioner.
+**Kvarvarande arbete:** granska och merga `add-ingredient`, verifiera flödet på en riktig enhet och uppdatera dokumentationen i samma PR. Home-fliken är fortfarande en `Hello World`-placeholder.
 
 ### Demoplan
 
-<!-- Visa en faktisk användarresa med det som finns i main. Ingen omergad funktion presenteras som klar. -->
-
-1. Visa appen som den är på main branchen nu; app index med en hello world, som visar app struckturen fungerar och är set up.
+1. Starta appen och visa flikarna **Home** och **Råvaror**.
+2. Öppna **Råvaror** och visa tomt läge.
+3. Tryck **+ Lägg till**, visa modalens fält för namn, mängd och enhet.
+4. Försök spara tomt namn, ogiltig mängd och noll/negativ mängd; visa fälten.
+5. Spara en giltig råvara (t.ex. `Mjöl`, `500`, `g`) och visa att den syns direkt i listan.
+6. Stäng och öppna appen igen och visa att råvaran finns kvar.
+7. Visa kort att datan ligger i lokal SQLite och att receptflödet ännu inte är byggt.
 
 ### Frågor till läraren
 
-- 
+- Vilken nivå av dokumentation förväntas per sprint utöver planning/review/retro?
+- Är det okej att US-01/US-02 redovisas som "implementerade men ej mergade" på reviewn?
 
 ## Del 2: Efter reviewn
 
+> Fylls i efter reviewn 2026-11-16.
+
 ### Feedback
 
-> **Exempel:** Läraren frågade hur man vet vem som ska göra nästa disk. I deras kollektiv turas man om varje vecka i stället för att tilldela.
-
--
 -
 
 ### Ändringar i backloggen
-
-<!-- Nya stories, ändrad prioritet, stories som tagits bort. Länka issues. -->
-
-> **Exempel:** Ny story #15 "Turordning per vecka" som Must. "Tilldela en syssla" (#5) sänks till Should.
 
 -
