@@ -18,12 +18,13 @@
 
 ## Sprintmål
 
-> Efter sprinten ska en användare kunna hålla sitt matförråd korrekt genom att ändra mängd på en sparad råvara och ta bort råvaror som inte längre finns hemma.
+> Efter sprinten ska användaren kunna hålla matförrådet korrekt (ändra mängd/ta bort råvara) och påbörja/få ett första fungerande receptflöde från lagret: begära ett AI-förslag (US-05), läsa ett komplett recept (US-68) och förstå när inget giltigt recept kan erbjudas (US-67).
 
 ## Kapacitet
 
 - Två utvecklare under veckan 2026-11-16–2026-11-20 (sprint 2).
 - Inga kända frånvaroanmälningar vid planeringstillfället; uppdatera om något ändras.
+- **Obs:** Omfattningen nedan är stor (inkl. en L-story och ny infrastruktur). Teamet kan behöva dela upp i mindre PR:er och flytta delar som inte blir klara till nästa sprint.
 
 ## Från förra retron
 
@@ -36,20 +37,27 @@
 
 ## Valda stories
 
-Stories valda uppifrån Must-backloggen efter US-01/US-02 (inventory-CRUD). Issue-nummer kopplas när GitHub-issues skapas/plockas in på boarden.
+Stories från Must-backloggen (inventory + receptflöde). Issue-nummer kopplas när GitHub-issues skapas/plockas in på boarden.
 
 | Issue | Story | Storlek | Ansvarig |
 |---|---|---|---|
 | TBD | US-03 – Korrigera en mängd i matförrådet (Must, Inventory) | M | TBD |
 | TBD | US-04 – Ta bort en råvara från matförrådet (Must, Inventory) | S | TBD |
+| TBD | US-05 – Få ett grundläggande AI-recept från mitt matförråd (Must, Recipe discovery), inkl. relaterade delstories i flödet: US-68 och US-67 | L | TBD |
+| TBD | US-68 – Läsa ett komplett recept i appen (Must, Recipe discovery) | S | TBD |
+| TBD | US-67 – Förstå när inget giltigt recept kan erbjudas (Must, Recipe discovery) | M | TBD |
 
-**Totalt:** 1 S, 1 M, 0 L
+**Totalt:** 2 S, 2 M, 1 L
 
-*Jämförelse:* Sprint 1 planerade 2 M (US-01, US-02). Den här sprinten tar in något mindre omfattning (1 M + 1 S) för att lämna utrymme för granskning, test på native/webb och dokumentation.
+*Relaterat:* US-06 (välja mat-humör, Must, S) ingår i MVP-receptresan men är inte listad separat ovan — lägg till om teamet tar in den i sprinten.
+
+*Notering om “sub-issues” till US-05:* I backloggen är receptflödet uppdelat i US-05 (generering), US-68 (presentation) och US-67 (fel/tomma/ogiltiga fall). Tillsammans täcker de den användbara vertikala kedjan för receptförslag.
 
 ## Risker och osäkerheter
 
-- **Delat datalager/UI:** ändring och borttagning rör samma inventory-skärmar och repository som US-01/US-02; samordna för att undvika mergekonflikter.
-- **Borttagning:** behöver tydligt bekräftelseflöde och hantering av fel så att lagret inte hamnar i felaktigt läge.
-- **Validering:** samma regler som vid inmatning ska gälla vid ändring (mängd > 0, giltig enhet/mängdformat).
-- **Nästa steg efter CRUD (ej denna sprint):** US-06 (mat-humör) och receptflödet US-05/US-68/US-67 kräver bland annat Supabase Edge Function, AI-nyckel och validering av AI-svar — planeras separat när inventariet är stabilt.
+- **Stor scope:** US-05 (L) + US-68 + US-67 är en stor vertikal leverans för en vecka; risk att allt inte hinner bli DoD-klart.
+- **Ny infrastruktur:** receptflödet kräver troligen Supabase Edge Function, hantering av AI-nyckel på servern, anropsflöde från appen och validering av AI-svar mot lagret.
+- **Kvalitet/säkerhet:** svar får inte föreslå recept som kräver mer/andra råvaror än lagret; fel och timeout ska ge tydliga meddelanden utan att ändra inventory.
+- **Delat datalager/UI:** US-03/US-04 rör samma inventory-skärmar och repository som tidigare; samordna för att undvika mergekonflikter.
+- **Validering:** samma regler som vid inmatning ska gälla vid ändring av mängd (mängd > 0, giltig enhet/mängdformat).
+- **Beroenden:** US-68/US-67 bygger på att ett receptresultat/felresultat kan produceras och visas; planera implementation i rätt ordning.

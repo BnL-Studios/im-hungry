@@ -9,7 +9,7 @@ Varje sprint får en egen mapp med fyra filer.
 | Sprint 1 | 2026-11-09 – 2026-11-16 | **Pågår/avslutas** (review & retro 2026-11-16) | [planning](sprint-1/planning.md) · [standup](sprint-1/standup.md) · [review](sprint-1/review.md) · [retro](sprint-1/retro.md) |
 | Sprint 2 | 2026-11-16 – 2026-11-20 | **Planerad** (vecka upplagd) | [planning](sprint-2/planning.md) · [standup](sprint-2/standup.md) · [review](sprint-2/review.md) · [retro](sprint-2/retro.md) |
 
-`sprint-mall/` är generiska mallar och ska inte fyllas i; kopiera mallen till nästa sprintmapp. Sprint 2-dokumenten är förberedda utifrån sprint 1 och aktuell backlog (US-03/US-04 som nästa inventarie-steg); uppdatera issue-nummer, ansvariga och dagliga standups löpande.
+`sprint-mall/` är generiska mallar och ska inte fyllas i; kopiera mallen till nästa sprintmapp. Sprint 2-dokumenten är förberedda utifrån sprint 1 och aktuell backlog (US-03/US-04 samt receptflödet US-05, US-68, US-67); uppdatera issue-nummer, ansvariga och dagliga standups löpande.
 
 ## Så gör ni vid varje ny sprint
 
