@@ -3,9 +3,9 @@
 > **Product goal:** Help home cooks answer *“What can I make with what I already have?”* quickly and reliably.  
 > **MVP definition:** [`mvp.md`](mvp.md)<br>
 > **Current delivery scope:** Two-person Scrum course; `Won't` means *not this time*, not rejected forever.  
-> **Updated:** 2026-11-13 (sprint 1)
+> **Updated:** 2026-11-16 (sprint 2)
 
-> **Sprint 1 status (2026-11-13):** US-01 (View my inventory) and US-02 (Add an ingredient) are implemented on the `add-ingredient` branch and await review/merge. US-03, US-04 and the recipe stories are not started. The backlog below remains the full product scope, not a status list.
+> **Sprint 2 status (2026-11-16):** US-01 (View my inventory) and US-02 (Add an ingredient) were merged to `main` in sprint 1 via PR #122. Sprint 2 covers US-03 (#26), US-04 (#27) and the recipe flow: US-05 (#22, split into sub-issues #125–#129), US-68 (#23) and US-67 (#24). No sprint 2 code is started yet. The backlog below remains the full product scope, not a status list.
 
 ## Priority and size overview
 
@@ -58,7 +58,7 @@ A small working journey: save ingredients → request a genuinely feasible AI re
 
 ### 01 · US-02 — Add an ingredient
 
-**Must · M · Inventory · Implemented in sprint 1 (awaiting merge)**
+**Must · M · Inventory · Done in sprint 1 (merged via #122)**
 
 > As a home cook, I want to record an ingredient with the quantity I have, so that it can be considered for recipes.
 
@@ -76,7 +76,7 @@ A small working journey: save ingredients → request a genuinely feasible AI re
 
 ### 02 · US-01 — View my inventory
 
-**Must · M · Inventory · Implemented in sprint 1 (awaiting merge)**
+**Must · M · Inventory · Done in sprint 1 (merged via #122)**
 
 > As a home cook, I want to see the ingredients and amounts I have at home, so that I can understand what the app can cook with.
 
@@ -94,7 +94,7 @@ A small working journey: save ingredients → request a genuinely feasible AI re
 
 ### 03 · US-05 — Get a basic AI recipe from my inventory
 
-**Must · L · Recipe discovery**
+**Must · L · Recipe discovery · In sprint 2 (#22, sub-issues #125–#129)**
 
 > As a home cook, I want a real AI-generated meal idea based on my recorded ingredients, so that I can find something feasible to cook without buying more food.
 
@@ -113,7 +113,7 @@ A small working journey: save ingredients → request a genuinely feasible AI re
 
 ### 04 · US-68 — Read a complete recipe in the app
 
-**Must · S · Recipe discovery**
+**Must · S · Recipe discovery · In sprint 2 (#23)**
 
 > As a home cook, I want to read a recipe’s quantities, estimated time and ordered cooking steps, so that I can prepare the suggested meal.
 
@@ -131,7 +131,7 @@ A small working journey: save ingredients → request a genuinely feasible AI re
 
 ### 05 · US-67 — Understand when no valid recipe can be offered
 
-**Must · M · Recipe discovery**
+**Must · M · Recipe discovery · In sprint 2 (#24)**
 
 > As a home cook, I want a clear explanation when the app cannot generate a feasible recipe, so that I do not mistakenly trust an unavailable ingredient or a failed request.
 
@@ -168,7 +168,7 @@ A small working journey: save ingredients → request a genuinely feasible AI re
 
 ### 07 · US-03 — Correct an ingredient amount
 
-**Must · M · Inventory**
+**Must · M · Inventory · In sprint 2 (#26)**
 
 > As a home cook, I want to change an ingredient quantity, so that recipes use the amount I actually have.
 
@@ -186,7 +186,7 @@ A small working journey: save ingredients → request a genuinely feasible AI re
 
 ### 08 · US-04 — Remove an ingredient
 
-**Must · S · Inventory**
+**Must · S · Inventory · In sprint 2 (#27)**
 
 > As a home cook, I want to remove an ingredient that I no longer have, so that it is not used in new recipe suggestions.
 

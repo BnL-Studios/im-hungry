@@ -23,31 +23,27 @@
 
 Användaren kan navigera mellan **Home** och **Råvaror**, se sitt matförråd från lokal SQLite och lägga till en råvara med namn, mängd och enhet.
 
-**Uppnåddes sprintmålet?** **Delvis.** Funktionen är implementerad på branchen `add-ingredient`, men den är ännu inte granskad och mergad till `main`. Enligt Definition of Done räknas stories som klara först efter granskad PR och merge.
+**Uppnåddes sprintmålet?** **Ja.** US-01 och US-02 är granskade och mergade till `main` via PR #122 (2026-11-13), och listan läser nu från lokal SQLite.
 
 ### Blev klart
 
-Inga stories är formellt klara enligt Definition of Done ännu: branchen `add-ingredient` är inte granskad och mergad.
+| Issue | Story | Visas av |
+|---|---|---|
+| [#21](https://github.com/BnL-Studios/im-hungry/issues/21) | US-01 – Visa matförrådet | Benjamin |
+| [#20](https://github.com/BnL-Studios/im-hungry/issues/20) | US-02 – Lägg till råvara | Leo |
 
 **Tekniskt delsteg på `main`:** Expo-grundprojekt, flikar, lokal SQLite med Drizzle, två migrationer, testuppsättning och CI.
-
-### Nästan klart — väntar review/merge
-
-| Issue | Story | Status | Visas av |
-|---|---|---|---|
-| [#21](https://github.com/BnL-Studios/im-hungry/issues/21) | US-01 – Visa matförrådet | Implementerad på branch; väntar review/merge. | Benjamin |
-| [#20](https://github.com/BnL-Studios/im-hungry/issues/20) | US-02 – Lägg till råvara | Implementerad på branch; väntar review/merge. | Leo |
 
 ### Blev inte klart
 
 | Issue | Story | Varför inte klar | Vad händer med den? |
 |---|---|---|---|
-| – | US-03 – Korrigera mängd | Inte påbörjad; sprinten fokuserade på lista + tillägg. | Nästa sprint. |
-| – | US-04 – Ta bort råvara | Inte påbörjad; kräver raderingsflöde och bekräftelse. | Nästa sprint. |
-| – | US-05/US-68/US-67 – Receptflödet | Kräver Edge Function, AI-nyckel och validering av AI-svar. | Efter inventariets CRUD. |
-| – | US-06 – Mat-humör | Inte påbörjad. | Nästa sprint eller senare. |
+| [#26](https://github.com/BnL-Studios/im-hungry/issues/26) | US-03 – Korrigera mängd | Inte påbörjad; sprinten fokuserade på lista + tillägg. | Sprint 2, ansvarig Leo. |
+| [#27](https://github.com/BnL-Studios/im-hungry/issues/27) | US-04 – Ta bort råvara | Inte påbörjad; kräver raderingsflöde och bekräftelse. | Sprint 2, ansvarig Leo. |
+| [#22](https://github.com/BnL-Studios/im-hungry/issues/22) m.fl. | US-05/US-68/US-67 – Receptflödet | Kräver Edge Function, AI-nyckel och validering av AI-svar. | Sprint 2 som #22 (delkort #125–#129), #23 och #24. |
+| [#25](https://github.com/BnL-Studios/im-hungry/issues/25) | US-06 – Mat-humör | Inte påbörjad. | Backloggen; utanför sprint 2. |
 
-**Kvarvarande arbete:** granska och merga `add-ingredient`, verifiera flödet på en riktig enhet och uppdatera dokumentationen i samma PR. Home-fliken är fortfarande en `Hello World`-placeholder.
+**Kvarvarande arbete:** Home-fliken är fortfarande en `Hello World`-placeholder. Verifiera US-01/US-02 manuellt på en riktig enhet om det inte gjordes före merge, och uppdatera README/docs i sprint 2.
 
 ### Demoplan
 
@@ -62,7 +58,7 @@ Inga stories är formellt klara enligt Definition of Done ännu: branchen `add-i
 ### Frågor till läraren
 
 - Vilken nivå av dokumentation förväntas per sprint utöver planning/review/retro?
-- Är det okej att US-01/US-02 redovisas som "implementerade men ej mergade" på reviewn?
+- Är det rimligt att lägga AI-receptflödet (Edge Function + gratis AI-nivå) i sprint 2, eller bör vi spika en tekniskt mindre del först?
 
 ## Del 2: Efter reviewn
 

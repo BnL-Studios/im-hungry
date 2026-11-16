@@ -20,8 +20,8 @@
 
 | Namn | Närvaro | Igår | Idag | Hinder |
 |---|---|---|---|---|
-| Benjamin | | Sprint 1 avslut/review & retro | Sprint 2 planning; sätta upp board/issues | |
-| Leo | | Sprint 1 avslut/review & retro | Sprint 2 planning; bryta ner valda stories | |
+| Benjamin | | Sprint 1 avslut/review & retro | Sprint 2 planning; issues #125–#129 skapade | |
+| Leo | | Sprint 1 avslut/review & retro | Sprint 2 planning; receptflödet nedbrutet i #125–#129 | |
 
 ## Tisdag 2026-11-17
 
@@ -51,4 +51,4 @@
 | Benjamin | | | | |
 | Leo | | | | |
 
-**Senast uppdaterad:** 2026-11-16 (vecka upplagd).
+**Senast uppdaterad:** 2026-11-16 (vecka upplagd; sprintbacklog och issues kopplade).

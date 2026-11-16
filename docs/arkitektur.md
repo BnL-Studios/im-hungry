@@ -1,6 +1,6 @@
 # Arkitektur — lokal databas och planerad AI-gateway
 
-**Status (2026-11-13, sprint 1):** Datalagret och matförrådets första UI är implementerade. Receptflödet, Supabase Edge Function och AI-integrationen återstår. Arbetet med listan och formuläret ligger på branchen `add-ingredient` och väntar på granskning/merge.
+**Status (2026-11-16, sprint 2):** Datalagret och matförrådets första UI är mergade till `main` via PR #122. Receptflödet, Supabase Edge Function och AI-integrationen återstår och ligger i sprint 2 som #22 (delkort #125–#129), #23 och #24. Ingen `supabase/`-kod finns ännu.
 
 ## Översikt
 
