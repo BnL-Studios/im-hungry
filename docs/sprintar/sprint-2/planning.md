@@ -16,7 +16,7 @@
 **Product Owner denna sprint:** Leo Spenner
 **Scrum Master denna sprint:** Benjamin Simmons
 
-> **Status 2026-11-17 (efter board-sortering):** Sprint 2 pågår 2026-11-16–2026-11-20. US-01/US-02 är klara sedan sprint 1 (#122). **Sprint Backlog har nu 8 kort:** #22, #125–#129, #23 och #24. #26, #27, #123 och #124 ligger i **In Progress** (alla Leo). Product Backlog är ner till 68 kort.
+> **Status 2026-11-17 (efter board-sortering och kodstatus):** Sprint 2 pågår 2026-11-16–2026-11-20. US-01/US-02 är klara sedan sprint 1 (#122, mergad). **Sprint Backlog har 8 kort:** #22, #125–#129, #23 och #24. #26, #27, #123 och #124 ligger på boarden i **In Progress** (alla Leo), men koden är implementerad lokalt (commit `f160032`) och väntar på PR/granskning. Product Backlog är ner till 68 kort.
 
 ## Sprintmål
 
@@ -78,7 +78,9 @@ Receptflödet ligger som delkort under US-05 (#22). Korten nedan är de som fakt
 | [#123](https://github.com/BnL-Studios/im-hungry/issues/123) | Nummertangentbord för mängd i add-ingredient | US-02 (förbättring) | Leo |
 | [#124](https://github.com/BnL-Studios/im-hungry/issues/124) | Extra enhetsknappar i add-ingredient | US-36 (Could) | Leo |
 
-**Kapacitetsrisk:** Leo har fyra kort i In Progress, varav två (#123/#124) ligger utanför sprintmålet. Bekräfta att de ska vara med i sprinten; annars flytta tillbaka dem till Product Backlog så att US-03/US-04 och receptflödet får plats.
+**Kodstatus 2026-11-17:** alla fyra kort är implementerade i koden — numeriskt tangentbord, skalor (mg/g/kg, ml/dl/L, st/dussin) som avrundas och sparas i basenheter, ändra mängd och borttagning med bekräftelse. Fyra Vitest-testfiler finns (validering, skalor, enheter, migrationer), CI kör nu `npm run lint`, typkontroll och tester. Inga nya PR:er eller branches är skapade utan tillåtelse.
+
+**Kapacitetsrisk (uppdaterad):** koden för de fyra korten är klar men boardstatusen är kvar i In Progress tills PR/granskning är gjord. #123/#124 är förbättringar utanför sprintmålet; receptspåret är det stora återstående arbetet.
 
 **Kvar att lösa:** #23 och #24 ligger nu i Sprint Backlog, men #24 saknar fortfarande ett eget implementationskort och #23 är inte explicit kopplad till #129 i GitHub. I förslaget nedan täcks #24 av PR:en för #126 och #23 av PR:en för #129 — bekräfta kopplingen eller skapa ett delkort för #24.
 
@@ -88,11 +90,11 @@ Receptflödet ligger som delkort under US-05 (#22). Korten nedan är de som fakt
 
 ## Risker och osäkerheter
 
-- **Stor scope:** fem kort för receptflödet plus två inventory-stories och två sidokort på fem dagar för två utvecklare. Om AI-spåret drar ut på tiden: leverera US-03/US-04 först och flytta receptdelar till sprint 3.
+- **Stor scope:** fem kort för receptflödet plus två inventory-stories och två sidokort på fem dagar för två utvecklare. US-03/US-04 och sidokorten är implementerade i koden; om AI-spåret drar ut på tiden flyttas receptdelar till sprint 3.
 - **AI-valet är inte gjort:** #127 (leverantör, gratisnivå, rate limits) blockerar #125 och #128. Beslutet behövs tidigt i veckan.
 - **Ny infrastruktur:** ingen `supabase/`-kod finns ännu. Edge Function, hemlig AI-nyckel och svarsformat mellan app och funktion måste tas fram i #125/#128.
 - **Kvalitet/säkerhet:** svar får inte föreslå recept som kräver mer/andra råvaror än lagret. Definiera svarsformat och toleranser i #125, och validera AI-svaret mot inventory innan det visas.
-- **Fyra kort hos Leo:** #26, #27, #123 och #124 ligger alla i In Progress. #123/#124 är förbättringar utanför sprintmålet och riskerar att tränga ut receptarbetet.
+- **Fyra kort hos Leo (koden klar):** #26, #27, #123 och #124 ligger kvar i In Progress på boarden men väntar på granskning. #123/#124 är förbättringar utanför sprintmålet.
 - **US-67 utan delkort:** #24 ligger nu i Sprint Backlog men har inget implementationskort. Fel-, timeout- och tomt-lager-flöden riskerar att bli bortglömda; lägg dem explicit i PR:en för #126 (eller skapa ett delkort).
 - **Delat datalager/UI:** US-03/US-04 rör samma inventory-skärmar och repository som tidigare; samordna för att undvika mergekonflikter.
 - **Validering:** samma regler som vid inmatning ska gälla vid ändring av mängd (mängd > 0, giltig enhet/mängdformat).
@@ -100,7 +102,7 @@ Receptflödet ligger som delkort under US-05 (#22). Korten nedan är de som fakt
 
 ## Förslag: PR-indelning och fördelning
 
-Förslag att bekräfta — inga branches, issues eller PR:er är skapade. Enligt DoD granskas och mergas varje PR av den andra teammedlemmen.
+Förslag att bekräfta — inte godkänt; inga nya branches eller PR:er är skapade. Enligt DoD granskas och mergas varje PR av den andra teammedlemmen.
 
 | Ord | Branch / PR | Stänger | Ansvarig | Reviewer | Beror på |
 |---|---|---|---|---|---|
@@ -116,6 +118,6 @@ Förslag att bekräfta — inga branches, issues eller PR:er är skapade. Enligt
 - **PR 4:** modellval, gratisnivå/rate limits, svarsformat och secret-setup i Supabase. API-nyckeln commitas aldrig.
 - **PR 6:** fel-, timeout- och tomt-lager-lägen ligger i samma PR som genereringsknappen. Vill ni ha #24 som egen PR måste ett delkort skapas först.
 - **PR 2/3:** samma `repository.ts` och `IngredientsScreen.tsx` — gör dem sekventiellt.
-- **Fallback:** om #123/#124 inte blir klara, flytta tillbaka dem till Product Backlog och låt Leo börja med #26.
+- **Fallback:** #123/#124 är nu implementerade tillsammans med #26/#27 i samma lokala kod; om granskningen drar ut på tiden prioriteras inventory-PR:erna före receptspåret.
 
-**Senast uppdaterad:** 2026-11-17 (board sorterad: #23/#24 flyttade till Sprint Backlog; PR-förslag tillagt).
+**Senast uppdaterad:** 2026-11-17 (board sorterad; PR #122 mergad; inventory-koden implementerad och verifierad med `tsc`/lint/Vitest; PR-förslag ej godkänt).

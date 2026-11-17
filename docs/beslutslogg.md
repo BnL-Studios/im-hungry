@@ -2,7 +2,7 @@
 
 Dokumentation av viktiga produkt- och teknikbeslut för **I'm Hungry!**. Varje beslut beskriver bakgrund, övervägda alternativ, motivering och konsekvenser.
 
-> **Aktuellt (2026-11-13, sprint 1):** Vi använder lokal Expo SQLite + Drizzle ORM för inventariet och en planerad Supabase Edge Function för AI. Spring Boot/PostgreSQL är ersatta teknikval. Matförrådets lista och formulär för att lägga till en råvara är implementerade på branchen `add-ingredient`; receptflödet är inte byggt. Historiska beslut finns kvar nedan.
+> **Aktuellt (2026-11-17, sprint 2):** Vi använder lokal Expo SQLite + Drizzle ORM för inventariet och en planerad Supabase Edge Function för AI. Spring Boot/PostgreSQL är ersatta teknikval. Första inventarieflödet är mergat via PR #122; ändra mängd, ta bort med bekräftelse, skalor och fyra Vitest-testfiler är implementerade. Receptflödet är inte byggt. Historiska beslut finns kvar nedan.
 
 ## Översikt
 
@@ -50,7 +50,7 @@ Vi valde alternativ C för att det löser ett verkligt problem: man vet inte vad
 
 **Utanför MVP:n:** inloggning/konton, delning i hushåll, molnsynk, inköpslista, näringsberäkning, streckkodsskanning, favoriter, recepthistorik och automatiska avdrag. Dessa ligger i backloggen.
 
-**Status i sprint 1:** Visa och lägga till är implementerat; ändra/ta bort, mat-humör och recept återstår.
+**Status i sprint 2:** Visa, lägga till, ändra mängd och ta bort är implementerat (PR #122 + US-03/US-04); mat-humör och recept återstår.
 
 ---
 
@@ -118,7 +118,7 @@ Gemini Flash-modellerna ingår i Geminis kostnadsfria API-nivå (Free Tier), så
 - **Begränsningar på gratisnivån:** Gratisnivån är hastighetsbegränsad. Exakta RPM/RPD-siffror syns per projekt i Google AI Studios rate-limit-konsol. Vi behöver hantera 429-svar (t.ex. kö eller backoff) och räkna med att gratisnivån kan ta slut vid mycket användning.
 - **Dataanvändning:** På gratisnivån får Google använda prompts och svar för att förbättra sina produkter. Vi skickar därför **inte** känsliga personuppgifter – bara livsmedelslistor. Vid behov av mer kapacitet eller dataskydd flyttar vi projektet till betald nivå.
 - **Utbytbar AI-tjänst:** AI-anropet läggs bakom Edge Functionen så att vi kan byta modell eller leverantör utan att röra mobilappen.
-- **Status:** AI-anropet är inte implementerat i sprint 1. Läs mer om [Geminis rate limits](https://ai.google.dev/gemini-api/docs/rate-limits), [priser](https://ai.google.dev/gemini-api/docs/pricing) och [villkor](https://ai.google.dev/gemini-api/terms).
+- **Status:** AI-anropet är fortfarande inte implementerat (sprint 2). Läs mer om [Geminis rate limits](https://ai.google.dev/gemini-api/docs/rate-limits), [priser](https://ai.google.dev/gemini-api/docs/pricing) och [villkor](https://ai.google.dev/gemini-api/terms).
 
 ---
 
@@ -220,7 +220,7 @@ Lokala inventarieoperationer ska fungera utan internet. Drizzle ger ett enhetlig
 - Schema och migrationer är teknisk sanningskälla. [Databasschemat](databasschema.md) är implementerat, inte ett utkast.
 - Validera mängd och enhet både i kod och med SQLite-begränsningar. Testa migrering från befintlig databas utan dataförlust.
 - De gamla backendfilerna togs bort i PR #104 tillsammans med flytten till `mobile/`. CI använder `Mobile (Node 22)`; branch protection kan behöva uppdateras manuellt.
-- **Sprint 1 (2026-11-13):** Listan läser från SQLite och formuläret för att lägga till en råvara är implementerat på branchen `add-ingredient`. Ändra/ta bort återstår.
+- **Sprint 1–2 (2026-11-17):** Listan läser från SQLite (PR #122). Lägga till, ändra mängd och ta bort med bekräftelse är implementerade; skalor sparas som basenheter. Fyra testfiler täcker validering, skalor, enheter och migrationer.
 
 ---
 
@@ -256,7 +256,7 @@ En Edge Function kan förvara AI-nyckeln på serversidan och gör det möjligt a
 - **Korrekthet:** Funktionen kan kontrollera AI:s recept mot de **inskickade** ingredienserna men känner inte den lokala databasens faktiska saldo. Mobilappen måste kontrollera receptet mot sitt lokala inventarie innan det visas som genomförbart.
 - **Dataminimering:** Skicka inte användarkonto eller andra personuppgifter i onödan.
 - **Framtid:** AI-leverantören kan bytas bakom funktionen utan att mobilappens lokala datalager ändras.
-- **Status i sprint 1:** Ingen `supabase/`-kod, ingen anropsklient och ingen receptvy finns ännu. Flödet byggs efter att inventariets CRUD är klart.
+- **Status i sprint 2:** Ingen `supabase/`-kod, ingen anropsklient och ingen receptvy finns ännu. Inventariets CRUD är nu klart i koden; receptflödet är nästa steg.
 
 Detaljer finns i [arkitekturdokumentet](arkitektur.md).
 
@@ -269,3 +269,4 @@ Detaljer finns i [arkitekturdokumentet](arkitektur.md).
 | 2026-10-27 | Beslut 01–05 skapade. | Första teknik- och produktvalen. |
 | 2026-11-02 | Beslut 06–07 ersatte Spring Boot/PostgreSQL med lokal SQLite och Edge Function. | Enklare MVP med lokal data och säker AI-gateway. |
 | 2026-11-13 | Status och konsekvenser uppdaterade; platshållare borttagna. | Dokumentationen ska spegla sprint 1. Inga nya arkitekturbeslut togs. |
+| 2026-11-17 | Status synkad med koden: PR #122 mergad, US-03/US-04, skalor och 4 testfiler implementerade. CI kör lint. | Dokumentationen ska spegla sprint 2. Inga nya arkitekturbeslut togs. |

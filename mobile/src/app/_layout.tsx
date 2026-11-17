@@ -17,6 +17,13 @@ export default function RootLayout() {
             title: "Lägg till råvara",
           }}
         />
+        <Stack.Screen
+          name="edit-ingredient"
+          options={{
+            presentation: "modal",
+            title: "Ändra mängd",
+          }}
+        />
       </Stack>
     </DatabaseProvider>
   );

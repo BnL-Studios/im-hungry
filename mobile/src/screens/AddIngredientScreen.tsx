@@ -1,4 +1,4 @@
-import { useMemo, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import {
   ActivityIndicator,
   KeyboardAvoidingView,
@@ -9,7 +9,6 @@ import {
   Text,
   TextInput,
   View,
-  useColorScheme,
   type TextInputInstance,
 } from "react-native";
 import { router } from "expo-router";
@@ -25,39 +24,24 @@ import {
   type IngredientField,
 } from "@/features/inventory/validation";
 
-const palettes = {
-  light: {
-    background: "#FFFFFF",
-    text: "#111827",
-    muted: "#6B7280",
-    border: "#D1D5DB",
-    field: "#F9FAFB",
-    chip: "#F3F4F6",
-    chipSelected: "#E0EDFB",
-    primary: "#208AEF",
-    onPrimary: "#FFFFFF",
-    error: "#B91C1C",
-  },
-  dark: {
-    background: "#0B0F14",
-    text: "#F9FAFB",
-    muted: "#9CA3AF",
-    border: "#374151",
-    field: "#111827",
-    chip: "#111827",
-    chipSelected: "#123A5C",
-    primary: "#208AEF",
-    onPrimary: "#FFFFFF",
-    error: "#F87171",
-  },
+const colors = {
+  background: "#FFFFFF",
+  text: "#111827",
+  muted: "#6B7280",
+  border: "#D1D5DB",
+  field: "#F9FAFB",
+  chip: "#F3F4F6",
+  chipSelected: "#E0EDFB",
+  primary: "#208AEF",
+  onPrimary: "#FFFFFF",
+  error: "#B91C1C",
 } as const;
 
-type Palette = (typeof palettes)[keyof typeof palettes];
+type Palette = typeof colors;
+
+const styles = createStyles(colors);
 
 export default function AddIngredientScreen() {
-  const scheme = useColorScheme() === "dark" ? "dark" : "light";
-  const colors = palettes[scheme];
-  const styles = useMemo(() => createStyles(colors), [colors]);
 
   const { add, saving } = useAddIngredient();
 
@@ -65,7 +49,6 @@ export default function AddIngredientScreen() {
   const [quantity, setQuantity] = useState("");
   const [unit, setUnit] = useState<Unit>("g");
   const [scaleFactor, setScaleFactor] = useState(1);
-  const [unitPicked, setUnitPicked] = useState(false);
   const [errors, setErrors] = useState<FieldErrors>({});
   const [formError, setFormError] = useState<string | null>(null);
 
@@ -200,7 +183,6 @@ export default function AddIngredientScreen() {
                   onPress={() => {
                     setUnit(option);
                     setScaleFactor(getDefaultScale(option).factor);
-                    setUnitPicked(true);
                     clearError("unit");
                   }}
                   style={({ pressed }) => [
@@ -231,46 +213,46 @@ export default function AddIngredientScreen() {
           ) : null}
         </View>
 
-        {unitPicked ? (
-          <View style={styles.field}>
-            <Text style={styles.label}>Skala</Text>
-            <View accessibilityRole="radiogroup" style={styles.units}>
-              {QUANTITY_SCALES[unit].map((scale) => {
-                const selected = scaleFactor === scale.factor;
+        <View style={styles.field}>
+          <Text style={styles.label}>Skala</Text>
+          <View accessibilityRole="radiogroup" style={styles.units}>
+            {QUANTITY_SCALES[unit].map((scale) => {
+              const selected = scaleFactor === scale.factor;
 
-                return (
-                  <Pressable
-                    accessibilityLabel={`Skala ${scale.label}`}
-                    accessibilityRole="radio"
-                    accessibilityState={{ selected }}
-                    key={scale.label}
-                    onPress={() => setScaleFactor(scale.factor)}
-                    style={({ pressed }) => [
-                      styles.scaleUnit,
-                      {
-                        backgroundColor: selected
-                          ? colors.chipSelected
-                          : colors.chip,
-                        borderColor: selected ? colors.primary : colors.border,
-                      },
-                      pressed ? styles.pressed : null,
+              return (
+                <Pressable
+                  accessibilityLabel={`Skala ${scale.label}`}
+                  accessibilityRole="radio"
+                  accessibilityState={{ selected }}
+                  key={scale.label}
+                  onPress={() => setScaleFactor(scale.factor)}
+                  style={({ pressed }) => [
+                    styles.scaleUnit,
+                    {
+                      backgroundColor: selected
+                        ? colors.chipSelected
+                        : colors.chip,
+                      borderColor: selected ? colors.primary : colors.border,
+                    },
+                    pressed ? styles.pressed : null,
+                  ]}
+                >
+                  <Text
+                    style={[
+                      styles.scaleUnitText,
+                      { color: selected ? colors.primary : colors.text },
                     ]}
                   >
-                    <Text
-                      style={[
-                        styles.scaleUnitText,
-                        { color: selected ? colors.primary : colors.text },
-                      ]}
-                    >
-                      {scale.label}
-                    </Text>
-                  </Pressable>
-                );
-              })}
-            </View>
-            <Text style={styles.note}>Sparas som {UNIT_LABELS[unit]} i förrådet.</Text>
+                    {scale.label}
+                  </Text>
+                </Pressable>
+              );
+            })}
           </View>
-        ) : null}
+          <Text style={styles.note}>
+            Sparas som {UNIT_LABELS[unit]} i förrådet.
+          </Text>
+        </View>
 
         {formError ? (
           <Text accessibilityLiveRegion="polite" style={styles.formError}>

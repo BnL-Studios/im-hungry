@@ -19,4 +19,10 @@ describe("QUANTITY_SCALES", () => {
     expect(liter).toBeDefined();
     expect(convertToBaseQuantity(2, liter!)).toBe(2000);
   });
+
+  it("avrundar flyttalsbrus för 300 mg", () => {
+    const mg = QUANTITY_SCALES.g.find((scale) => scale.label === "mg");
+    expect(mg).toBeDefined();
+    expect(convertToBaseQuantity(300, mg!)).toBe(0.3);
+  });
 });

@@ -11,19 +11,19 @@ En story är klar när:
 7. Inga hemliga AI-nycklar, känsliga uppgifter, tillfällig felsökningskod eller oavsiktliga filer finns i Git eller appens distribuerade kod.
 8. Dokumentationen är uppdaterad vid ändrad funktion/arkitektur och GitHub-kortet kan flyttas till **Klart**.
 
-## Nuvarande kontroller (sprint 1)
+## Nuvarande kontroller (sprint 2)
 
 Körs från `mobile/`:
 
 ```bash
 npx tsc --noEmit       # typkontroll
-npm test               # Vitest: validering, enheter och SQL-migrationer
-npm run lint           # ESLint via expo lint (lokalt; ingår inte i CI ännu)
+npm test               # Vitest: validering, skalor, enheter och SQL-migrationer
+npm run lint           # ESLint via expo lint (körs lokalt och i CI)
 ```
 
-CI-workflowen [`.github/workflows/ci.yml`](../.github/workflows/ci.yml) kör på Node 22: `npm ci`, validering av Expo-konfigurationen, `npx tsc --noEmit` och `npm test` vid PR och push till `main`.
+CI-workflowen [`.github/workflows/ci.yml`](../.github/workflows/ci.yml) kör på Node 22: `npm ci`, validering av Expo-konfigurationen, `npm run lint`, `npx tsc --noEmit` och `npm test` vid PR och push till `main`.
 
-Manuell kontroll i sprint 1: öppna fliken **Råvaror**, lägg till en råvara med giltig och ogiltig input, kontrollera att listan uppdateras direkt och att datan finns kvar efter omstart. Testa gärna både Expo Go/simulator och webb.
+Manuell kontroll i sprint 2: öppna fliken **Råvaror**, lägg till en råvara med giltig och ogiltig input (inklusive skalor), ändra mängden, ta bort en råvara och bekräfta dialogrutan. Kontrollera att listan uppdateras direkt och att datan finns kvar efter omstart. Testa både native och webb.
 
 ## Versioner
 

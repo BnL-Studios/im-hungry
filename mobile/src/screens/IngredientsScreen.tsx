@@ -1,8 +1,10 @@
 import { useState } from "react";
-import { router, type RelativePathString } from "expo-router";
+import { router } from "expo-router";
 import {
   ActivityIndicator,
+  Alert,
   FlatList,
+  Platform,
   Pressable,
   StyleSheet,
   Text,
@@ -14,13 +16,33 @@ import {
 } from "@/features/inventory/repository";
 import { formatQuantity } from "@/features/inventory/units";
 
+async function confirmRemove(name: string): Promise<boolean> {
+  if (Platform.OS === "web") {
+    return (
+      typeof window !== "undefined" &&
+      window.confirm(`Vill du ta bort ${name}?`)
+    );
+  }
+
+  return new Promise((resolve) => {
+    Alert.alert("Ta bort råvara", `Vill du ta bort ${name}?`, [
+      { text: "Avbryt", style: "cancel", onPress: () => resolve(false) },
+      { text: "Ta bort", style: "destructive", onPress: () => resolve(true) },
+    ]);
+  });
+}
+
 export default function IngredientsScreen() {
   const { data, error, updatedAt } = useInventoryItems();
   const { remove, removing } = useRemoveIngredient();
   const [actionError, setActionError] = useState<string | null>(null);
   const isLoading = updatedAt === undefined && !error;
 
-  async function handleRemove(id: number) {
+  async function handleRemove(id: number, name: string) {
+    if (!(await confirmRemove(name))) {
+      return;
+    }
+
     setActionError(null);
     try {
       await remove(id);
@@ -80,9 +102,10 @@ export default function IngredientsScreen() {
                   accessibilityLabel={`Ändra mängd för ${item.name}`}
                   accessibilityRole="button"
                   onPress={() =>
-                    router.push(
-                      `/edit-ingredient?id=${item.id}` as RelativePathString,
-                    )
+                    router.push({
+                      pathname: "/edit-ingredient",
+                      params: { id: String(item.id) },
+                    })
                   }
                   style={({ pressed }) => [
                     styles.actionButton,
@@ -95,7 +118,7 @@ export default function IngredientsScreen() {
                   accessibilityLabel={`Ta bort ${item.name}`}
                   accessibilityRole="button"
                   disabled={removing}
-                  onPress={() => void handleRemove(item.id)}
+                  onPress={() => void handleRemove(item.id, item.name)}
                   style={({ pressed }) => [
                     styles.actionButton,
                     pressed ? styles.actionPressed : null,
@@ -131,7 +154,7 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
   addButton: {
-    backgroundColor: "#2563eb",
+    backgroundColor: "#208AEF",
     borderRadius: 999,
     paddingHorizontal: 18,
     paddingVertical: 10,
@@ -152,7 +175,7 @@ const styles = StyleSheet.create({
     fontWeight: "600",
   },
   pressed: {
-    backgroundColor: "#1d4ed8", // mörkare blå vid tryck
+    opacity: 0.8,
   },
   listContent: {
     flexGrow: 1,

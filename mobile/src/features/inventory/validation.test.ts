@@ -63,6 +63,10 @@ describe("parseIngredientInput", () => {
     expect(expectValue(parse("Mjöl", "5", "ml", 100)).quantity).toBe(500);
   });
 
+  it("avrundar flyttalsbrus för 300 mg", () => {
+    expect(expectValue(parse("Salt", "300", "g", 0.001)).quantity).toBe(0.3);
+  });
+
   it("avvisar tomt namn", () => {
     expect(expectError(parse("", "1"), "name")).toBe(
       "Ange ett namn på råvaran.",

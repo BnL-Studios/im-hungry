@@ -37,5 +37,6 @@ export function convertToBaseQuantity(
   value: number,
   scale: QuantityScale,
 ): number {
-  return value * scale.factor;
+  // Avrunda bort flyttalsbrus, t.ex. 300 * 0.001 -> 0.3.
+  return Math.round(value * scale.factor * 1e6) / 1e6;
 }

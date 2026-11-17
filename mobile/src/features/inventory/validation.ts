@@ -91,7 +91,8 @@ export function parseIngredientInput(
       input.scaleFactor > 0
         ? input.scaleFactor
         : 1;
-    quantity = parsedQuantity.value * factor;
+    // Avrunda bort flyttalsbrus, t.ex. 300 mg -> 0.3 g.
+    quantity = Math.round(parsedQuantity.value * factor * 1e6) / 1e6;
 
     if (!Number.isFinite(quantity) || quantity > QUANTITY_MAX) {
       errors.quantity = "Mängden är för stor.";

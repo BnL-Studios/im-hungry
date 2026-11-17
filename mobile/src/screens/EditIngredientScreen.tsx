@@ -173,7 +173,7 @@ const styles = StyleSheet.create({
   },
   saveButton: {
     alignItems: "center",
-    backgroundColor: "#2563eb",
+    backgroundColor: "#208AEF",
     borderRadius: 12,
     justifyContent: "center",
     marginTop: 8,
