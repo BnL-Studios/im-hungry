@@ -1,4 +1,5 @@
-import { router } from "expo-router";
+import { useState } from "react";
+import { router, type RelativePathString } from "expo-router";
 import {
   ActivityIndicator,
   FlatList,
@@ -7,12 +8,26 @@ import {
   Text,
   View,
 } from "react-native";
-import { useInventoryItems } from "@/features/inventory/repository";
+import {
+  useInventoryItems,
+  useRemoveIngredient,
+} from "@/features/inventory/repository";
 import { formatQuantity } from "@/features/inventory/units";
 
 export default function IngredientsScreen() {
   const { data, error, updatedAt } = useInventoryItems();
+  const { remove, removing } = useRemoveIngredient();
+  const [actionError, setActionError] = useState<string | null>(null);
   const isLoading = updatedAt === undefined && !error;
+
+  async function handleRemove(id: number) {
+    setActionError(null);
+    try {
+      await remove(id);
+    } catch {
+      setActionError("Kunde inte ta bort råvaran. Försök igen.");
+    }
+  }
 
   return (
     <View style={styles.container}>
@@ -33,6 +48,8 @@ export default function IngredientsScreen() {
         </Pressable>
       </View>
 
+      {actionError ? <Text style={styles.error}>{actionError}</Text> : null}
+
       {error ? (
         <Text style={styles.error}>
           Kunde inte läsa matförrådet. Försök igen.
@@ -52,10 +69,44 @@ export default function IngredientsScreen() {
           }
           renderItem={({ item }) => (
             <View style={styles.item}>
-              <Text style={styles.name}>{item.name}</Text>
-              <Text style={styles.quantity}>
-                {formatQuantity(item.quantity, item.unit)}
-              </Text>
+              <View style={styles.itemInfo}>
+                <Text style={styles.name}>{item.name}</Text>
+                <Text style={styles.quantity}>
+                  {formatQuantity(item.quantity, item.unit)}
+                </Text>
+              </View>
+              <View style={styles.actions}>
+                <Pressable
+                  accessibilityLabel={`Ändra mängd för ${item.name}`}
+                  accessibilityRole="button"
+                  onPress={() =>
+                    router.push(
+                      `/edit-ingredient?id=${item.id}` as RelativePathString,
+                    )
+                  }
+                  style={({ pressed }) => [
+                    styles.actionButton,
+                    pressed ? styles.actionPressed : null,
+                  ]}
+                >
+                  <Text style={styles.actionText}>Ändra</Text>
+                </Pressable>
+                <Pressable
+                  accessibilityLabel={`Ta bort ${item.name}`}
+                  accessibilityRole="button"
+                  disabled={removing}
+                  onPress={() => void handleRemove(item.id)}
+                  style={({ pressed }) => [
+                    styles.actionButton,
+                    pressed ? styles.actionPressed : null,
+                    removing ? styles.disabled : null,
+                  ]}
+                >
+                  <Text style={[styles.actionText, styles.removeText]}>
+                    Ta bort
+                  </Text>
+                </Pressable>
+              </View>
             </View>
           )}
         />
@@ -111,15 +162,44 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
+    gap: 12,
     paddingVertical: 16,
+  },
+  itemInfo: {
+    flexShrink: 1,
   },
   name: {
     fontSize: 16,
     flexShrink: 1,
   },
   quantity: {
-    fontSize: 16,
-    marginLeft: 12,
+    color: "#6B7280",
+    fontSize: 14,
+    marginTop: 2,
+  },
+  actions: {
+    flexDirection: "row",
+    gap: 8,
+  },
+  actionButton: {
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: "#D1D5DB",
+    paddingHorizontal: 10,
+    paddingVertical: 8,
+  },
+  actionText: {
+    fontSize: 13,
+    fontWeight: "600",
+  },
+  removeText: {
+    color: "#B91C1C",
+  },
+  actionPressed: {
+    opacity: 0.7,
+  },
+  disabled: {
+    opacity: 0.5,
   },
   separator: {
     height: 1,

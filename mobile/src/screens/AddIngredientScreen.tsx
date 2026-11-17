@@ -14,6 +14,10 @@ import {
 } from "react-native";
 import { router } from "expo-router";
 import { useAddIngredient } from "@/features/inventory/repository";
+import {
+  getDefaultScale,
+  QUANTITY_SCALES,
+} from "@/features/inventory/scales";
 import { UNIT_LABELS, UNITS, type Unit } from "@/features/inventory/units";
 import {
   parseIngredientInput,
@@ -60,6 +64,8 @@ export default function AddIngredientScreen() {
   const [name, setName] = useState("");
   const [quantity, setQuantity] = useState("");
   const [unit, setUnit] = useState<Unit>("g");
+  const [scaleFactor, setScaleFactor] = useState(1);
+  const [unitPicked, setUnitPicked] = useState(false);
   const [errors, setErrors] = useState<FieldErrors>({});
   const [formError, setFormError] = useState<string | null>(null);
 
@@ -85,7 +91,7 @@ export default function AddIngredientScreen() {
 
     setFormError(null);
 
-    const result = parseIngredientInput({ name, quantity, unit });
+    const result = parseIngredientInput({ name, quantity, unit, scaleFactor });
     if (!result.ok) {
       setErrors(result.errors);
       return;
@@ -154,8 +160,8 @@ export default function AddIngredientScreen() {
           <Text style={styles.label}>Mängd</Text>
           <TextInput
             accessibilityLabel="Mängd"
-            inputMode="decimal"
-            keyboardType="decimal-pad"
+            inputMode="numeric"
+            keyboardType="number-pad"
             onChangeText={(value) => {
               setQuantity(value);
               clearError("quantity");
@@ -193,6 +199,8 @@ export default function AddIngredientScreen() {
                   key={option}
                   onPress={() => {
                     setUnit(option);
+                    setScaleFactor(getDefaultScale(option).factor);
+                    setUnitPicked(true);
                     clearError("unit");
                   }}
                   style={({ pressed }) => [
@@ -222,6 +230,47 @@ export default function AddIngredientScreen() {
             </Text>
           ) : null}
         </View>
+
+        {unitPicked ? (
+          <View style={styles.field}>
+            <Text style={styles.label}>Skala</Text>
+            <View accessibilityRole="radiogroup" style={styles.units}>
+              {QUANTITY_SCALES[unit].map((scale) => {
+                const selected = scaleFactor === scale.factor;
+
+                return (
+                  <Pressable
+                    accessibilityLabel={`Skala ${scale.label}`}
+                    accessibilityRole="radio"
+                    accessibilityState={{ selected }}
+                    key={scale.label}
+                    onPress={() => setScaleFactor(scale.factor)}
+                    style={({ pressed }) => [
+                      styles.scaleUnit,
+                      {
+                        backgroundColor: selected
+                          ? colors.chipSelected
+                          : colors.chip,
+                        borderColor: selected ? colors.primary : colors.border,
+                      },
+                      pressed ? styles.pressed : null,
+                    ]}
+                  >
+                    <Text
+                      style={[
+                        styles.scaleUnitText,
+                        { color: selected ? colors.primary : colors.text },
+                      ]}
+                    >
+                      {scale.label}
+                    </Text>
+                  </Pressable>
+                );
+              })}
+            </View>
+            <Text style={styles.note}>Sparas som {UNIT_LABELS[unit]} i förrådet.</Text>
+          </View>
+        ) : null}
 
         {formError ? (
           <Text accessibilityLiveRegion="polite" style={styles.formError}>
@@ -305,6 +354,17 @@ function createStyles(colors: Palette) {
     },
     unitText: {
       fontSize: 17,
+      fontWeight: "600",
+    },
+    scaleUnit: {
+      alignItems: "center",
+      borderRadius: 8,
+      borderWidth: 1,
+      flex: 1,
+      paddingVertical: 8,
+    },
+    scaleUnitText: {
+      fontSize: 14,
       fontWeight: "600",
     },
     error: {

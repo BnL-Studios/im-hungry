@@ -45,3 +45,13 @@ Docs: https://docs.expo.dev/eas/index.md
 - Svara kortfattat och koncist. Skippa långa förklaringar om jag inte uttryckligen ber om det.
 - Vid ändringar i befintliga filer, redigera endast berörda funktioner – skriv inte om hela filer i onödan.
 - Vid Git-kommandon, föreslå korta, beskrivande Conventional Commits (t.ex. `feat:`, `fix:`).
+
+## Kontext- och tokenvänligt arbetssätt
+
+- Läs bara filer du ska ändra eller som direkt blockerar uppgiften. Använd riktade sökningar och `read` med `offset`/`limit` i stället för att bläddra i hela projektet.
+- Sök efter ett befintligt mönster eller en hjälpfunktion innan du skapar en ny; återanvänd hellre än duplicerar.
+- Gör små, lokala ändringar. Lämna omgivande kod, formatering och kommentarer orörda.
+- Samla oberoende sökningar och filäsningar i parallella anrop när det går.
+- Skriv inte ut hela filer eller stora utdrag i svaret. Sammanfatta vad som ändrats och vilka kontroller som körts.
+- Kör `npx tsc --noEmit`, `npx expo lint` och `npx vitest run` innan du säger att uppgiften är klar. Rapportera bara relevanta fel och radnummer.
+- Nya Expo Router-routes kan ge tillfälliga typfel i `.expo/types/router.d.ts` tills dev-servern startats; starta Expo eller använd `RelativePathString` i stället för att gissa nya href-typer.

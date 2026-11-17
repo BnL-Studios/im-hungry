@@ -5,7 +5,7 @@
 > **Current delivery scope:** Two-person Scrum course; `Won't` means *not this time*, not rejected forever.  
 > **Updated:** 2026-11-16 (sprint 2)
 
-> **Sprint 2 status (2026-11-16):** US-01 (View my inventory) and US-02 (Add an ingredient) were merged to `main` in sprint 1 via PR #122. Sprint 2 covers US-03 (#26), US-04 (#27) and the recipe flow: US-05 (#22, split into sub-issues #125–#129), US-68 (#23) and US-67 (#24). No sprint 2 code is started yet. The backlog below remains the full product scope, not a status list.
+> **Sprint 2 status (2026-11-17):** US-01 (View my inventory) and US-02 (Add an ingredient) were merged to `main` in sprint 1 via PR #122. On the sprint board, all five selected stories are now in the sprint: #22 (US-05, split into #125–#129), #26/#27 (US-03/US-04, In Progress) and #23/#24 (US-68/US-67, moved to Sprint Backlog). #123/#124 are also In Progress but outside the sprint goal. The backlog below remains the full product scope, not a status list.
 
 ## Priority and size overview
 
