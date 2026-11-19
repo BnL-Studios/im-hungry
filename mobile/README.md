@@ -54,7 +54,7 @@ Routes i `src/app/` hålls tunna och importerar skärmar och logik från `src/sc
 - **Lägga till:** `AddIngredientScreen` använder numeriskt tangentbord, validerar med `parseIngredientInput` och sparar med `useAddIngredient`. Ingen SQL och ingen duplicerad validering i skärmen.
 - **Ändra och ta bort:** `EditIngredientScreen` validerar med `parseQuantityInput` och skriver med `useUpdateIngredient`. Borttagning sker via `useRemoveIngredient` först efter bekräftelse (`Alert.alert` på native, `window.confirm` på webb).
 - **Migrationer:** Drizzle Kit-genererade, versionshanterade filer i `drizzle/`. De körs vid appstart innan databasfrågor utförs.
-- **Recept:** Endast vid receptbegäran ska inventariet och valt mat-humör skickas via HTTPS till en **Supabase Edge Function**, som anropar **Gemini 3.8 Flash** med en serverlagrad hemlig nyckel. Se [kontrakt v1, status, fel och validering](../docs/ai-integration.md). Edge Function är ännu inte byggd.
+- **Recept:** Endast vid receptbegäran skickas **ingredienserna** (ID, namn, mängd, basenhet) via HTTPS till en **Supabase Edge Function** som anropar **Gemini 3.8 Flash** med serverlagrad hemlig nyckel. Vid framgång returneras exakt fyra toppnivåfält: `title`, `ingredients`, `steps` och `estimatedCookingTime` (minuter). Val av mat-humör tillkommer efter MVP och ingår inte i request v1. Se [kontrakt v1, fel och validering](../docs/ai-integration.md). Edge Function är ännu inte byggd.
 - **Enheter och skalor:** `g`, `ml` och `qty` (visas som `st`). `scales.ts` erbjuder mg/g/kg, ml/dl/L och st/dussin och räknar om med flyttalsavrundning innan värdet sparas i basenhet. Databasen stoppar mängder som inte är positiva och enheter utanför listan.
 
 ## Flödet för att lägga till en råvara
