@@ -14,7 +14,6 @@ Målgrupp: studenter och andra som ofta har råvaror hemma men svårt att bestä
 |---|---|---|
 | Matförråd | Visa, lägga till, korrigera och ta bort råvaror med mängd och enhet. | Implementerat (US-01–US-04). Skalor räknas om till basenheterna g/ml/st. |
 | Lokal lagring | Inventariet finns kvar efter omstart och kan hanteras utan internet. | Implementerat med Expo SQLite + Drizzle. |
-| Mat-humör (US-06) | Val av receptstil/preferens | **Efter MVP**; skickas inte i första API-kontraktet |
 | Ett receptförslag | Skicka en begäran till Edge Function och visa ett AI-genererat recept utifrån råvarorna som finns. | Inte påbörjat; Edge Function finns inte i repot. |
 | Resultat och fel | Visa recepttitel, tid, ingredienser, mängder och steg, eller ett begripligt felmeddelande. | Inte påbörjat. |
 
