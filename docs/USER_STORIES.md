@@ -3,7 +3,7 @@
 > **Product goal:** Help home cooks answer *“What can I make with what I already have?”* quickly and reliably.  
 > **MVP definition:** [`mvp.md`](mvp.md)<br>
 > **Current delivery scope:** Two-person Scrum course; `Won't` means *not this time*, not rejected forever.  
-> **Updated:** 2026-11-16 (sprint 2)
+> **Updated:** 2026-11-19 (sprint 2; simplified MVP)
 
 > **Sprint 2 status (2026-11-17):** US-01 (View my inventory) and US-02 (Add an ingredient) were merged to `main` in sprint 1 via PR #122. On the sprint board, all five selected stories are now in the sprint: #22 (US-05, split into #125–#129), #26/#27 (US-03/US-04, In Progress) and #23/#24 (US-68/US-67, moved to Sprint Backlog). #123/#124 are also In Progress but outside the sprint goal. The backlog below remains the full product scope, not a status list.
 
@@ -15,8 +15,8 @@ T-shirt sizes are **relative, not hours**: **S** = small and clear; **M** = seve
 
 | Priority | Stories | S | M | L | Planned scope |
 |:--|--:|--:|--:|--:|:--|
-| **Must** | **8** | 3 | 4 | 1 | MVP |
-| **Should** | **26** | 6 | 15 | 5 | Next after validation |
+| **Must** | **7** | 2 | 4 | 1 | MVP |
+| **Should** | **27** | 7 | 15 | 5 | Next after validation |
 | **Could** | **28** | 7 | 15 | 6 | Optional enhancements |
 | **Won't** | **13** | 0 | 8 | 5 | Excluded this course |
 | **Total** | **75** | **16** | **42** | **17** | **Full product vision** |
@@ -29,7 +29,7 @@ Each heading begins with the **unique queue position**, followed by its **stable
 
 ### First 14 stories for the classroom exercise
 
-The earlier course material suggests initially discussing about 10–15 stories. Here are the first 14 **in priority order** (all eight MVP stories, then six follow-ups):
+The earlier course material suggests initially discussing about 10–15 stories. Here are the first 14 **in priority order** (all seven MVP stories, then seven follow-ups):
 
 | Order | ID | Story | MoSCoW | Size |
 |--:|:--|:--|:--|:--:|
@@ -38,19 +38,18 @@ The earlier course material suggests initially discussing about 10–15 stories.
 | 03 | [US-05](#us-05) | Get a basic AI recipe from my inventory | Must | **L** |
 | 04 | [US-68](#us-68) | Read a complete recipe in the app | Must | **S** |
 | 05 | [US-67](#us-67) | Understand when no valid recipe can be offered | Must | **M** |
-| 06 | [US-06](#us-06) | Choose a cooking mood | Must | **S** |
-| 07 | [US-03](#us-03) | Correct an ingredient amount | Must | **M** |
-| 08 | [US-04](#us-04) | Remove an ingredient | Must | **S** |
+| 06 | [US-03](#us-03) | Correct an ingredient amount | Must | **M** |
+| 07 | [US-04](#us-04) | Remove an ingredient | Must | **S** |
+| 08 | [US-06](#us-06) | Choose a cooking mood | Should | **S** |
 | 09 | [US-07](#us-07) | Try another suggestion | Should | **S** |
 | 10 | [US-26](#us-26) | Choose a cuisine or food style | Should | **S** |
 | 11 | [US-27](#us-27) | Set a maximum cooking time | Should | **M** |
 | 12 | [US-28](#us-28) | Choose the number of servings | Should | **M** |
 | 13 | [US-17](#us-17) | Create my own account | Should | **L** |
 | 14 | [US-18](#us-18) | Sign in | Should | **L** |
-
 ---
 
-## Must Have — MVP (8 stories)
+## Must Have — MVP (7 stories)
 
 A small working journey: save ingredients → request a genuinely feasible AI recipe → read it.
 
@@ -146,27 +145,9 @@ A small working journey: save ingredients → request a genuinely feasible AI re
 
 </details>
 
-<a id="us-06"></a>
-
-### 06 · US-06 — Choose a cooking mood
-
-**Must · S · Recipe discovery**
-
-> As a home cook, I want to choose the kind of food I feel like, so that the suggestion better suits my appetite.
-
-<details>
-<summary>Acceptance criteria</summary>
-
-- [ ] I can choose between Comfort food, Quick & easy and Surprise me before generating a recipe.
-- [ ] Surprise me is selected by default, and I can clearly see my current selection.
-- [ ] My selected mood is taken into account for the requested recipe when feasible.
-- [ ] Choosing a mood never permits a recipe to exceed the ingredients and amounts recorded in my inventory.
-
-</details>
-
 <a id="us-03"></a>
 
-### 07 · US-03 — Correct an ingredient amount
+### 06 · US-03 — Correct an ingredient amount
 
 **Must · M · Inventory · In sprint 2 (#26)**
 
@@ -184,7 +165,7 @@ A small working journey: save ingredients → request a genuinely feasible AI re
 
 <a id="us-04"></a>
 
-### 08 · US-04 — Remove an ingredient
+### 07 · US-04 — Remove an ingredient
 
 **Must · S · Inventory · In sprint 2 (#27)**
 
@@ -202,9 +183,28 @@ A small working journey: save ingredients → request a genuinely feasible AI re
 
 ---
 
-## Should Have — Next (26 stories)
+## Should Have — Next (27 stories)
 
 Valuable additions after the MVP is demonstrated; these are not automatically part of the current sprint.
+
+<a id="us-06"></a>
+
+### 08 · US-06 — Choose a cooking mood
+
+**Should · S · Recipe discovery · Efter MVP (beslut 2026-11-19)**
+
+> As a home cook, I want to choose the kind of food I feel like, so that the suggestion better suits my appetite.
+
+<details>
+<summary>Acceptance criteria</summary>
+
+- [ ] I can choose between Comfort food, Quick & easy and Surprise me before generating a recipe.
+- [ ] Surprise me is selected by default, and I can clearly see my current selection.
+- [ ] My selected mood is taken into account for the requested recipe when feasible.
+- [ ] Choosing a mood never permits a recipe to exceed the ingredients and amounts recorded in my inventory.
+
+</details>
+
 
 <a id="us-07"></a>
 
@@ -1383,7 +1383,7 @@ These are **proposed** sizes. If your chosen AI/authentication technology or tea
 ## Dependencies, estimation and review
 
 - **First prove the key risk.** US-05 (real AI using actual stock) is near the top, immediately after entering and viewing food. Don't postpone AI integration until the end of the course.
-- **MVP traceability.** Six bullets in `MVP.md` map to eight Must stories: view (**US-01**), add (**US-02**), correct/delete (**US-03/04**), choose mood (**US-06**), generate one feasible recipe (**US-05**), and view results/handle failures (**US-68/67**). No post-MVP features were promoted to Must.
+- **MVP traceability (updated 2026-11-19).** Seven Must stories cover view (**US-01**), add (**US-02**), correct/delete (**US-03/04**), generate one feasible recipe with **only ingredients in the request** (**US-05**) and view results/handle failures (**US-68/67**). **US-06 cooking mood moved to Should (after MVP).** Successful AI response has exactly title, ingredients, steps and estimated cooking time. Sync the GitHub Project MoSCoW field for US-06 at backlog refinement.
 - **Check dependencies.** US-10 needs US-69; US-11 needs US-10; US-09 needs US-08; US-31 needs completion; US-18/19/20/21/22/23/29/30 need accounts and user data separation. US-38 needs expiry-date data; US-42 needs the missing-ingredient mode; household membership needs account permissions.
 - **Refine together.** Compare every proposed size with **US-02 = M**, let both developers explain disagreements and revise uncertainty after technical spikes or sprint reviews. A new size is not a conversion to hours.
 - **Use real completed work.** In subsequent sprint planning, compare the team's recent completed S/M/L stories against current capacity. Don't assume all 75 stories are deliverable during the course.
