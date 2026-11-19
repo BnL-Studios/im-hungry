@@ -45,12 +45,12 @@ Vi valde alternativ C för att det löser ett verkligt problem: man vet inte vad
 **MVP:n innehåller:**
 
 - Registrera, visa, ändra och ta bort råvaror med mängd och enhet.
-- Ett litet urval mat-humör, t.ex. *Comfort food*, *Quick & easy* och *Surprise me*.
-- Ett AI-genererat receptförslag utifrån det som finns hemma, med begripliga fel- och tomma lägen.
+- Ett AI-receptförslag som tar **enbart ingredienslistan** som indata och returnerar recepttitel, använda ingredienser, tillagningssteg och uppskattad tid i minuter.
+- Begripliga fel- och tomma lägen när ett giltigt recept inte går att få.
 
-**Utanför MVP:n:** inloggning/konton, delning i hushåll, molnsynk, inköpslista, näringsberäkning, streckkodsskanning, favoriter, recepthistorik och automatiska avdrag. Dessa ligger i backloggen.
+**Utanför MVP:n:** mat-humör (US-06; tidigare planerat för MVP), inloggning/konton, delning i hushåll, molnsynk, inköpslista, näringsberäkning, streckkodsskanning, favoriter, recepthistorik och automatiska avdrag. Dessa ligger i backloggen.
 
-**Status i sprint 2:** Visa, lägga till, ändra mängd och ta bort är implementerat (PR #122 + US-03/US-04); mat-humör och recept återstår.
+**Status i sprint 2:** Visa/lägga till är mergat via PR #122; ändra/ta bort är implementerat på öppna PR #130. Receptintegration är inte byggd; mat-humör flyttat till efter MVP enligt förenkling 2026-11-19.
 
 ---
 
@@ -231,7 +231,7 @@ Lokala inventarieoperationer ska fungera utan internet. Drizzle ger ett enhetlig
 **Datum:** 2026-11-02 · **Status:** Gäller som målarkitektur; ej implementerat
 
 > **Beslut**
-> Vid receptbegäran skickar Expo-appen **endast inventariet och valt mat-humör** till en **Supabase Edge Function (Deno/TypeScript)**. Funktionen validerar indata, anropar Gemini med en **serverlagrad privat API-nyckel** och returnerar ett validerat strukturerat recept. Matförrådet lagras fortfarande bara lokalt i SQLite.
+> Vid receptbegäran skickar Expo-appen **endast ingredienslistan** till en **Supabase Edge Function (Deno/TypeScript)**. Funktionen validerar indata, anropar Gemini med en **serverlagrad privat API-nyckel** och returnerar på framgång exakt fyra fält: `title`, `ingredients`, `steps`, `estimatedCookingTime`. Matförrådet lagras fortfarande bara lokalt i SQLite.
 
 ### Bakgrund
 
@@ -250,7 +250,7 @@ En Edge Function kan förvara AI-nyckeln på serversidan och gör det möjligt a
 
 ### Konsekvenser
 
-- **Dataflöde:** SQLite → appens begäran (råvaror, mängder, enheter, mat-humör) → Edge Function → AI → funktion → app. Begäran görs bara när användaren vill ha recept.
+- **Dataflöde:** SQLite → appens begäran (endast `ingredients` med ID, namn, mängd, enhet) → Edge Function → AI → funktion → app. Lyckat svar innehåller fyra receptfält utan `status`- eller `recipe`-wrapper. Begäran görs bara när användaren vill ha recept.
 - **Onlinekrav:** Receptgenerering kräver uppkoppling. Matförrådet fungerar offline.
 - **Säkerhet:** Lägg AI-nyckeln i Supabase-funktionens hemlighetshantering. Validera förfrågningsstorlek, tillåtna värden och AI-svarets format; hantera fel och kvotgränser.
 - **Skydd mot missbruk:** MVP:n saknar användarkonton. En publik Edge Function kan missbrukas; säkra rate limiting, kvoter, övervakning och en rimlig anropskontroll **innan publik lansering**. En publik Supabase-nyckel är inte hemlig.
@@ -272,3 +272,4 @@ Detaljer och API-kontrakt finns i [arkitekturdokumentet](arkitektur.md) och [AI-
 | 2026-11-13 | Status och konsekvenser uppdaterade; platshållare borttagna. | Dokumentationen ska spegla sprint 1. Inga nya arkitekturbeslut togs. |
 | 2026-11-17 | Status synkad med koden: PR #122 mergad, US-03/US-04, skalor och 4 testfiler implementerade. CI kör lint. | Dokumentationen ska spegla sprint 2. Inga nya arkitekturbeslut togs. |
 | 2026-11-19 | Beslut 03 preciserat till `gemini-3.8-flash` med Flash-Lite som reserv. AI-kontrakt, validering och säkerhetsgräns dokumenterade i `ai-integration.md`. | #125 design klar för review; #127 API-konto/nyckel inte ännu verifierat. |
+| 2026-11-19 | Beslut 01/07 och API v1 förenklade: endast ingredienslista in, fyra receptfält ut; US-06 flyttad utanför MVP. | Teamets beslut att minimera första vertikala receptflödet. |
