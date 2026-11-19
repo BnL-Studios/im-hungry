@@ -114,7 +114,7 @@ Gemini 3.8 Flash har strukturerade JSON-svar och text-in/utdata som listas som k
 
 ### Konsekvenser
 
-- **API-nyckel:** `GEMINI_API_KEY` ska ligga i Supabase Edge Functionens hemlighetshantering, aldrig i React Native-appen, Git eller `EXPO_PUBLIC_*`. **Nyckeln är ännu inte skapad/verifierad inom #127.**
+- **API-nyckel:** `GEMINI_API_KEY` ska ligga i Supabase Edge Functionens hemlighetshantering, aldrig i React Native-appen, Git eller `EXPO_PUBLIC_*`. **Nyckel och åtkomst är ännu inte verifierade inom #127.**
 - **Begränsningar på gratisnivån:** Gratisnivån är hastighetsbegränsad och kontoberoende. Exakta RPM/TPM/RPD-siffror syns per projekt i Google AI Studios rate-limit-konsol. Hantera 429-svar, återförsök med gräns och slut på kvot; ingen fakturering aktiveras utan nytt beslut.
 - **Dataanvändning:** På gratisnivån får Google använda prompts och svar för att förbättra sina produkter. Vi skickar därför **inte** känsliga personuppgifter – bara livsmedelslistor. Vid behov av mer kapacitet eller dataskydd flyttar vi projektet till betald nivå.
 - **Utbytbar AI-tjänst:** AI-anropet läggs bakom Edge Functionen så att vi kan byta modell eller leverantör utan att röra mobilappen.
