@@ -128,3 +128,19 @@ När inget rimligt recept kan genereras eller anropet misslyckas returneras ett 
 - [ ] **US-05 / US-67:** Tests visar att lager inte ändras och att inga saknade eller överstora mängder presenteras som tillgängliga.
 
 **Gräns för #125:** detta dokument är design, inte påstående om fungerande API, konfigurerad prenumeration eller färdigt sprintmål.
+
+## Lokal demo för #128 och #126
+
+Den lokala demon använder `gemini-3.5-flash-lite`. Serverns `GEMINI_MODEL` kan ändras för att testa designens ursprungliga modellval. Ingen reservmodell är aktiverad som standard.
+
+Installera Deno 2. Kopiera `supabase/.env.example` till `supabase/.env` och fyll i Gemini-nyckeln lokalt. Kör från repots rot:
+
+```sh
+RECIPE_LOCAL_DEMO=1 deno run --env-file=supabase/.env --allow-env=RECIPE_LOCAL_DEMO,DENO_DEPLOYMENT_ID,GEMINI_API_KEY,GEMINI_MODEL,GEMINI_BACKUP_MODEL --allow-net=127.0.0.1:8787,generativelanguage.googleapis.com supabase/functions/generate-recipe/index.ts
+```
+
+Sätt `EXPO_PUBLIC_RECIPE_URL=http://127.0.0.1:8787/functions/v1/generate-recipe` i `mobile/.env.local` och starta om Expo. Testa i webbläsaren på localhost eller i iOS-simulatorn. Lägg till råvaror, öppna Home och tryck på **Generera recept**. Android-emulatorn behöver portvidarebefordran med `adb reverse tcp:8787 tcp:8787`.
+
+Funktionen lyssnar bara på loopback. Använd ingen tunnel eller publik proxy. Publik drift väntar på åtkomstskydd och kvotbegränsning. Gemini-nyckeln används enbart på servern.
+
+För Leos receptvy (#129) returnerar `generateFromInventory` en `RecipeResult` med `recipe` (de fyra API-fälten) och `snapshot` (namn per ingrediens-ID). Home visar resultatet tills receptvyn är klar. Tjänsten läser lagret igen före visning och skriver aldrig till SQLite.

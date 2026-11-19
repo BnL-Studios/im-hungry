@@ -101,3 +101,7 @@ export function useRemoveIngredient() {
 
   return { remove, removing };
 }
+
+export function readInventory(db: AppDatabase) {
+  return db.select().from(inventoryItems).all();
+}
