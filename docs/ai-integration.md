@@ -44,7 +44,7 @@ flowchart TD
 ```json
 {
   "ingredients": [
-    { "id": 1, "name": "Ris", "quantity": 500, "unit": "g" },
+    { "id": 1, "name": "Kokt ris", "quantity": 500, "unit": "g" },
     { "id": 2, "name": "Ägg", "quantity": 4, "unit": "qty" },
     { "id": 3, "name": "Lök", "quantity": 2, "unit": "qty" }
   ]
@@ -57,15 +57,15 @@ Ingrediensposterna motsvarar befintliga SQLite-fält: positivt heltals-`id`, `na
 
 ```json
 {
-  "title": "Stekt ris med ägg och lök",
+  "title": "Stekt kokt ris med ägg och lök",
   "ingredients": [
     { "id": 1, "quantity": 200, "unit": "g" },
     { "id": 2, "quantity": 2, "unit": "qty" },
     { "id": 3, "quantity": 1, "unit": "qty" }
   ],
   "steps": [
-    "Koka riset enligt anvisningarna.",
-    "Stek löken och tillsätt riset.",
+    "Värm det redan kokta riset i en stekpanna.",
+    "Tillsätt finhackad lök och stek under omrörning.",
     "Rör ner äggen och tillaga tills de är genomstekta."
   ],
   "estimatedCookingTime": 20
