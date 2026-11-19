@@ -2,7 +2,7 @@
 
 Expo/React Native-projektet för [I'm Hungry!](../README.md).
 
-**Status (2026-11-17, sprint 2):** Matförrådet läses från lokal SQLite och råvaror kan läggas till, ändras och tas bort (PR #122 + US-03/US-04). Skalor räknas om till basenheter och fyra Vitest-testfiler finns. Receptflödet och Supabase Edge Function är inte byggda.
+**Status (2026-11-19, sprint 2):** Matförrådet läses från lokal SQLite; ändring/borttagning och skalor är implementerade på öppna PR #130 och är inte mergade ännu. **AI-modell (`gemini-3.8-flash`) och [API-kontrakt](../docs/ai-integration.md) är dokumenterade**, men API-nyckel är inte verifierad och varken receptflöde eller Supabase Edge Function är byggda.
 
 ## Starta utvecklingsmiljön
 
@@ -54,7 +54,7 @@ Routes i `src/app/` hålls tunna och importerar skärmar och logik från `src/sc
 - **Lägga till:** `AddIngredientScreen` använder numeriskt tangentbord, validerar med `parseIngredientInput` och sparar med `useAddIngredient`. Ingen SQL och ingen duplicerad validering i skärmen.
 - **Ändra och ta bort:** `EditIngredientScreen` validerar med `parseQuantityInput` och skriver med `useUpdateIngredient`. Borttagning sker via `useRemoveIngredient` först efter bekräftelse (`Alert.alert` på native, `window.confirm` på webb).
 - **Migrationer:** Drizzle Kit-genererade, versionshanterade filer i `drizzle/`. De körs vid appstart innan databasfrågor utförs.
-- **Recept:** Endast vid receptbegäran ska inventariet och valt mat-humör skickas via HTTPS till en **Supabase Edge Function**, som anropar AI med en serverlagrad hemlig nyckel. Edge Function är ännu inte byggd.
+- **Recept:** Endast vid receptbegäran skickas **ingredienserna** (ID, namn, mängd, basenhet) via HTTPS till en **Supabase Edge Function** som anropar **Gemini 3.8 Flash** med serverlagrad hemlig nyckel. Vid framgång returneras exakt fyra toppnivåfält: `title`, `ingredients`, `steps` och `estimatedCookingTime` (minuter). Val av mat-humör tillkommer efter MVP och ingår inte i request v1. Se [kontrakt v1, fel och validering](../docs/ai-integration.md). Edge Function är ännu inte byggd.
 - **Enheter och skalor:** `g`, `ml` och `qty` (visas som `st`). `scales.ts` erbjuder mg/g/kg, ml/dl/L och st/dussin och räknar om med flyttalsavrundning innan värdet sparas i basenhet. Databasen stoppar mängder som inte är positiva och enheter utanför listan.
 
 ## Flödet för att lägga till en råvara
