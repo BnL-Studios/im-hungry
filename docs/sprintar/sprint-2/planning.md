@@ -91,9 +91,9 @@ Receptflödet ligger som delkort under US-05 (#22). Korten nedan är de som fakt
 ## Risker och osäkerheter
 
 - **Stor scope:** fem kort för receptflödet plus två inventory-stories och två sidokort på fem dagar för två utvecklare. US-03/US-04 och sidokorten är implementerade i koden; om AI-spåret drar ut på tiden flyttas receptdelar till sprint 3.
-- **AI-valet är inte gjort:** #127 (leverantör, gratisnivå, rate limits) blockerar #125 och #128. Beslutet behövs tidigt i veckan.
-- **Ny infrastruktur:** ingen `supabase/`-kod finns ännu. Edge Function, hemlig AI-nyckel och svarsformat mellan app och funktion måste tas fram i #125/#128.
-- **Kvalitet/säkerhet:** svar får inte föreslå recept som kräver mer/andra råvaror än lagret. Definiera svarsformat och toleranser i #125, och validera AI-svaret mot inventory innan det visas.
+- **AI-modell vald 2026-11-19, konto återstår:** `gemini-3.8-flash` är primär och `gemini-3.5-flash-lite` reserv enligt [AI-designen](../../ai-integration.md). #125 är dokumenterad och väntar på review/merge. #127 är **inte** färdig förrän teamets API-nyckel, modellåtkomst och verkliga gratiskvot har verifierats. #128 är ännu inte byggd.
+- **Ny infrastruktur:** ingen `supabase/`-kod finns ännu. JSON-kontrakt och valideringsregler finns nu i [AI-designen](../../ai-integration.md); Edge Function, hemlig AI-nyckel och verklig integration återstår i #127/#128.
+- **Kvalitet/säkerhet:** svar får inte föreslå recept som kräver mer/andra råvaror än lagret. #125 definierar schema, inventory-ID och summakontroll i [AI-designen](../../ai-integration.md); implementation och tester återstår.
 - **Fyra kort hos Leo (koden klar):** #26, #27, #123 och #124 ligger kvar i In Progress på boarden men väntar på granskning. #123/#124 är förbättringar utanför sprintmålet.
 - **US-67 utan delkort:** #24 ligger nu i Sprint Backlog men har inget implementationskort. Fel-, timeout- och tomt-lager-flöden riskerar att bli bortglömda; lägg dem explicit i PR:en för #126 (eller skapa ett delkort).
 - **Delat datalager/UI:** US-03/US-04 rör samma inventory-skärmar och repository som tidigare; samordna för att undvika mergekonflikter.
@@ -102,14 +102,14 @@ Receptflödet ligger som delkort under US-05 (#22). Korten nedan är de som fakt
 
 ## Förslag: PR-indelning och fördelning
 
-Förslag att bekräfta — inte godkänt; inga nya branches eller PR:er är skapade. Enligt DoD granskas och mergas varje PR av den andra teammedlemmen.
+Ursprungligt förslag från planning 2026-11-17. **Status 2026-11-19:** PR #130 för inventory finns och en separat dokumentationsbranch `docs/ai-design-model-decision` har skapats för #125; detta avsnitt är alltså en historisk plan, inte aktuell lista över öppna PR:er. Enligt DoD granskas och mergas varje PR av den andra teammedlemmen.
 
 | Ord | Branch / PR | Stänger | Ansvarig | Reviewer | Beror på |
 |---|---|---|---|---|---|
 | 1 | `fix/add-ingredient-input` | #123, #124 | Leo | Benjamin | – (redan i In Progress) |
 | 2 | `feat/edit-ingredient-amount` | #26 | Leo | Benjamin | 1 (valfritt) |
 | 3 | `feat/remove-ingredient` | #27 | Leo | Benjamin | 2 |
-| 4 | `docs/ai-foundation` | #127, #125 | Benjamin | Leo | – |
+| 4 | `docs/ai-design-model-decision` | #125 (design); #127 modellval, men inte konto/setup | Benjamin | Leo | – |
 | 5 | `feat/generate-recipe-api` | #128 | Benjamin | Leo | 4 |
 | 6 | `feat/generate-recipe-screen` | #126, #24 | Benjamin | Leo | 5 (UI kan mockas efter 4) |
 | 7 | `feat/recipe-detail` | #129, #23 | Leo | Benjamin | 5, 6 |
@@ -120,4 +120,6 @@ Förslag att bekräfta — inte godkänt; inga nya branches eller PR:er är skap
 - **PR 2/3:** samma `repository.ts` och `IngredientsScreen.tsx` — gör dem sekventiellt.
 - **Fallback:** #123/#124 är nu implementerade tillsammans med #26/#27 i samma lokala kod; om granskningen drar ut på tiden prioriteras inventory-PR:erna före receptspåret.
 
-**Senast uppdaterad:** 2026-11-17 (board sorterad; PR #122 mergad; inventory-koden implementerad och verifierad med `tsc`/lint/Vitest; PR-förslag ej godkänt).
+**Uppföljning 2026-11-19:** Exakt Gemini-modell och [API-kontrakt v1](../../ai-integration.md) är dokumenterade för #125 och väntar på PR-granskning. #127 har modellbeslut men **nyckel, projektaccess och gratiskvot är inte verifierade**. #128/#126/#129 saknar implementerad AI-integration. Inventory-arbetet ligger i öppna PR #130. Sprintmålet ska inte markeras som uppfyllt enbart på basis av designen.
+
+**Senast uppdaterad:** 2026-11-19 (uppföljning till ursprunglig planning 2026-11-17).
