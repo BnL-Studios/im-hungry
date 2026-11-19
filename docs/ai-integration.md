@@ -17,28 +17,29 @@ Verifierat 2026-11-19 i [Gemini 3.8 Flash-modellkort](https://aistudio.google.co
 
 ## 2. Arkitektur och ansvar
 
+`MVP-beslut 2026-11-19:` Receptgenerering har **ett enda indatafält** (`ingredients`) och svarar med **exakt fyra fält** vid framgång: `title`, `ingredients`, `steps`, `estimatedCookingTime`. Ingen `mood`, val av kök, portionsstorlek, språkparameter, användarprofil eller annat ingår i request v1. Mat-humör (US-06) skjuts upp till efter denna MVP.
+
 ```mermaid
 flowchart TD
-  UI[Expo: GenerateRecipeScreen] --> SNAP[Inventory-snapshot via repository]
-  SNAP -->|HTTPS, validerad JSON| EDGE[Supabase Edge Function: generate-recipe]
+  UI[Expo: Generera recept] --> SNAP[Inventory-snapshot via repository]
+  DB[(Lokal SQLite + Drizzle)] --> SNAP
+  SNAP -->|HTTPS: endast ingredients| EDGE[Supabase Edge Function: generate-recipe]
   EDGE -->|GEMINI_API_KEY som serverhemlighet| GEM[Gemini 3.8 Flash]
-  GEM -->|strukturerad JSON| EDGE
-  EDGE -->|kontrollerat recept eller no_recipe/fel| CLIENT[features/recipes: kontrakt och lagerkontroll]
-  CLIENT --> RESULT[RecipeResultScreen eller begripligt felläge]
-  DB[(SQLite + Drizzle på telefonen)] --> SNAP
+  GEM -->|Strukturerad JSON| EDGE
+  EDGE -->|4-fältsrecept eller HTTP-fel| CLIENT[features/recipes: schema- och lagerkontroll]
+  CLIENT --> RESULT[Receptvy eller begripligt felläge]
 ```
 
-- **Mobilen:** behåller all inventariedata lokalt i SQLite/Drizzle, tar en snapshot när användaren begär ett recept, skickar endast tillåtna fält och kontrollerar svaret mot snapshoten samt aktuell lagerstatus innan det markeras som tillagningsbart. Inga automatiska lageravdrag.
-- **Edge Function:** Deno/TypeScript i `supabase/functions/generate-recipe/index.ts`; validerar request, begränsar storlek och anrop, skickar prompt + JSON-schema till Gemini, verifierar resultat och mappar fel till stabilt API-kontrakt. Den har **ingen** direkt åtkomst till telefonens SQLite.
-- **AI-leverantören:** föreslår ett recept inom angiven lista; den får inte bestämma vilka ingredienser som faktiskt är tillgängliga.
-- **Ingen extra databas eller Spring Boot-server** krävs för MVP:n. En separat serverlagrad begränsare för missbruk kan behövas innan publik driftsättning.
-- **Mappindelning:** `mobile/src/app/` har tunna routes; `mobile/src/screens/` har skärmar; `mobile/src/features/recipes/` innehåller API-klient, typer, domänkontroller och tester. `supabase/functions/generate-recipe/` är gränsen till leverantören.
+- **Mobilen** äger inventariet lokalt och skickar en ögonblicksbild endast när användaren trycker på Generera. Den validerar svaret mot denna snapshot och aktuellt lager innan receptet markeras som tillagningsbart. Genereringen förändrar aldrig inventariet.
+- **Edge Function** i `supabase/functions/generate-recipe/index.ts` är ett litet Deno/TypeScript-lager som validerar request och AI-svar, använder serverhemligheten och returnerar kontraktet nedan eller ett tydligt HTTP-fel. Den kan inte läsa mobilens SQLite direkt.
+- **Gemini** skapar ett recept utifrån enbart listade råvaror; appen och Edge Function är ansvariga för tillgänglighetskontrollen.
+- Ingen separat Java/Node-server eller molnlagring av skafferiet behövs. Mobilens routes hålls i `src/app/`, skärmar i `src/screens/` och recept-API/validering i `src/features/recipes/`.
 
-## 3. API-kontrakt v1
+## 3. API-kontrakt v1 — minsta möjliga
 
-**Endpoint:** `POST /functions/v1/generate-recipe` med `Content-Type: application/json`. Klienten anropar Supabase-projektets funktion via HTTPS. Autentisering och missbruksskydd behöver lösas innan internetpublik drift (se `5`).
+**Endpoint:** `POST /functions/v1/generate-recipe` med `Content-Type: application/json`. Endpointens åtkomstskydd beskrivs i avsnitt 5.
 
-**Request:** endast följande fält accepteras. `mood` är förberett för US-06, men kan skickas som `surprise` tills valet finns i UI. Databasens basenheter är `g`, `ml` och `qty` (UI visar `st`, men API:t använder `qty`).
+### Request (enda toppnivåfältet: ingredients)
 
 ```json
 {
@@ -46,58 +47,65 @@ flowchart TD
     { "id": 1, "name": "Ris", "quantity": 500, "unit": "g" },
     { "id": 2, "name": "Ägg", "quantity": 4, "unit": "qty" },
     { "id": 3, "name": "Lök", "quantity": 2, "unit": "qty" }
-  ],
-  "mood": "surprise"
+  ]
 }
 ```
 
-**Regler för request:** `ingredients` innehåller 1–50 unika positiva heltals-ID:n, namn på 1–80 tecken, en positiv ändlig mängd och en av ovanstående enheter. `mood` tillhör `surprise`, `comfort` eller `quick`. Avvisa okända fält, duplicerade ID:n, icke-finit tal och för stora payloads. Enhet `qty` bör vara heltal för diskreta varor om det kan säkerställas från matförrådet; nya regler får inte i tysthet ändra befintliga SQLite-värden.
+Ingrediensposterna motsvarar befintliga SQLite-fält: positivt heltals-`id`, `name` (1–80 tecken), positivt ändligt `quantity` och `unit` (`g`, `ml` eller `qty`; i användargränssnittet visas `qty` som `st`). Begäran tillåter exempelvis 1–50 unika ingredienser. Avvisa okända toppnivåfält, dubblett-ID, otillåtna enheter och för stora requests. Den *enda* begäran som skickas till AI-flödet är denna ingredienslista — ingen `mood` eller annan preferens.
 
-**Framgång (HTTP 200):** exakt ett recept; ingredienser refererar till **ID:n från requesten**, inte fria modellnamn. Klienten kan slå upp de korrekta namnen från sin snapshot.
+### Lyckat svar (HTTP 200: exakt fyra toppnivåfält)
 
 ```json
 {
-  "status": "ok",
-  "recipe": {
-    "title": "Stekt ris med ägg och lök",
-    "durationMinutes": 20,
-    "ingredients": [
-      { "inventoryId": 1, "quantity": 200, "unit": "g" },
-      { "inventoryId": 2, "quantity": 2, "unit": "qty" },
-      { "inventoryId": 3, "quantity": 1, "unit": "qty" }
-    ],
-    "steps": [
-      "Koka riset enligt anvisningarna.",
-      "Stek löken och tillsätt riset.",
-      "Rör ner äggen och tillaga tills de är genomstekta."
-    ]
+  "title": "Stekt ris med ägg och lök",
+  "ingredients": [
+    { "id": 1, "quantity": 200, "unit": "g" },
+    { "id": 2, "quantity": 2, "unit": "qty" },
+    { "id": 3, "quantity": 1, "unit": "qty" }
+  ],
+  "steps": [
+    "Koka riset enligt anvisningarna.",
+    "Stek löken och tillsätt riset.",
+    "Rör ner äggen och tillaga tills de är genomstekta."
+  ],
+  "estimatedCookingTime": 20
+}
+```
+
+- `title`: receptets namn, icke-tom sträng.
+- `ingredients`: använda råvaror med `id` från requesten, positiv `quantity` och samma `unit` som i inventariet. Namnet hämtas från snapshoten i appen — AI behöver inte skapa det en gång till. Dubbletter summeras per ID innan kontroll.
+- `steps`: en icke-tom lista med tydliga, ordnade tillagningssteg.
+- `estimatedCookingTime`: uppskattad **total tillagningstid i minuter**, positivt heltal.
+
+**Ingen `status`, `recipe`-wrapper, metadata eller extra inställningar i ett lyckat svar.** Fältnamnen är kontraktets exakta stavning och ska användas likadant i Supabase, mobilapp, tester och receptskärm.
+
+### Fel (separat från lyckat recept)
+
+När inget rimligt recept kan genereras eller anropet misslyckas returneras ett HTTP-fel; detta är **inte** ett recept med fyra tomma fält.
+
+```json
+{
+  "error": {
+    "code": "NO_RECIPE",
+    "message": "Inget recept kan göras med dessa råvaror och mängder."
   }
 }
 ```
 
-**Inget möjligt recept (HTTP 200):**
-
-```json
-{ "status": "no_recipe", "message": "Inget recept kan göras med dessa mängder." }
-```
-
-**Tekniskt/valideringsfel (HTTP 4xx/5xx):**
-
-```json
-{ "error": { "code": "RATE_LIMITED", "message": "För många förfrågningar. Försök igen senare." } }
-```
-
-Dokumenterade felkoder för v1: `INVALID_REQUEST` (400), `RATE_LIMITED` (429), `MODEL_UNAVAILABLE` (502/503), `INVALID_RECIPE` (502), `TIMEOUT` (504) och `INTERNAL_ERROR` (500). Nätverksfel kan uppstå i appen utan HTTP-svar. API:t ska inte skicka läckta felmeddelanden, prompts, tokens eller hemligheter till användaren.
+- `NO_RECIPE` (422): tillgängligt lager räcker inte till ett giltigt recept; visa begripligt meddelande.
+- `INVALID_REQUEST` (400): tom/ogiltig ingredienslista eller felaktig JSON.
+- `RATE_LIMITED` (429): API-kvot eller rate limit nådd.
+- `MODEL_UNAVAILABLE` (502/503), `INVALID_RECIPE` (502), `TIMEOUT` (504) och `INTERNAL_ERROR` (500): tekniska fel utan att exponera hemligheter eller leverantörens råa internfel.
+- Nätverksfel kan uppstå utan HTTP-svar och ska visas tydligt i appen. Inventariet ska fortfarande fungera offline.
 
 ## 4. Receptregler och validering
 
-1. Prompten kräver att **endast inskickade råvaror** används; inte ens salt, olja, vatten eller kryddor antas finnas om de inte finns i snapshoten. Inget köpbehov maskeras som tillgängligt.
-2. Använd Geminis **structured output / JSON Schema**, men behandla alla modellfält som otillförlitliga. Validera fullständigt i Edge Function och igen i klienten. Strukturerad JSON garanterar inte receptets faktiska genomförbarhet.
-3. `title` ska vara en icke-tom text, `durationMinutes` ett rimligt positivt heltal, `steps` en lista med användbara icke-tomma steg och `ingredients` en icke-tom lista med positiva ändliga mängder och giltiga enheter.
-4. Varje `inventoryId` måste finnas i ursprunglig snapshot. Enheten måste matcha exakt, eller vara en uttryckligen implementerad, testad enhetsomräkning. Summera eventuellt upprepade receptposter **per ID** innan kvantitetskontrollen; summan får inte överstiga tillgänglig mängd (med en liten dokumenterad tolerans enbart för flyttalsavrundning, inte för brist).
-5. Jämför också mot aktuellt inventarium om användaren ändrade något medan förfrågan kördes. Ett recept som inte längre går att laga markeras inte som tillgängligt.
-6. Vid okänt ID, orimlig mängd, extra ingrediens, tomma steg eller annan avvikelse: **visa inte receptet som tillagningsbart**. Svara med `no_recipe` eller `INVALID_RECIPE` i stället för att i smyg lägga till/ta bort råvaror.
-7. Generering är **read-only** mot lagret: ingen infogning, uppdatering eller borttagning av råvaror. Receptet sparas inte permanent i MVP:n.
+1. Prompten kräver att **enbart inskickade råvaror** används; även salt, olja, vatten och kryddor måste finnas i listan om receptet kräver dem. Ingen implicit inköpslista.
+2. Begär Geminis **structured output / JSON Schema** för de fyra fälten ovan. Validera ändå resultatet i Edge Function och mobilen: modellen är inte en källa till sanning om tillgänglighet.
+3. Varje `ingredients[].id` måste finnas i requestens snapshot. Enheten måste matcha och **summan** av föreslagna mängder per ID får inte överstiga tillgänglig mängd; eventuella toleranser får endast avse dokumenterad flyttalsavrundning, aldrig faktisk brist.
+4. Försök inte rätta modellens recept genom att automatiskt lägga till eller öka lagerrader. Avvisa ogiltigt resultat med `INVALID_RECIPE` eller `NO_RECIPE` och visa inget som tillagningsbart.
+5. Om inventariet ändras medan anropet körs ska mobilen kontrollera mot nuvarande saldo innan receptet visas som tillgängligt.
+6. Receptbegäran är **read-only**: inga råvaror läggs till, ändras eller dras av; resultatet sparas inte permanent i MVP:n.
 
 [Google: Structured outputs](https://aistudio.google.com/docs/structured-output).
 
