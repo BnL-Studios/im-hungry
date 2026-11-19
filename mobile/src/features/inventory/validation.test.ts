@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
   parseIngredientInput,
+  parseQuantityInput,
   type IngredientInput,
   type ParseIngredientResult,
 } from "./validation";
@@ -9,8 +10,9 @@ function parse(
   name: string,
   quantity: string,
   unit: IngredientInput["unit"] = "g",
+  scaleFactor = 1,
 ): ParseIngredientResult {
-  return parseIngredientInput({ name, quantity, unit });
+  return parseIngredientInput({ name, quantity, unit, scaleFactor });
 }
 
 function expectValue(result: ParseIngredientResult) {
@@ -44,15 +46,25 @@ describe("parseIngredientInput", () => {
   });
 
   it("trimmar namn och kollapsar mellanslag", () => {
-    expect(expectValue(parse("  Mjöl   special  ", "1,5", "ml"))).toEqual({
+    expect(expectValue(parse("  Mjöl   special  ", "5", "ml"))).toEqual({
       name: "Mjöl special",
-      quantity: 1.5,
+      quantity: 5,
       unit: "ml",
     });
   });
 
-  it("accepterar decimal med punkt", () => {
-    expect(expectValue(parse("Mjöl", "1.5")).quantity).toBe(1.5);
+  it("avvisar decimaler i add-formuläret", () => {
+    expect(expectError(parse("Mjöl", "1,5"), "quantity")).toBe(
+      "Mängden måste vara ett heltal, t.ex. 5.",
+    );
+  });
+
+  it("räknar om vald skala till basenhet", () => {
+    expect(expectValue(parse("Mjöl", "5", "ml", 100)).quantity).toBe(500);
+  });
+
+  it("avrundar flyttalsbrus för 300 mg", () => {
+    expect(expectValue(parse("Salt", "300", "g", 0.001)).quantity).toBe(0.3);
   });
 
   it("avvisar tomt namn", () => {
@@ -86,16 +98,16 @@ describe("parseIngredientInput", () => {
       "Mängden måste vara större än 0.",
     );
     expect(expectError(parse("Mjöl", "-1"), "quantity")).toBe(
-      "Mängden måste vara större än 0.",
+      "Mängden måste vara ett heltal, t.ex. 5.",
     );
   });
 
   it("avvisar text och exponentnotation", () => {
     expect(expectError(parse("Mjöl", "abc"), "quantity")).toBe(
-      "Mängden måste vara ett tal, t.ex. 1,5.",
+      "Mängden måste vara ett heltal, t.ex. 5.",
     );
     expect(expectError(parse("Mjöl", "1e3"), "quantity")).toBe(
-      "Mängden måste vara ett tal, t.ex. 1,5.",
+      "Mängden måste vara ett heltal, t.ex. 5.",
     );
   });
 
@@ -109,5 +121,29 @@ describe("parseIngredientInput", () => {
     expect(expectError(parse("Mjöl", "1000001"), "quantity")).toBe(
       "Mängden är för stor.",
     );
+  });
+});
+
+describe("parseQuantityInput", () => {
+  it("tillåter decimaler vid redigering", () => {
+    expect(parseQuantityInput("1,5")).toEqual({ ok: true, value: 1.5 });
+  });
+
+  it("kräver heltal när add-formuläret begär det", () => {
+    expect(parseQuantityInput("1,5", { integerOnly: true })).toEqual({
+      ok: false,
+      error: "Mängden måste vara ett heltal, t.ex. 5.",
+    });
+  });
+
+  it("avvisar tom mängd och noll", () => {
+    expect(parseQuantityInput("")).toEqual({
+      ok: false,
+      error: "Ange en mängd.",
+    });
+    expect(parseQuantityInput("0")).toEqual({
+      ok: false,
+      error: "Mängden måste vara större än 0.",
+    });
   });
 });

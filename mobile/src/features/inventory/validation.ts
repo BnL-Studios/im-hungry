@@ -10,6 +10,8 @@ export type IngredientInput = {
   quantity: string;
   /** Medvetet string: formulärdata är inte betrodd förrän den validerats. */
   unit: string;
+  /** Faktor från vald skala (t.ex. dl → ml). Sparas alltid i basenhet. */
+  scaleFactor?: number;
 };
 
 export type ParseIngredientResult =
@@ -18,7 +20,46 @@ export type ParseIngredientResult =
 
 const NAME_MAX_LENGTH = 80;
 const QUANTITY_MAX = 1_000_000;
-const QUANTITY_PATTERN = /^[+-]?\d+(?:[.,]\d+)?$/;
+const INTEGER_PATTERN = /^\d+$/;
+const DECIMAL_PATTERN = /^\d+(?:[.,]\d+)?$/;
+
+export type ParseQuantityResult =
+  | { ok: true; value: number }
+  | { ok: false; error: string };
+
+/**
+ * Validerar en mängd. Add-formuläret kräver heltal; redigering tillåter
+ * decimaler så att befintliga värden kan sparas oförändrade.
+ */
+export function parseQuantityInput(
+  input: string,
+  options: { integerOnly?: boolean } = {},
+): ParseQuantityResult {
+  const text = input.trim();
+  const integerOnly = options.integerOnly === true;
+  const typeError = integerOnly
+    ? "Mängden måste vara ett heltal, t.ex. 5."
+    : "Mängden måste vara ett tal, t.ex. 1,5.";
+
+  if (text.length === 0) {
+    return { ok: false, error: "Ange en mängd." };
+  }
+  if (!(integerOnly ? INTEGER_PATTERN : DECIMAL_PATTERN).test(text)) {
+    return { ok: false, error: typeError };
+  }
+
+  const value = Number(text.replace(",", "."));
+  if (!Number.isFinite(value)) {
+    return { ok: false, error: typeError };
+  }
+  if (value <= 0) {
+    return { ok: false, error: "Mängden måste vara större än 0." };
+  }
+  if (value > QUANTITY_MAX) {
+    return { ok: false, error: "Mängden är för stor." };
+  }
+  return { ok: true, value };
+}
 
 /**
  * Validerar och normaliserar råvaruformuläret. Ren funktion utan React och SQLite,
@@ -36,21 +77,24 @@ export function parseIngredientInput(
     errors.name = `Namnet får vara högst ${NAME_MAX_LENGTH} tecken.`;
   }
 
-  const quantityText = input.quantity.trim();
+  const parsedQuantity = parseQuantityInput(input.quantity, {
+    integerOnly: true,
+  });
   let quantity = Number.NaN;
 
-  if (quantityText.length === 0) {
-    errors.quantity = "Ange en mängd.";
-  } else if (!QUANTITY_PATTERN.test(quantityText)) {
-    errors.quantity = "Mängden måste vara ett tal, t.ex. 1,5.";
+  if (!parsedQuantity.ok) {
+    errors.quantity = parsedQuantity.error;
   } else {
-    quantity = Number(quantityText.replace(",", "."));
+    const factor =
+      input.scaleFactor !== undefined &&
+      Number.isFinite(input.scaleFactor) &&
+      input.scaleFactor > 0
+        ? input.scaleFactor
+        : 1;
+    // Avrunda bort flyttalsbrus, t.ex. 300 mg -> 0.3 g.
+    quantity = Math.round(parsedQuantity.value * factor * 1e6) / 1e6;
 
-    if (!Number.isFinite(quantity)) {
-      errors.quantity = "Mängden måste vara ett tal, t.ex. 1,5.";
-    } else if (quantity <= 0) {
-      errors.quantity = "Mängden måste vara större än 0.";
-    } else if (quantity > QUANTITY_MAX) {
+    if (!Number.isFinite(quantity) || quantity > QUANTITY_MAX) {
       errors.quantity = "Mängden är för stor.";
     }
   }

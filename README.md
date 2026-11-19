@@ -4,15 +4,15 @@
 
 Projektet byggs av **BnL Studios** inom en Scrum-kurs. Det är under utveckling, inte en färdig app.
 
-> **Aktuellt läge (2026-11-13, sprint 1):** Appen är en React Native-app med Expo och TypeScript. Matförrådet lagras **lokalt på telefonen** med **SQLite och Drizzle ORM**. Fliken **Råvaror** läser matförrådet från SQLite och man kan lägga till en råvara via en modal. Arbetet ligger på branchen `add-ingredient` och väntar på granskning/merge. **Supabase Edge Function, AI och receptflödet är ännu inte byggda.** Supabase används inte som matförrådsdatabas.
+> **Aktuellt läge (2026-11-17, sprint 2):** Appen är en React Native-app med Expo och TypeScript. Matförrådet lagras **lokalt på telefonen** med **SQLite och Drizzle ORM**. Fliken **Råvaror** kan visa, lägga till, ändra mängd och ta bort råvaror. Första inventarieflödet mergades via PR #122; US-03/US-04, numeriskt tangentbord och skalor (mg/g/kg, ml/dl/L, st/dussin) är implementerade. **Supabase Edge Function, AI och receptflödet är ännu inte byggda.** Supabase används inte som matförrådsdatabas.
 
 ## Mål och MVP
 
 Målgrupp: studenter och andra som ofta har råvaror hemma men svårt att bestämma vad de kan laga med just de mängderna.
 
-| Ingår i MVP:n | Hur det ska fungera | Status i sprint 1 |
+| Ingår i MVP:n | Hur det ska fungera | Status (2026-11-17) |
 |---|---|---|
-| Matförråd | Visa, lägga till, korrigera och ta bort råvaror med mängd och enhet. | Visa och lägga till är implementerat; korrigera/ta bort återstår (US-03/US-04). |
+| Matförråd | Visa, lägga till, korrigera och ta bort råvaror med mängd och enhet. | Implementerat (US-01–US-04). Skalor räknas om till basenheterna g/ml/st. |
 | Lokal lagring | Inventariet finns kvar efter omstart och kan hanteras utan internet. | Implementerat med Expo SQLite + Drizzle. |
 | Mat-humör | Välj t.ex. *Comfort food*, *Quick & easy* eller *Surprise me*. | Inte påbörjat. |
 | Ett receptförslag | Skicka en begäran till Edge Function och visa ett AI-genererat recept utifrån råvarorna som finns. | Inte påbörjat; Edge Function finns inte i repot. |
@@ -20,21 +20,21 @@ Målgrupp: studenter och andra som ofta har råvaror hemma men svårt att bestä
 
 Utanför MVP:n: användarkonton, molnsynkronisering, favoriter, recepthistorik, automatiska avdrag ur matförrådet, avancerade preferenser, inköpslistor och streckkodsskanning. **Inventariet fungerar offline; receptgenerering kräver internet.** Lokal data synkroniseras inte mellan enheter och kan förloras vid avinstallation.
 
-Se [MVP](docs/mvp.md), [Product Backlog](docs/USER_STORIES.md) och [sprint 1](docs/sprintar/sprint-1/planning.md).
+Se [MVP](docs/mvp.md), [Product Backlog](docs/USER_STORIES.md), [sprint 1](docs/sprintar/sprint-1/planning.md) och [sprint 2](docs/sprintar/sprint-2/planning.md).
 
 ## Teknik och arkitektur
 
 | Del | Val | Status |
 |---|---|---|
 | Mobilapp | React Native, Expo SDK 58, TypeScript och Expo Router | Implementerad i `mobile/` |
-| Navigation | Två flikar: Home (placeholder) och Råvaror; `add-ingredient` som modal | Implementerad |
+| Navigation | Två flikar: Home (placeholder) och Råvaror; `add-ingredient` och `edit-ingredient` som modaler | Implementerad |
 | Lokal databas | Expo SQLite | Implementerad |
 | ORM och migrationer | Drizzle ORM + Drizzle Kit | Implementerade; två migrationer |
-| Matförrådets UI | Lista från SQLite, formulär för ny råvara, validering och fel/empty-state | Implementerat på branchen `add-ingredient`; väntar review/merge |
+| Matförrådets UI | Lista från SQLite, lägga till/ändra/ta bort, skalor, validering och fel/empty-state | Implementerat (PR #122 + sprint 2) |
 | Recept-gateway | Supabase Edge Functions (Deno/TypeScript) | Vald design, ännu inte byggd |
 | AI-tjänst | Gemini Flash enligt beslut 03; möjlighet att byta leverantör | Integration inte byggd |
-| Test | Vitest: validering, enheter och riktiga SQL-migrationer | Implementerat; 3 testfiler |
-| CI | GitHub Actions för mobilapp | `npm ci`, Expo-konfiguration, `tsc --noEmit` och `npm test` |
+| Test | Vitest: validering, skalor, enheter och riktiga SQL-migrationer | Implementerat; 4 testfiler |
+| CI | GitHub Actions för mobilapp | `npm ci`, Expo-konfiguration, `npm run lint`, `tsc --noEmit` och `npm test` |
 | Process | Scrum, trunk-based development, granskade PR:er, squash merge | Dokumenterat |
 
 ```mermaid
@@ -51,7 +51,7 @@ flowchart TD
     Edge -.->|"planerad: validerat svar"| App
 ```
 
-Heldragna pilar är implementerade i sprint 1; streckade pilar är målarkitektur som återstår.
+Heldragna pilar är implementerade i sprint 1–2; streckade pilar är målarkitektur som återstår.
 
 **Viktig säkerhetsgräns:** När receptflödet byggs ska API-nyckeln bara ligga som hemlighet i Edge Function, aldrig i appen. Funktionens indata och AI-svar måste valideras. Utan användarinloggning behöver en publik Edge Function dessutom begränsa missbruk och kostnader (t.ex. rate limiting, kvoter och övervakning) innan den görs publikt tillgänglig. Klienten ska kontrollera receptets mängder mot sitt lokala inventarie; funktionens begäran är inte bevis för vad som faktiskt är lagrat på telefonen.
 
@@ -83,11 +83,12 @@ npx expo-doctor        # kontrollera beroenden och konfiguration
 
 Testfilerna ligger i `mobile/src/features/inventory/`:
 
-- `validation.test.ts` testar inmatningsreglerna.
+- `validation.test.ts` testar inmatningsreglerna, decimaler vid redigering och avrundning (300 mg → 0,3 g).
+- `scales.test.ts` testar skalornas omvandling till basenheter och flyttalsavrundning.
 - `units.test.ts` testar enheter och formatering.
 - `migrations.test.ts` kör de riktiga SQL-migrationerna mot en temporär SQLite-databas och kontrollerar att `CHECK`-begränsningarna stoppar ogiltiga rader.
 
-[GitHub Actions-CI](.github/workflows/ci.yml) installerar beroenden, validerar Expo-konfigurationen, typkontrollerar appkällkoden och kör `npm test` vid PR och push till `main`. Lint körs lokalt men ingår inte i CI-workflowen ännu.
+[GitHub Actions-CI](.github/workflows/ci.yml) installerar beroenden, validerar Expo-konfigurationen, kör `npm run lint`, typkontrollerar appkällkoden och kör `npm test` vid PR och push till `main`.
 
 **Branch protection:** CI-kontrollen heter **Mobile (Node 22)**. Om branch protection fortfarande kräver den gamla kontrollen **Backend (Java 21)** måste en GitHub-administratör byta till **Mobile (Node 22)** efter första gröna körningen. Detta sker inte automatiskt.
 
@@ -95,20 +96,20 @@ Testfilerna ligger i `mobile/src/features/inventory/`:
 
 ## Aktuellt läge
 
-Sprint 1 pågår (2026-11-09–2026-11-16). Det som är klart i koden:
+Sprint 2 pågår (2026-11-16–2026-11-20). Det som är klart i koden:
 
-- Flikarna Home och Råvaror.
+- Flikarna Home och Råvaror; `add-ingredient` och `edit-ingredient` öppnas som modaler.
 - Råvarulistan läser från lokal SQLite via Drizzle och `useLiveQuery`.
-- Formuläret **Lägg till råvara** validerar namn, mängd och enhet och sparar via det delade inventory-lagret.
+- **Lägg till råvara** använder numeriskt tangentbord och en skalväljare som sparar basenheter (g/ml/st).
+- **Ändra mängd** (US-03) och **ta bort råvara** med bekräftelse (US-04).
 - Två Drizzle-migrationer med `CHECK`-begränsningar för positiv mängd och tillåtna enheter.
-- Vitest-tester för validering, enheter och migrationer.
+- Fyra Vitest-testfiler: validering, skalor, enheter och migrationer.
+- CI kör lint, typkontroll och tester; appen är låst till ljust läge.
 
 Det som återstår:
 
-- US-03 (korrigera mängd) och US-04 (ta bort råvara).
-- Mat-humör, Supabase Edge Function, AI-integration och receptvy.
+- Mat-humör, Supabase Edge Function, AI-integration och receptvy (US-05/US-68/US-67).
 - Home-fliken är fortfarande Expos `Hello World`-placeholder.
-- Granskning och merge av branchen `add-ingredient`.
 
 **Legacy:** Spring Boot-koden är borttagen. Ingen Java-server eller molndatabas behövs för matförrådet i målarkitekturen.
 
@@ -124,6 +125,7 @@ im-hungry/
 │   │   ├── app/                     # Routes (Expo Router)
 │   │   │   ├── _layout.tsx          # Rot-Stack + DatabaseProvider
 │   │   │   ├── add-ingredient.tsx   # Modal route
+│   │   │   ├── edit-ingredient.tsx  # Modal route
 │   │   │   └── (tabs)/
 │   │   │       ├── _layout.tsx      # Home + Råvaror
 │   │   │       ├── index.tsx        # Home (placeholder)
@@ -131,8 +133,9 @@ im-hungry/
 │   │   │           └── index.tsx    # Tunn route till IngredientsScreen
 │   │   ├── screens/                 # Skärmkomponenter
 │   │   │   ├── IngredientsScreen.tsx
-│   │   │   └── AddIngredientScreen.tsx
-│   │   ├── features/inventory/      # Enheter, validering, repository + tester
+│   │   │   ├── AddIngredientScreen.tsx
+│   │   │   └── EditIngredientScreen.tsx
+│   │   ├── features/inventory/      # Enheter, skalor, validering, repository + tester
 │   │   └── db/                      # Drizzle-schema, client, provider
 │   └── ...
 ├── docs/
@@ -182,4 +185,4 @@ Vi använder kortlivade branches från `main`, pull requests, minst en annan per
 | [Sprintdokumentation](docs/sprintar/) | Planning, standup, review, retro |
 | [Individuella reflektioner](docs/reflektioner/) | Kursreflektioner |
 
-**Senast uppdaterad:** 2026-11-13 (sprint 1).
+**Senast uppdaterad:** 2026-11-17 (sprint 2).

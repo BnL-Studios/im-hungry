@@ -5,7 +5,7 @@
 **Product Owner denna sprint:** Benjamin
 **Scrum Master denna sprint:** Leo
 
-> **Status 2026-11-13:** Sprinten pågår. Listan och formuläret är implementerade på branchen `add-ingredient` och väntar på granskning/merge. Review och retro är planerade till 2026-11-16.
+> **Status 2026-11-16:** Sprinten avslutas i dag. Listan och formuläret är mergade till `main` via PR #122 (2026-11-13). Review och retro hålls 2026-11-16.
 
 ## Sprintmål
 

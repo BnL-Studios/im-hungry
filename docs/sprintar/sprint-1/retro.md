@@ -8,7 +8,7 @@
 
 ## Förra retrons åtgärder
 
-Sprint 1 är första sprinten; det finns inga tidigare åtgärder att följa upp.
+-
 
 ## Vad gick bra?
 
@@ -37,6 +37,6 @@ Sprint 1 är första sprinten; det finns inga tidigare åtgärder att följa upp
 
 ## Ändringar i Definition of Done eller gruppkontrakt
 
-Inga beslutade ändringar ännu. Frågan tas på retron.
+-
 
-**Senast uppdaterad:** 2026-11-13 (förberedelse inför retron).
+**Senast uppdaterad:** 2026-11-16 
