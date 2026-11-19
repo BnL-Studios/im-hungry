@@ -20,7 +20,7 @@ Målgrupp: studenter och andra som ofta har råvaror hemma men svårt att bestä
 
 Utanför MVP:n: användarkonton, molnsynkronisering, favoriter, recepthistorik, automatiska avdrag ur matförrådet, avancerade preferenser, inköpslistor och streckkodsskanning. **Inventariet fungerar offline; receptgenerering kräver internet.** Lokal data synkroniseras inte mellan enheter och kan förloras vid avinstallation.
 
-Se [MVP](docs/mvp.md), [Product Backlog](docs/USER_STORIES.md), [sprint 1](docs/sprintar/sprint-1/planning.md) och [sprint 2](docs/sprintar/sprint-2/planning.md).
+Se [MVP](docs/mvp.md), [Product Backlog](docs/USER_STORIES.md), [sprint 1](docs/sprintar/sprint-1/planning.md), [sprint 2](docs/sprintar/sprint-2/planning.md) och [AI-integrationsdesignen](docs/ai-integration.md).
 
 ## Teknik och arkitektur
 
@@ -31,8 +31,8 @@ Se [MVP](docs/mvp.md), [Product Backlog](docs/USER_STORIES.md), [sprint 1](docs/
 | Lokal databas | Expo SQLite | Implementerad |
 | ORM och migrationer | Drizzle ORM + Drizzle Kit | Implementerade; två migrationer |
 | Matförrådets UI | Lista från SQLite, lägga till/ändra/ta bort, skalor, validering och fel/empty-state | Implementerat (PR #122 + sprint 2) |
-| Recept-gateway | Supabase Edge Functions (Deno/TypeScript) | Vald design, ännu inte byggd |
-| AI-tjänst | Gemini Flash enligt beslut 03; möjlighet att byta leverantör | Integration inte byggd |
+| Recept-gateway | Supabase Edge Functions (Deno/TypeScript); [API-kontrakt v1](docs/ai-integration.md) | Vald design, ännu inte byggd |
+| AI-tjänst | **Gemini 3.8 Flash** (`gemini-3.8-flash`), Flash-Lite som utvärderad reserv | Modell/design fastställd 2026-11-19 (#125); nyckel och integration inte verifierade/byggda |
 | Test | Vitest: validering, skalor, enheter och riktiga SQL-migrationer | Implementerat; 4 testfiler |
 | CI | GitHub Actions för mobilapp | `npm ci`, Expo-konfiguration, `npm run lint`, `tsc --noEmit` och `npm test` |
 | Process | Scrum, trunk-based development, granskade PR:er, squash merge | Dokumenterat |
@@ -46,7 +46,7 @@ flowchart TD
       App --> Logic --> DB
     end
     App -.->|"planerad: HTTPS vid receptbegäran"| Edge[Supabase Edge Function]
-    Edge -.->|"planerad: serverlagrad API-nyckel"| AI[Gemini / vald AI-tjänst]
+    Edge -.->|"planerad: serverlagrad API-nyckel"| AI[Gemini 3.8 Flash - vald]
     AI -.->|"planerad: strukturerat recept"| Edge
     Edge -.->|"planerad: validerat svar"| App
 ```
@@ -177,6 +177,7 @@ Vi använder kortlivade branches från `main`, pull requests, minst en annan per
 | [MVP](docs/mvp.md) | Omfattning och avgränsningar |
 | [Product Backlog](docs/USER_STORIES.md) | User stories och acceptanskriterier |
 | [Arkitektur](docs/arkitektur.md) | Ansvar, dataflöden, AI-gateway och säkerhet |
+| [AI-integrationsdesign](docs/ai-integration.md) | Vald modell, gratisnivå, API-kontrakt, validering och status för #125/#127 |
 | [Databasschema](docs/databasschema.md) · [DBML](docs/databasschema.dbml) | Lokal SQLite-modell |
 | [Beslutslogg](docs/beslutslogg.md) | Tidigare och gällande teknikbeslut |
 | [Git-arbetsflöde](docs/git-workflow.md) | Branches, PR, CI och squash merge |
@@ -185,4 +186,4 @@ Vi använder kortlivade branches från `main`, pull requests, minst en annan per
 | [Sprintdokumentation](docs/sprintar/) | Planning, standup, review, retro |
 | [Individuella reflektioner](docs/reflektioner/) | Kursreflektioner |
 
-**Senast uppdaterad:** 2026-11-17 (sprint 2).
+**Senast uppdaterad:** 2026-11-19 (sprint 2; AI-modell/design fastställd, integration kvar).
