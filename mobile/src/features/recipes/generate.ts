@@ -14,13 +14,15 @@ const messages: Record<string, string> = {
   INVALID_RECIPE: "Receptet stämde inte med ditt matförråd.",
 };
 
+export const hostedRecipeUrl = "https://wkfmtrdltjwvhhjpgdco.supabase.co/functions/v1/generate-recipe";
+
 export async function generateFromInventory(
   readInventory: () => Ingredient[] | Promise<Ingredient[]>,
-  endpoint: string | undefined,
+  endpoint = hostedRecipeUrl,
   request = fetch,
 ): Promise<RecipeResult> {
-  if (!endpoint || !/^http:\/\/(127\.0\.0\.1|localhost)(:\d+)?\/functions\/v1\/generate-recipe$/.test(endpoint)) {
-    throw new Error("Den lokala recepttjänsten är inte konfigurerad.");
+  if (endpoint !== hostedRecipeUrl && !/^http:\/\/(127\.0\.0\.1|localhost)(:\d+)?\/functions\/v1\/generate-recipe$/.test(endpoint)) {
+    throw new Error("Recepttjänsten är inte konfigurerad.");
   }
   const rows = await readInventory();
   if (!rows.length) throw new Error("Lägg till råvaror i matförrådet först.");
@@ -42,7 +44,7 @@ export async function generateFromInventory(
     if (!response.ok) throw new Error(messages[body?.error?.code] ?? "Recepttjänsten kunde inte generera ett recept.");
   } catch (error) {
     if (controller.signal.aborted) throw new Error(messages.TIMEOUT);
-    if (error instanceof TypeError) throw new Error("Kunde inte nå den lokala recepttjänsten.");
+    if (error instanceof TypeError) throw new Error("Kunde inte nå recepttjänsten.");
     if (error instanceof SyntaxError) throw new Error(messages.INVALID_RECIPE);
     throw error;
   } finally {

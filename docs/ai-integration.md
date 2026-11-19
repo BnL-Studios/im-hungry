@@ -1,6 +1,6 @@
 # AI-integration — beslut och kontrakt (sprint 2)
 
-**Beslutad design:** 2026-11-19 · **Status:** Design för #125 klar för PR-granskning; **ingen AI-funktion är implementerad eller driftad ännu**. API-nyckel, verklig projektkvot och lyckat API-anrop återstår inom #127/#128.
+**Beslutad design:** 2026-11-19 · **Status:** Ursprunglig design för #125. Aktuell driftsättning och modell för MVP:n beskrivs under **Publik MVP för #128 och #126**.
 
 Relaterade kort: [#125](https://github.com/BnL-Studios/im-hungry/issues/125) (design), [#127](https://github.com/BnL-Studios/im-hungry/issues/127) (modell och gratis API-åtkomst), [#128](https://github.com/BnL-Studios/im-hungry/issues/128) (integration), [#126](https://github.com/BnL-Studios/im-hungry/issues/126) (generera-sida), [#129](https://github.com/BnL-Studios/im-hungry/issues/129) (receptvy), [#22](https://github.com/BnL-Studios/im-hungry/issues/22) (US-05), [#23](https://github.com/BnL-Studios/im-hungry/issues/23) (US-68), [#24](https://github.com/BnL-Studios/im-hungry/issues/24) (US-67).
 
@@ -129,18 +129,16 @@ När inget rimligt recept kan genereras eller anropet misslyckas returneras ett 
 
 **Gräns för #125:** detta dokument är design, inte påstående om fungerande API, konfigurerad prenumeration eller färdigt sprintmål.
 
-## Lokal demo för #128 och #126
+## Publik MVP för #128 och #126
 
-Den lokala demon använder `gemini-3.5-flash-lite`. Serverns `GEMINI_MODEL` kan ändras för att testa designens ursprungliga modellval. Ingen reservmodell är aktiverad som standard.
+Expo använder projektets HTTPS-endpoint för `generate-recipe` som standard. Home skickar den lokala inventariesnapshoten först efter knapptryckning. För Leos receptvy (#129) innehåller `RecipeResult` det validerade receptet och samma snapshot med råvarunamnen.
 
-Installera Deno 2. Kopiera `supabase/.env.example` till `supabase/.env` och fyll i Gemini-nyckeln lokalt. Kör från repots rot:
+MVP-beslutet ersätter driftsättningsvillkoret i avsnitt 5. Funktionen är publik utan JWT-verifiering eller egen rate limiting. Varje anrop kan förbruka projektets Gemini-kvot. Åtkomstskydd och kvotbegränsning följs upp i [#138](https://github.com/BnL-Studios/im-hungry/issues/138).
+
+Sätt `GEMINI_API_KEY` och `GEMINI_MODEL=gemini-3.5-flash-lite` bland projektets Edge Function Secrets. Driftsätt från repots rot:
 
 ```sh
-RECIPE_LOCAL_DEMO=1 deno run --env-file=supabase/.env --allow-env=RECIPE_LOCAL_DEMO,DENO_DEPLOYMENT_ID,GEMINI_API_KEY,GEMINI_MODEL,GEMINI_BACKUP_MODEL --allow-net=127.0.0.1:8787,generativelanguage.googleapis.com supabase/functions/generate-recipe/index.ts
+supabase functions deploy generate-recipe --remote=wkfmtrdltjwvhhjpgdco --no-verify-jwt --use-api
 ```
 
-Sätt `EXPO_PUBLIC_RECIPE_URL=http://127.0.0.1:8787/functions/v1/generate-recipe` i `mobile/.env.local` och starta om Expo. Testa i webbläsaren på localhost eller i iOS-simulatorn. Lägg till råvaror, öppna Home och tryck på **Generera recept**. Android-emulatorn behöver portvidarebefordran med `adb reverse tcp:8787 tcp:8787`.
-
-Funktionen lyssnar bara på loopback. Använd ingen tunnel eller publik proxy. Publik drift väntar på åtkomstskydd och kvotbegränsning. Gemini-nyckeln används enbart på servern.
-
-För Leos receptvy (#129) returnerar `generateFromInventory` en `RecipeResult` med `recipe` (de fyra API-fälten) och `snapshot` (namn per ingrediens-ID). Home visar resultatet tills receptvyn är klar. Tjänsten läser lagret igen före visning och skriver aldrig till SQLite.
+Testa i Expo genom att lägga till råvaror och välja **Home → Generera recept**. Kontrollera namn, mängd, steg och tid mot råvarorna. En tidigare lokal `EXPO_PUBLIC_RECIPE_URL` behöver tas bort för att använda den hostade funktionen. Starta sedan om Expo.

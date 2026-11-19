@@ -57,4 +57,4 @@ jobs:
       - uses: denoland/setup-deno@v2
         with:
           deno-version: v2.x
-      - run: deno test --allow-env=RECIPE_LOCAL_DEMO,DENO_DEPLOYMENT_ID supabase/functions/generate-recipe
+      - run: deno test supabase/functions/generate-recipe

@@ -6,8 +6,6 @@ import {
   validateRecipe,
 } from "./core.ts";
 
-const demoOrigin = /^http:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/;
-
 async function readBody(request: Request) {
   const reader = request.body?.getReader();
   if (!reader) throw new ApiError("INVALID_REQUEST", 400, "Expected JSON.");
@@ -32,25 +30,11 @@ async function readBody(request: Request) {
 }
 
 export async function handle(request: Request, generate = generateRecipe) {
-  const origin = request.headers.get("origin");
   const headers = {
-    "Access-Control-Allow-Origin": origin ?? "http://localhost",
+    "Access-Control-Allow-Origin": "*",
     "Access-Control-Allow-Headers": "content-type",
     "Access-Control-Allow-Methods": "POST, OPTIONS",
-    "Vary": "Origin",
   };
-  // Require the local demo runner. Hosted Supabase must fail closed.
-  if (
-    Deno.env.get("RECIPE_LOCAL_DEMO") !== "1" ||
-    Deno.env.get("DENO_DEPLOYMENT_ID") ||
-    !demoOrigin.test(new URL(request.url).origin) ||
-    (origin && !demoOrigin.test(origin))
-  ) {
-    return new Response(null, { status: 403 });
-  }
-  if (new URL(request.url).pathname !== "/functions/v1/generate-recipe") {
-    return new Response(null, { status: 404 });
-  }
   if (request.method === "OPTIONS") {
     return new Response(null, { status: 204, headers });
   }

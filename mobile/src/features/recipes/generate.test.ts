@@ -1,5 +1,5 @@
 import { expect, it, vi } from "vitest";
-import { generateFromInventory } from "./generate";
+import { generateFromInventory, hostedRecipeUrl } from "./generate";
 
 const endpoint = "http://127.0.0.1:8787/functions/v1/generate-recipe";
 const stock = [{ id: 1, name: "Ris", unit: "g" as const, quantity: 120 }];
@@ -9,7 +9,8 @@ const recipe = { title: "Ris", ingredients: [{ id: 1, quantity: 80, unit: "g" }]
 it("sends only stock fields, reads again and hands the original snapshot to the result view", async () => {
   const read = vi.fn(() => stock.map(row => ({ ...row, private: true })));
   const send = vi.fn(async (_url: RequestInfo | URL, _init?: RequestInit) => Response.json(recipe));
-  await expect(generateFromInventory(read, endpoint, send)).resolves.toEqual({ recipe, snapshot: stock });
+  await expect(generateFromInventory(read, undefined, send)).resolves.toEqual({ recipe, snapshot: stock });
+  expect(send.mock.calls[0][0]).toBe(hostedRecipeUrl);
   expect(JSON.parse(String(send.mock.calls[0][1]?.body))).toEqual({ ingredients: stock });
   expect(read).toHaveBeenCalledTimes(2);
 });
