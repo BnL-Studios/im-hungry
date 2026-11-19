@@ -10,29 +10,28 @@ Användaren har mat hemma men vet inte **vad hen kan laga av just de råvaror oc
 
 ## Beskrivning
 
-**I'm Hungry!** är en mobilapp där användaren registrerar sina råvaror och mängder i ett digitalt matförråd. Matförrådet sparas **lokalt i SQLite på telefonen** med Expo SQLite och Drizzle ORM och kan hanteras utan nätverk. Användaren väljer ett mat-humör och begär **ett** recept från AI. Då skickar appen bara den nödvändiga inventarielistan och humöret via HTTPS till en **Supabase Edge Function**, som validerar begäran och anropar AI med en hemlig nyckel som aldrig finns i mobilappen. Receptet visas i appen och sparas inte permanent i MVP:n.
+**I'm Hungry!** är en mobilapp där användaren registrerar sina råvaror och mängder i ett digitalt matförråd. Matförrådet sparas **lokalt i SQLite på telefonen** med Expo SQLite och Drizzle ORM och kan hanteras utan nätverk. Användaren begär **ett** recept från AI genom att skicka **endast inventariets ingredienslista** (ID, namn, mängd, basenhet) via HTTPS till en **Supabase Edge Function**, som validerar begäran och anropar AI med en hemlig nyckel som aldrig finns i mobilappen. Vid framgång kommer exakt fyra fält tillbaka: receptnamn (`title`), använda råvaror (`ingredients`), tillagningssteg (`steps`) och uppskattad tid i minuter (`estimatedCookingTime`). Receptet visas i appen och sparas inte permanent i MVP:n.
 
-## Status i sprint 2 (2026-11-16)
+## Status i sprint 2 (uppföljt 2026-11-19)
 
-Sprint 1 avslutades 2026-11-16. Matförrådets första vertikala del är mergad till `main` via PR #122. Sprint 2 pågår och ingen sprint 2-kod är påbörjad ännu:
+Sprint 1 avslutades 2026-11-16. Matförrådets första vertikala del är mergad till `main` via PR #122. Under sprint 2 har Leo implementerat korrigering/borttagning och skalor i öppna PR #130 (ännu inte mergad); AI-modell och API-design är fastställda men AI-kod är ännu inte byggd:
 
 | Område | Status |
 |---|---|
 | Se matförrådet (US-01) | Klar: listan läser från lokal SQLite, visar tomt läge och fel (mergad via #122). |
 | Lägga till råvara (US-02) | Klar: modal, validering och sparning via det delade inventory-lagret (mergad via #122). |
-| Korrigera/ta bort (US-03/US-04) | Sprint 2: issues #26 och #27, ansvarig Leo. |
-| Mat-humör (US-06) | Inte påbörjat; utanför sprint 2. |
-| Recept via Edge Function/AI (US-05 m.fl.) | Sprint 2: US-05 (#22) med delkort #125–#129; US-68 (#23) och US-67 (#24). Ingen `supabase/`-kod finns ännu. |
+| Korrigera/ta bort (US-03/US-04) | Implementerat på öppna PR #130, ännu inte mergat till `main`. |
+| Mat-humör (US-06) | **Efter MVP**; påverkar inte API-request v1. |
+| Recept via Edge Function/AI (US-05 m.fl.) | Modell `gemini-3.8-flash` och [kontrakt](ai-integration.md) dokumenterade för #125. API-nyckel ej verifierad; ingen Edge Function eller receptvy implementerad (#127–#129). |
 
-Se [sprint 2](sprintar/sprint-2/planning.md) och [arkitekturen](arkitektur.md).
+Se [sprint 2](sprintar/sprint-2/planning.md), [arkitekturen](arkitektur.md) och [AI-integrationsdesignen](ai-integration.md).
 
 ## Ingår i MVP:n
 
 - **Se matförrådet:** visa sparade råvaror med mängd och enhet; stöd för tom lista.
 - **Lägga till råvaror:** ange namn, positiv mängd och enhet (t.ex. g, ml eller styck); lagra lokalt i SQLite.
 - **Korrigera matförrådet:** ändra mängd eller ta bort råvara med bestående ändringar.
-- **Välja mat-humör:** ett litet urval, exempelvis *Comfort food*, *Quick & easy* och *Surprise me*.
-- **Få ett recept med AI:** skicka det aktuella matförrådet och mat-humöret via Edge Function till AI och få **ett** recept utifrån enbart tillgängliga råvaror och mängder.
+- **Få ett recept med AI:** skicka **enbart ingredienslistan** via Edge Function och få **ett** recept utifrån tillgängliga råvaror och mängder.
 - **Läsa receptet:** visa titel, uppskattad tillagningstid, ingrediensmängder och steg; visa begripligt meddelande när nätet saknas eller giltigt recept inte kan erbjudas.
 
 ## Ingår inte i MVP:n
@@ -43,7 +42,7 @@ Se [sprint 2](sprintar/sprint-2/planning.md) och [arkitekturen](arkitektur.md).
 - Smart sökning, sortering, kategorier, streckkodsskanning och utgångsdatum.
 - Flera receptförslag i följd, recepthistorik, favoriter och sparade recept.
 - Starta matlagning, bekräfta tillagning eller automatiskt dra av ingredienser.
-- Avancerade matpreferenser, portionsval, inköpslistor och näringsberäkning.
+- Mat-humör (US-06), val av kök, avancerade matpreferenser, portionsval, inköpslistor och näringsberäkning.
 - Administratörsvy och rapporter.
 - **Offline-generering av AI-recept.** Endast matförrådets CRUD fungerar utan internet.
 
@@ -57,3 +56,5 @@ Se [sprint 2](sprintar/sprint-2/planning.md) och [arkitekturen](arkitektur.md).
 | 2026-11-02 | Lokal SQLite + Drizzle för matförråd, Supabase Edge Function för AI. | Offline-inventarie utan egen backend/databasserver och säker serverlagring av AI-nyckeln. |
 | 2026-11-13 | Sprint 1-status tillagd; US-01/US-02 implementerade, receptflödet kvar. | Dokumentationen ska spegla faktiskt läge i sprint 1. |
 | 2026-11-16 | Sprint 2-status: US-01/US-02 mergade via #122; US-03/US-04 och receptflödet (#22, #23, #24) pågår. | Dokumentationen ska spegla faktiskt läge i sprint 2. |
+| 2026-11-19 | Status för PR #130 och AI-val/kontrakt (#125/#127) förtydligad. | Skilj beslutad design från implementerad funktion. |
+| 2026-11-19 | MVP-kontrakt förenklat till ingredients-in och fyra receptfält ut. US-06 skjuts upp. | Kortare vertikal leverans utan preferenser. |
