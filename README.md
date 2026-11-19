@@ -14,11 +14,11 @@ Målgrupp: studenter och andra som ofta har råvaror hemma men svårt att bestä
 |---|---|---|
 | Matförråd | Visa, lägga till, korrigera och ta bort råvaror med mängd och enhet. | Implementerat (US-01–US-04). Skalor räknas om till basenheterna g/ml/st. |
 | Lokal lagring | Inventariet finns kvar efter omstart och kan hanteras utan internet. | Implementerat med Expo SQLite + Drizzle. |
-| Mat-humör | Välj t.ex. *Comfort food*, *Quick & easy* eller *Surprise me*. | Inte påbörjat. |
+| Mat-humör (US-06) | Val av receptstil/preferens | **Efter MVP**; skickas inte i första API-kontraktet |
 | Ett receptförslag | Skicka en begäran till Edge Function och visa ett AI-genererat recept utifrån råvarorna som finns. | Inte påbörjat; Edge Function finns inte i repot. |
 | Resultat och fel | Visa recepttitel, tid, ingredienser, mängder och steg, eller ett begripligt felmeddelande. | Inte påbörjat. |
 
-Utanför MVP:n: användarkonton, molnsynkronisering, favoriter, recepthistorik, automatiska avdrag ur matförrådet, avancerade preferenser, inköpslistor och streckkodsskanning. **Inventariet fungerar offline; receptgenerering kräver internet.** Lokal data synkroniseras inte mellan enheter och kan förloras vid avinstallation.
+Utanför MVP:n: mat-humör, val av kök, användarkonton, molnsynkronisering, favoriter, recepthistorik, automatiska avdrag ur matförrådet, avancerade preferenser, inköpslistor och streckkodsskanning. **Inventariet fungerar offline; receptgenerering kräver internet.** Lokal data synkroniseras inte mellan enheter och kan förloras vid avinstallation.
 
 Se [MVP](docs/mvp.md), [Product Backlog](docs/USER_STORIES.md), [sprint 1](docs/sprintar/sprint-1/planning.md), [sprint 2](docs/sprintar/sprint-2/planning.md) och [AI-integrationsdesignen](docs/ai-integration.md).
 
@@ -31,7 +31,7 @@ Se [MVP](docs/mvp.md), [Product Backlog](docs/USER_STORIES.md), [sprint 1](docs/
 | Lokal databas | Expo SQLite | Implementerad |
 | ORM och migrationer | Drizzle ORM + Drizzle Kit | Implementerade; två migrationer |
 | Matförrådets UI | Lista från SQLite, lägga till/ändra/ta bort, skalor, validering och fel/empty-state | Implementerat (PR #122 + sprint 2) |
-| Recept-gateway | Supabase Edge Functions (Deno/TypeScript); [API-kontrakt v1](docs/ai-integration.md) | Vald design, ännu inte byggd |
+| Recept-gateway | Supabase Edge Functions (Deno/TypeScript); [API-kontrakt v1](docs/ai-integration.md) med endast ingredienslista in och fyra receptfält ut | Vald design, ännu inte byggd |
 | AI-tjänst | **Gemini 3.8 Flash** (`gemini-3.8-flash`), Flash-Lite som utvärderad reserv | Modell/design fastställd 2026-11-19 (#125); nyckel och integration inte verifierade/byggda |
 | Test | Vitest: validering, skalor, enheter och riktiga SQL-migrationer | Implementerat; 4 testfiler |
 | CI | GitHub Actions för mobilapp | `npm ci`, Expo-konfiguration, `npm run lint`, `tsc --noEmit` och `npm test` |
@@ -108,7 +108,7 @@ Sprint 2 pågår (2026-11-16–2026-11-20). Det som är klart i koden:
 
 Det som återstår:
 
-- Mat-humör, Supabase Edge Function, AI-integration och receptvy (US-05/US-68/US-67).
+- Supabase Edge Function, AI-integration och receptvy (US-05/US-68/US-67). Mat-humör skjuts upp till efter MVP.
 - Home-fliken är fortfarande Expos `Hello World`-placeholder.
 
 **Legacy:** Spring Boot-koden är borttagen. Ingen Java-server eller molndatabas behövs för matförrådet i målarkitekturen.
@@ -177,7 +177,7 @@ Vi använder kortlivade branches från `main`, pull requests, minst en annan per
 | [MVP](docs/mvp.md) | Omfattning och avgränsningar |
 | [Product Backlog](docs/USER_STORIES.md) | User stories och acceptanskriterier |
 | [Arkitektur](docs/arkitektur.md) | Ansvar, dataflöden, AI-gateway och säkerhet |
-| [AI-integrationsdesign](docs/ai-integration.md) | Vald modell, gratisnivå, API-kontrakt, validering och status för #125/#127 |
+| [AI-integrationsdesign](docs/ai-integration.md) | Vald modell, gratisnivå, enkel ingredients-request, fyra receptfält, validering och status för #125/#127 |
 | [Databasschema](docs/databasschema.md) · [DBML](docs/databasschema.dbml) | Lokal SQLite-modell |
 | [Beslutslogg](docs/beslutslogg.md) | Tidigare och gällande teknikbeslut |
 | [Git-arbetsflöde](docs/git-workflow.md) | Branches, PR, CI och squash merge |
