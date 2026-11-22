@@ -49,4 +49,12 @@ jobs:
       - name: Test
         run: npm test
 
-# Edge Function tests get added when the recipe flow starts.
+  edge:
+    name: Recipe Edge Function
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: denoland/setup-deno@v2
+        with:
+          deno-version: v2.x
+      - run: deno test --allow-env=RECIPE_LOCAL_DEMO,DENO_DEPLOYMENT_ID supabase/functions/generate-recipe
