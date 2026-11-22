@@ -1,15 +1,13 @@
+
 import {
   ApiError,
   generateRecipe,
-  type Ingredient,
   parseIngredients,
   validateRecipe,
+  type Ingredient,
 } from "./core.ts";
 
-function assert(
-  condition: unknown,
-  message = "Assertion failed",
-): asserts condition {
+function assert(condition: unknown, message = "Assertion failed"): asserts condition {
   if (!condition) throw new Error(message);
 }
 
@@ -127,13 +125,11 @@ Deno.test("Retries a temporary 503 and then succeeds", async () => {
     model: "primary",
     backupModel: "primary",
     delay: async () => {},
-    fetcher: () => {
+    fetcher: async () => {
       calls++;
-      return Promise.resolve(
-        calls === 1
-          ? new Response(null, { status: 503 })
-          : geminiResponse(recipe),
-      );
+      return calls === 1
+        ? new Response(null, { status: 503 })
+        : geminiResponse(recipe);
     },
   });
 
@@ -149,14 +145,12 @@ Deno.test("Uses the backup only after primary failures", async () => {
     model: "primary",
     backupModel: "backup",
     delay: async () => {},
-    fetcher: (url) => {
+    fetcher: async (url) => {
       urls.push(url);
 
-      return Promise.resolve(
-        urls.length < 3
-          ? new Response(null, { status: 503 })
-          : geminiResponse(recipe),
-      );
+      return urls.length < 3
+        ? new Response(null, { status: 503 })
+        : geminiResponse(recipe);
     },
   });
 
@@ -176,9 +170,9 @@ Deno.test("Does not retry quota errors", async () => {
         model: "primary",
         backupModel: "backup",
         delay: async () => {},
-        fetcher: () => {
+        fetcher: async () => {
           calls++;
-          return Promise.resolve(new Response(null, { status: 429 }));
+          return new Response(null, { status: 429 });
         },
       }),
     "RATE_LIMITED",
@@ -197,9 +191,9 @@ Deno.test("Stops after the maximum attempts", async () => {
         model: "primary",
         backupModel: "backup",
         delay: async () => {},
-        fetcher: () => {
+        fetcher: async () => {
           calls++;
-          return Promise.resolve(new Response(null, { status: 503 }));
+          return new Response(null, { status: 503 });
         },
       }),
     "MODEL_UNAVAILABLE",

@@ -19,7 +19,7 @@ export default function Page() {
     setResult(null);
     setError("");
     try {
-      setResult(await generateFromInventory(() => readInventory(db), process.env.EXPO_PUBLIC_RECIPE_URL));
+      setResult(await generateFromInventory(() => readInventory(db)));
     } catch (cause) {
       setError(cause instanceof Error ? cause.message : "Kunde inte generera recept.");
     } finally {

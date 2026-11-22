@@ -1,5 +1,91 @@
-import { ApiError, type Ingredient } from "../_shared/recipe.ts";
-export * from "../_shared/recipe.ts";
+
+export type Unit = "g" | "ml" | "qty";
+
+export type Ingredient = {
+  id: number;
+  name: string;
+  quantity: number;
+  unit: Unit;
+};
+
+export type Recipe = {
+  title: string;
+  ingredients: { id: number; quantity: number; unit: Unit }[];
+  steps: string[];
+  estimatedCookingTime: number;
+};
+
+export class ApiError extends Error {
+  constructor(
+    public code: string,
+    public status: number,
+    message: string,
+  ) {
+    super(message);
+    this.name = "ApiError";
+  }
+}
+
+function isObject(value: unknown): value is Record<string, unknown> {
+  return typeof value === "object" &&
+    value !== null &&
+    !Array.isArray(value);
+}
+
+function hasKeys(value: Record<string, unknown>, keys: string[]): boolean {
+  const actual = Object.keys(value);
+  return actual.length === keys.length &&
+    actual.every((key) => keys.includes(key));
+}
+
+function isUnit(value: unknown): value is Unit {
+  return value === "g" || value === "ml" || value === "qty";
+}
+
+export function parseIngredients(body: unknown): Ingredient[] {
+  if (
+    !isObject(body) ||
+    !hasKeys(body, ["ingredients"]) ||
+    !Array.isArray(body.ingredients) ||
+    body.ingredients.length < 1 ||
+    body.ingredients.length > 50
+  ) {
+    throw new ApiError("INVALID_REQUEST", 400, "Invalid ingredient list.");
+  }
+
+  const result: Ingredient[] = [];
+  const seen = new Set<number>();
+
+  for (const item of body.ingredients) {
+    if (!isObject(item) || !hasKeys(item, ["id", "name", "quantity", "unit"])) {
+      throw new ApiError("INVALID_REQUEST", 400, "Invalid ingredient.");
+    }
+
+    const { id, name, quantity, unit } = item;
+
+    if (
+      typeof id !== "number" ||
+      !Number.isSafeInteger(id) ||
+      id <= 0 ||
+      seen.has(id) ||
+      typeof name !== "string" ||
+      name.trim().length < 1 ||
+      name.length > 80 ||
+      typeof quantity !== "number" ||
+      !Number.isFinite(quantity) ||
+      quantity <= 0 ||
+      quantity > 1_000_000 ||
+      !isUnit(unit)
+    ) {
+      throw new ApiError("INVALID_REQUEST", 400, "Invalid ingredient.");
+    }
+
+    seen.add(id);
+    result.push({ id, name: name.trim(), quantity, unit });
+  }
+
+  return result;
+}
 
 export const recipeSchema = {
   type: "object",
@@ -24,6 +110,89 @@ export const recipeSchema = {
   },
   required: ["title", "ingredients", "steps", "estimatedCookingTime"],
 };
+
+export function isNoRecipe(value: unknown): boolean {
+  return isObject(value) &&
+    hasKeys(value, ["title", "ingredients", "steps", "estimatedCookingTime"]) &&
+    value.title === "" &&
+    Array.isArray(value.ingredients) &&
+    value.ingredients.length === 0 &&
+    Array.isArray(value.steps) &&
+    value.steps.length === 0 &&
+    value.estimatedCookingTime === 0;
+}
+
+export function validateRecipe(
+  value: unknown,
+  inventory: Ingredient[],
+): value is Recipe {
+  if (
+    !isObject(value) ||
+    !hasKeys(value, ["title", "ingredients", "steps", "estimatedCookingTime"])
+  ) {
+    return false;
+  }
+
+  const { title, ingredients, steps, estimatedCookingTime } = value;
+
+  if (
+    typeof title !== "string" ||
+    title.trim().length < 1 ||
+    title.length > 120 ||
+    typeof estimatedCookingTime !== "number" ||
+    !Number.isInteger(estimatedCookingTime) ||
+    estimatedCookingTime < 1 ||
+    estimatedCookingTime > 480 ||
+    !Array.isArray(steps) ||
+    steps.length < 1 ||
+    steps.length > 20 ||
+    !steps.every((s: unknown) =>
+      typeof s === "string" && s.trim().length > 0 && s.length <= 500
+    ) ||
+    !Array.isArray(ingredients) ||
+    ingredients.length < 1 ||
+    ingredients.length > inventory.length
+  ) {
+    return false;
+  }
+
+  const stock = new Map(inventory.map((item) => [item.id, item]));
+  const seen = new Set<number>();
+
+  for (const item of ingredients) {
+    if (!isObject(item) || !hasKeys(item, ["id", "quantity", "unit"])) {
+      return false;
+    }
+
+    const { id, quantity, unit } = item;
+
+    if (
+      typeof id !== "number" ||
+      !Number.isSafeInteger(id) ||
+      seen.has(id) ||
+      typeof quantity !== "number" ||
+      !Number.isFinite(quantity) ||
+      quantity <= 0 ||
+      !isUnit(unit)
+    ) {
+      return false;
+    }
+
+    const available = stock.get(id);
+
+    if (
+      !available ||
+      available.unit !== unit ||
+      quantity > available.quantity
+    ) {
+      return false;
+    }
+
+    seen.add(id);
+  }
+
+  return true;
+}
 
 type Fetcher = (url: string, options: RequestInit) => Promise<Response>;
 
@@ -55,7 +224,8 @@ export async function generateRecipe(
 Generate ONE practical recipe in Swedish.
 
 Use only the provided ingredients and do not exceed their quantities.
-Even water, salt and frying fats must be listed to be used.
+Water, salt and frying fats may be assumed available.
+These basics do not require inventory IDs.
 
 Use the original ingredient IDs and units.
 Provide clear cooking steps and total cooking time in minutes.
@@ -77,9 +247,15 @@ ${JSON.stringify(ingredients)}
   });
 
   // Two primary attempts; optionally one backup attempt.
-  const attempts = [model, model];
-  if (backupModel && backupModel !== model) attempts.push(backupModel);
-  const deadline = Date.now() + 45_000;
+  const attempts = [
+    { model, timeout: 15_000 },
+    { model, timeout: 15_000 },
+    ...(
+      backupModel && backupModel !== model
+        ? [{ model: backupModel, timeout: 12_000 }]
+        : []
+    ),
+  ];
 
   const fetcher = options.fetcher ?? fetch;
   const delay = options.delay ??
@@ -92,22 +268,17 @@ ${JSON.stringify(ingredients)}
   );
 
   for (let i = 0; i < attempts.length; i++) {
-    const remaining = deadline - Date.now();
-    if (remaining <= 0) {
-      throw new ApiError("TIMEOUT", 504, "Recipe generation timed out.");
-    }
+    const attempt = attempts[i];
 
     console.log(
-      `Gemini attempt ${i + 1}/${attempts.length}: ${attempts[i]}`,
+      `Gemini attempt ${i + 1}/${attempts.length}: ${attempt.model}`,
     );
 
     let response: Response | undefined;
 
     try {
       response = await fetcher(
-        `https://generativelanguage.googleapis.com/v1beta/models/${
-          attempts[i]
-        }:generateContent`,
+        `https://generativelanguage.googleapis.com/v1beta/models/${attempt.model}:generateContent`,
         {
           method: "POST",
           headers: {
@@ -115,7 +286,7 @@ ${JSON.stringify(ingredients)}
             "x-goog-api-key": apiKey,
           },
           body: requestBody,
-          signal: AbortSignal.timeout(remaining),
+          signal: AbortSignal.timeout(attempt.timeout),
         },
       );
     } catch (cause) {
@@ -123,9 +294,7 @@ ${JSON.stringify(ingredients)}
         (cause.name === "TimeoutError" || cause.name === "AbortError");
 
       console.warn(
-        `Gemini attempt ${i + 1} ${
-          timedOut ? "timed out" : "failed to connect"
-        }`,
+        `Gemini attempt ${i + 1} ${timedOut ? "timed out" : "failed to connect"}`,
       );
 
       lastError = timedOut
