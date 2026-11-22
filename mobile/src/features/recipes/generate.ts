@@ -1,6 +1,9 @@
 import {
-  parseIngredients, validateRecipe, type Ingredient, type Recipe,
-} from "../../../../supabase/functions/_shared/recipe";
+  parseIngredients,
+  validateRecipe,
+  type Ingredient,
+  type Recipe,
+} from "../../../../shared/recipe-contract";
 
 export interface RecipeResult {
   recipe: Recipe;
@@ -58,7 +61,23 @@ export async function generateFromInventory(
       body: JSON.stringify({ ingredients: snapshot }), signal: controller.signal,
     });
     body = await response.json();
-    if (!response.ok) throw new Error(messages[body?.error?.code] ?? "Recepttjänsten kunde inte generera ett recept.");
+    if (!response.ok) {
+      const code = body?.error?.code;
+      const message = body?.error?.message ?? body?.message;
+
+      console.warn("[Recipe API]", {
+        status: response.status,
+        code,
+        message,
+      });
+
+      throw new Error(
+        messages[code] ??
+          `Recepttjänsten svarade med HTTP ${response.status}${
+            code ? ` (${code})` : ""
+          }.`,
+      );
+    }
   } catch (error) {
     if (controller.signal.aborted) throw new Error(messages.TIMEOUT);
     if (error instanceof TypeError) throw new Error("Kunde inte nå recepttjänsten.");

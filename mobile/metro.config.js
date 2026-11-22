@@ -2,8 +2,9 @@
 const { getDefaultConfig } = require("expo/metro-config");
 
 const config = getDefaultConfig(__dirname);
-config.watchFolders.push(require("node:path").resolve(__dirname, "../supabase/functions/_shared"));
-
+config.watchFolders.push(
+  require("node:path").resolve(__dirname, "..")
+);
 // Support SQLite WebAssembly.
 if (!config.resolver.assetExts.includes("wasm")) {
   config.resolver.assetExts.push("wasm");
