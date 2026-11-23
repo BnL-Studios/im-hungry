@@ -1,6 +1,6 @@
 # Databasschema
 
-> **Status (2026-11-13, sprint 1):** Implementerad i `mobile/src/db/schema.ts` med två versionshanterade Drizzle-migrationer i `mobile/drizzle/`. **SQLite finns på telefonen**, inte i Supabase. Matförrådslistan och formuläret för att lägga till en råvara använder tabellen.
+> **Status (2026-11-23):** Implementerad i `mobile/src/db/schema.ts` med två versionshanterade Drizzle-migrationer i `mobile/drizzle/`. **SQLite finns på telefonen**, inte i Supabase. Matförrådslistan och formulären för att lägga till/ändra/ta bort råvaror använder tabellen. Receptflödet läser samma tabell via en snapshot och skriver aldrig till den; det finns därför inga nya tabeller i schemat.
 
 ## Diagram
 
@@ -51,8 +51,8 @@ Drizzle ger TypeScript-typer och genererar SQL-migrationer. `quantity` är `REAL
 
 ## Koppling till MVP
 
-Ingen `users`-tabell behövs eftersom varje appinstallation har sitt eget matförråd. Recept genereras vid behov via en planerad **Supabase Edge Function**, men recepten och AI-anropen kräver inga nya SQLite-tabeller i MVP:n. Funktionen ska inte lagra matförrådet i Supabase.
+Ingen `users`-tabell behövs eftersom varje appinstallation har sitt eget matförråd. Recept genereras vid behov via en deployad **Supabase Edge Function**, men recepten och AI-anropen kräver inga nya SQLite-tabeller i MVP:n. Funktionen lagrar inte matförrådet i Supabase.
 
 `mobile/src/db/schema.ts` och de versionshanterade migrationerna i `mobile/drizzle/` är den tekniska sanningskällan. Uppdatera diagrammet när modellen ändras.
 
-**Senast uppdaterad:** 2026-11-13 (sprint 1).
+**Senast uppdaterad:** 2026-11-23 (receptflödet är read-only mot samma schema).
