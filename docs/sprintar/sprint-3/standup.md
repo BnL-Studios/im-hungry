@@ -3,7 +3,7 @@
 **Vecka:** 2026-11-23–2026-11-27
 **Team:** Benjamin Simmons, Leo Spenner
 
-> Fyll i en rad per person efter standupen. Måndagens rader bygger på aktivitet i GitHub, inte på en loggad muntlig standup. Närvaro och hinder skrivs in när de faktiskt rapporteras.
+> En rad per person efter varje standup.
 
 ---
 
@@ -11,8 +11,8 @@
 
 | Namn | Närvaro | Igår | Idag | Hinder |
 |---|---|---|---|---|
-| Benjamin | Ej loggat | – | US-07 (#28) lyftes igen; nya kort för omgenerering, AI-kvalitet och språk (#145–#148). Sprint 3 planeras. | Ej rapporterat |
-| Leo | Ej loggat | – | Kort #143 för generera recept-modal skapades. Planera kopplingen till receptvyn (#129). | Ej rapporterat |
+| Benjamin | | | | |
+| Leo | | | | |
 
 ## Tisdag 2026-11-24
 
@@ -41,5 +41,3 @@
 |---|---|---|---|---|
 | Benjamin | | | | |
 | Leo | | | | |
-
-**Senast uppdaterad:** 2026-11-23.
