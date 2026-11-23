@@ -1,8 +1,8 @@
 # Retrospektiv: sprint 3
 
-**Datum:** 2026-11-27 (planerat)
-**Deltagare:** Benjamin Simmons, Leo Spenner
-**Leds av:** Leo (Scrum Master)
+**Datum:**
+**Deltagare:**
+**Leds av:**
 
 > Fylls i tillsammans efter reviewn.
 

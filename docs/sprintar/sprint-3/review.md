@@ -5,14 +5,14 @@
   Visa bara stories som uppfyller Definition of Done.
 -->
 
-**Datum:** 2026-11-27 (planerat)
-**Deltagare:** Benjamin Simmons, Leo Spenner och läraren (planerat)
+**Datum:**
+**Deltagare:**
 
 ## Del 1: Förberedelse
 
 ### Sprintmål
 
-Från den nya receptknappen ska användaren kunna få ett recept som faktiskt går att laga med råvarorna hemma, och be om ett annat förslag utan att börja om.
+Användaren ska kunna få ett recept från sitt matförråd utifrån mat-humör, typ av mat, maxtid och antal portioner, följa stegen med mängd och enhet direkt i instruktionen och be om ett annat förslag med samma val.
 
 **Uppnåddes sprintmålet?** Ja / Delvis / Nej (fylls i när sprinten avslutas)
 
@@ -30,19 +30,16 @@ Från den nya receptknappen ska användaren kunna få ett recept som faktiskt g�
 
 ### Demoplan
 
-1. Öppna **Råvaror** och visa ingredienserna som finns sparade.
-2. Öppna generera recept från knappen i navigeringen, visa modalen och generera ett recept (#143).
-3. Visa ett exempel där råvarorna faktiskt räcker och kontrollera att receptet är rimligt att laga (#147).
-4. Prova ett lager där ett vettigt recept inte går att skapa. Visa hur AI:n hanterar det (#146).
-5. Begär ett annat recept med samma råvaror utan att börja om (#28, #145).
-6. Testa svenska och engelska ingrediensnamn och visa att receptet håller samma språk (#148).
+Visa de delar som uppfyller [Definition of Done](../../definition-of-done.md).
 
-Demot anpassas efter vad som faktiskt är klart och mergat inför reviewn.
+1. Öppna receptmodalen från knappen i navigeringen (#143).
+2. Välj mat-humör och matstil (#25, #29). Sätt en maxtid och välj antal portioner (#30, #31).
+3. Generera receptet. Visa titel, ingredienser, steg och tillagningstid på receptskärmen (#129). Följ ett steg där mängd och enhet står direkt i instruktionen (#135).
+4. Be om ett annat förslag med samma råvaror och val (#28).
 
 ### Frågor till läraren
 
-- Hur kan vi bäst testa och visa kvaliteten på AI-genererade recept när resultatet kan skilja sig mellan anrop?
-- Är det rimligt att dela upp förbättringen av AI-svaren i flera kort när de ändrar samma prompt?
+-
 
 ## Del 2: Efter reviewn
 
