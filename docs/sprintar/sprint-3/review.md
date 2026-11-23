@@ -1,8 +1,17 @@
 # Sprint review: sprint 3
 
 <!--
-  Del 1 fylls i inför reviewn. Del 2 fylls i under eller efter mötet.
-  Visa bara stories som uppfyller Definition of Done.
+  INSTRUKTION
+  Del 1 fylls i INNAN reviewn, senast söndag kväll. Det är ert manus.
+  Del 2 fylls i UNDER eller DIREKT EFTER reviewn.
+
+  Reviewn med läraren är ungefär 20 minuter:
+  - Sprintmål och vad som blev klart (2 min)
+  - Demo av fungerande mjukvara (10 min)
+  - Feedback och frågor (8 min)
+
+  Visa bara stories som uppfyller Definition of Done. Halvfärdigt redovisas under "Blev inte klart".
+  Demot ska köras på riktigt, inte med skärmdumpar. Testa det innan.
 -->
 
 **Datum:**
@@ -12,23 +21,30 @@
 
 ### Sprintmål
 
-Användaren ska kunna få ett recept från sitt matförråd utifrån mat-humör, typ av mat, maxtid och antal portioner, följa stegen med mängd och enhet direkt i instruktionen och be om ett annat förslag med samma val.
+<!-- Kopiera från planning.md. -->
 
-**Uppnåddes sprintmålet?** Ja / Delvis / Nej (fylls i när sprinten avslutas)
+> Efter sprinten ska användaren kunna få ett recept från matförrådet som passar valt mat-humör, kök, maxtid och antal portioner, se mängderna direkt i receptstegen och be om ett annat förslag med samma val.
+
+**Uppnåddes sprintmålet?** Ja / Delvis / Nej
 
 ### Blev klart
 
 | Issue | Story | Visas av |
 |---|---|---|
 | | | |
+| | | |
 
 ### Blev inte klart
+
+<!-- Vad och varför? Det är inget misslyckande, men det ska förklaras. -->
 
 | Issue | Story | Varför inte klar | Vad händer med den? |
 |---|---|---|---|
 | | | | |
 
 ### Demoplan
+
+<!-- I vilken ordning visar ni? Vem gör vad? Berätta det som en användares väg genom appen, inte story för story. -->
 
 Visa de delar som uppfyller [Definition of Done](../../definition-of-done.md).
 
@@ -39,6 +55,8 @@ Visa de delar som uppfyller [Definition of Done](../../definition-of-done.md).
 
 ### Frågor till läraren
 
+<!-- Något ni vill ha feedback på eller är osäkra på? -->
+
 -
 
 ## Del 2: Efter reviewn
@@ -46,7 +64,10 @@ Visa de delar som uppfyller [Definition of Done](../../definition-of-done.md).
 ### Feedback
 
 -
+-
 
 ### Ändringar i backloggen
+
+<!-- Nya stories, ändrad prioritet, stories som tagits bort. Länka issues. -->
 
 -

@@ -14,25 +14,27 @@ Varje sprint får en egen mapp med fyra filer.
 
 ## Så gör ni vid varje ny sprint
 
-1. Kopiera `sprint-mall/` till nästa sprintmapp.
-2. Fyll i `planning.md` på måndagen.
-3. Logga kort i `standup.md` varje dag.
-4. Fyll i `review.md` inför reviewn med läraren och komplettera efteråt.
-5. Fyll i `retro.md` efter reviewn.
+1. Kopiera mappen `sprint-mall/` och döp kopian till nästa lediga sprintnummer, t.ex. `sprint-2/`.
+2. Fyll i `planning.md` under sprint planning på måndagen.
+3. Fyll i `standup.md` varje dag.
+4. Fyll i `review.md` inför reviewn med läraren, och komplettera efteråt med feedbacken.
+5. Fyll i `retro.md` direkt efter reviewn.
 
-Gör dokumentändringarna i en egen branch och pull request, precis som med kod.
+Gör det här i en egen branch och pull request, precis som med kod.
 
 ## Måndagens ordning
 
-```text
-Review (sprint N) → Retro (sprint N) → Planning (sprint N+1)
 ```
+Review (sprint N)  →  Retro (sprint N)  →  Planning (sprint N+1)
+```
+
+Retron ligger före planeringen, så att det ni bestämmer på retron påverkar nästa sprint direkt.
 
 ## Filerna
 
 | Fil | När | Vem |
 |---|---|---|
-| `planning.md` | I början av sprinten | Hela teamet, PO leder |
+| `planning.md` | Måndag, i början av sprinten | Hela teamet, PO leder |
 | `standup.md` | Varje dag | Alla skriver sin egen rad |
 | `review.md` | Före och efter reviewn | Hela teamet |
-| `retro.md` | Direkt efter reviewn | Hela teamet, SM leder |
+| `retro.md` | Måndag, direkt efter reviewn | Hela teamet, SM leder |
