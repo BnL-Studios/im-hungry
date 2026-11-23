@@ -1,4 +1,4 @@
-# Sprint review: sprint N
+# Sprint review: sprint 3
 
 <!--
   INSTRUKTION
@@ -23,19 +23,11 @@
 
 <!-- Kopiera från planning.md. -->
 
-
+> Efter sprinten ska användaren kunna få ett recept från matförrådet som passar valt mat-humör, kök, maxtid och antal portioner, se mängderna direkt i receptstegen och be om ett annat förslag med samma val.
 
 **Uppnåddes sprintmålet?** Ja / Delvis / Nej
 
 ### Blev klart
-
-> **Exempel:**
->
-> | Issue | Story | Visas av |
-> |---|---|---|
-> | #3 | Skapa ett hushåll | Sara |
-> | #4 | Lägga till en syssla | Lina |
-> | #7 | Visa lista med sysslor | Jonas |
 
 | Issue | Story | Visas av |
 |---|---|---|
@@ -46,8 +38,6 @@
 
 <!-- Vad och varför? Det är inget misslyckande, men det ska förklaras. -->
 
-> **Exempel:** #9 Projektskelett blev klart, men databasen körs bara lokalt hos Amir. Vi underskattade hur lång tid Docker-uppsättningen tog.
-
 | Issue | Story | Varför inte klar | Vad händer med den? |
 |---|---|---|---|
 | | | | |
@@ -56,14 +46,12 @@
 
 <!-- I vilken ordning visar ni? Vem gör vad? Berätta det som en användares väg genom appen, inte story för story. -->
 
-> **Exempel:**
-> 1. Sara skapar hushållet "Korridor 4B".
-> 2. Lina lägger till tre sysslor.
-> 3. Jonas visar att sysslorna finns kvar efter omladdning.
+Visa de delar som uppfyller [Definition of Done](../../definition-of-done.md).
 
-1.
-2.
-3.
+1. Öppna receptmodalen från knappen i navigeringen (#143).
+2. Välj mat-humör och matstil (#25, #29). Sätt en maxtid och välj antal portioner (#30, #31).
+3. Generera receptet. Visa titel, ingredienser, steg och tillagningstid på receptskärmen (#129). Följ ett steg där mängd och enhet står direkt i instruktionen (#135).
+4. Be om ett annat förslag med samma råvaror och val (#28).
 
 ### Frågor till läraren
 
@@ -75,15 +63,11 @@
 
 ### Feedback
 
-> **Exempel:** Läraren frågade hur man vet vem som ska göra nästa disk. I deras kollektiv turas man om varje vecka i stället för att tilldela.
-
 -
 -
 
 ### Ändringar i backloggen
 
 <!-- Nya stories, ändrad prioritet, stories som tagits bort. Länka issues. -->
-
-> **Exempel:** Ny story #15 "Turordning per vecka" som Must. "Tilldela en syssla" (#5) sänks till Should.
 
 -

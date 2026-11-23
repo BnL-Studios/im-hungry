@@ -1,4 +1,4 @@
-# Daily standup: sprint N
+# Daily standup: sprint 3
 
 <!--
   INSTRUKTION
@@ -9,60 +9,45 @@
   Närvaro: Ja / Nej / Sen / Distans.
 -->
 
-> **Exempel (Sysslo, sprint 1):**
->
-> ### Tisdag 2026-11-03
->
-> | Namn | Närvaro | Igår | Idag | Hinder |
-> |---|---|---|---|---|
-> | Amir | Ja | Sprint planning | Projektskelett #9 | – |
-> | Sara | Ja | Sprint planning | Skapa hushåll #3, backend | – |
-> | Jonas | Distans | Sprint planning | Lista sysslor #7 | – |
-> | Lina | Ja | Sprint planning | Formulär ny syssla #4 | Vet inte hur datum ska skickas. Jonas hjälper efter standup. |
+**Vecka:** 2026-11-23–2026-11-27
+
+**Team:** Benjamin Simmons, Leo Spenner
+
+> Fyll i en rad per person varje dag. Även korta noteringar räcker.
 
 ---
 
-## Måndag ÅÅÅÅ-MM-DD
+## Måndag 2026-11-23
 
 | Namn | Närvaro | Igår | Idag | Hinder |
 |---|---|---|---|---|
-| | | | | |
-| | | | | |
-| | | | | |
-| | | | | |
+| Benjamin | | | | |
+| Leo | | | | |
 
-## Tisdag ÅÅÅÅ-MM-DD
+## Tisdag 2026-11-24
 
 | Namn | Närvaro | Igår | Idag | Hinder |
 |---|---|---|---|---|
-| | | | | |
-| | | | | |
-| | | | | |
-| | | | | |
+| Benjamin | | | | |
+| Leo | | | | |
 
-## Onsdag ÅÅÅÅ-MM-DD
+## Onsdag 2026-11-25
 
 | Namn | Närvaro | Igår | Idag | Hinder |
 |---|---|---|---|---|
-| | | | | |
-| | | | | |
-| | | | | |
-| | | | | |
+| Benjamin | | | | |
+| Leo | | | | |
 
-## Torsdag ÅÅÅÅ-MM-DD
+## Torsdag 2026-11-26
 
 | Namn | Närvaro | Igår | Idag | Hinder |
 |---|---|---|---|---|
-| | | | | |
-| | | | | |
-| | | | | |
-| | | | | |
+| Benjamin | | | | |
+| Leo | | | | |
 
-## Fredag ÅÅÅÅ-MM-DD
+## Fredag 2026-11-27
 
 | Namn | Närvaro | Igår | Idag | Hinder |
 |---|---|---|---|---|
-| | | | | |
-| | | | | |
-| | | | | |
-| | | | | |
+| Benjamin | | | | |
+| Leo | | | | |
