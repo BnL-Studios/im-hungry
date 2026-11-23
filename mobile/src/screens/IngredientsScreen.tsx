@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { router } from "expo-router";
 import {
@@ -9,12 +10,14 @@ import {
   StyleSheet,
   Text,
   View,
+  type ListRenderItemInfo,
 } from "react-native";
 import {
   useInventoryItems,
   useRemoveIngredient,
 } from "@/features/inventory/repository";
 import { formatQuantity } from "@/features/inventory/units";
+import type { InventoryItem } from "@/db/schema";
 
 async function confirmRemove(name: string): Promise<boolean> {
   if (Platform.OS === "web") {
@@ -79,7 +82,7 @@ export default function IngredientsScreen() {
       ) : isLoading ? (
         <ActivityIndicator style={styles.loading} />
       ) : (
-        <FlatList
+        <FlatList<InventoryItem>
           contentContainerStyle={styles.listContent}
           data={data}
           ItemSeparatorComponent={() => <View style={styles.separator} />}
@@ -89,7 +92,7 @@ export default function IngredientsScreen() {
               Du har inte lagt till några råvaror än.
             </Text>
           }
-          renderItem={({ item }) => (
+          renderItem={({ item }: ListRenderItemInfo<InventoryItem>) => (
             <View style={styles.item}>
               <View style={styles.itemInfo}>
                 <Text style={styles.name}>{item.name}</Text>

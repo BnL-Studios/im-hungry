@@ -1,92 +1,24 @@
 
-export type Unit = "g" | "ml" | "qty";
+import {
+  ApiError,
+  type Ingredient,
+} from "../../../shared/recipe-contract.ts";
 
-export type Ingredient = {
-  id: number;
-  name: string;
-  quantity: number;
-  unit: Unit;
-};
+// Keep existing imports working while the backend is refactored.
+export {
+  ApiError,
+  parseIngredients,
+  isNoRecipe,
+  validateRecipe,
+} from "../../../shared/recipe-contract.ts";
 
-export type Recipe = {
-  title: string;
-  ingredients: { id: number; quantity: number; unit: Unit }[];
-  steps: string[];
-  estimatedCookingTime: number;
-};
+export type {
+  Ingredient,
+  Recipe,
+  Unit,
+} from "../../../shared/recipe-contract.ts";
 
-export class ApiError extends Error {
-  constructor(
-    public code: string,
-    public status: number,
-    message: string,
-  ) {
-    super(message);
-    this.name = "ApiError";
-  }
-}
-
-function isObject(value: unknown): value is Record<string, unknown> {
-  return typeof value === "object" &&
-    value !== null &&
-    !Array.isArray(value);
-}
-
-function hasKeys(value: Record<string, unknown>, keys: string[]): boolean {
-  const actual = Object.keys(value);
-  return actual.length === keys.length &&
-    actual.every((key) => keys.includes(key));
-}
-
-function isUnit(value: unknown): value is Unit {
-  return value === "g" || value === "ml" || value === "qty";
-}
-
-export function parseIngredients(body: unknown): Ingredient[] {
-  if (
-    !isObject(body) ||
-    !hasKeys(body, ["ingredients"]) ||
-    !Array.isArray(body.ingredients) ||
-    body.ingredients.length < 1 ||
-    body.ingredients.length > 50
-  ) {
-    throw new ApiError("INVALID_REQUEST", 400, "Invalid ingredient list.");
-  }
-
-  const result: Ingredient[] = [];
-  const seen = new Set<number>();
-
-  for (const item of body.ingredients) {
-    if (!isObject(item) || !hasKeys(item, ["id", "name", "quantity", "unit"])) {
-      throw new ApiError("INVALID_REQUEST", 400, "Invalid ingredient.");
-    }
-
-    const { id, name, quantity, unit } = item;
-
-    if (
-      typeof id !== "number" ||
-      !Number.isSafeInteger(id) ||
-      id <= 0 ||
-      seen.has(id) ||
-      typeof name !== "string" ||
-      name.trim().length < 1 ||
-      name.length > 80 ||
-      typeof quantity !== "number" ||
-      !Number.isFinite(quantity) ||
-      quantity <= 0 ||
-      quantity > 1_000_000 ||
-      !isUnit(unit)
-    ) {
-      throw new ApiError("INVALID_REQUEST", 400, "Invalid ingredient.");
-    }
-
-    seen.add(id);
-    result.push({ id, name: name.trim(), quantity, unit });
-  }
-
-  return result;
-}
-
+// JSON schema used to guide Gemini's output.
 export const recipeSchema = {
   type: "object",
   additionalProperties: false,
@@ -105,96 +37,24 @@ export const recipeSchema = {
         required: ["id", "quantity", "unit"],
       },
     },
-    steps: { type: "array", items: { type: "string" } },
+    steps: {
+      type: "array",
+      items: { type: "string" },
+    },
     estimatedCookingTime: { type: "integer" },
   },
-  required: ["title", "ingredients", "steps", "estimatedCookingTime"],
+  required: [
+    "title",
+    "ingredients",
+    "steps",
+    "estimatedCookingTime",
+  ],
 };
 
-export function isNoRecipe(value: unknown): boolean {
-  return isObject(value) &&
-    hasKeys(value, ["title", "ingredients", "steps", "estimatedCookingTime"]) &&
-    value.title === "" &&
-    Array.isArray(value.ingredients) &&
-    value.ingredients.length === 0 &&
-    Array.isArray(value.steps) &&
-    value.steps.length === 0 &&
-    value.estimatedCookingTime === 0;
-}
-
-export function validateRecipe(
-  value: unknown,
-  inventory: Ingredient[],
-): value is Recipe {
-  if (
-    !isObject(value) ||
-    !hasKeys(value, ["title", "ingredients", "steps", "estimatedCookingTime"])
-  ) {
-    return false;
-  }
-
-  const { title, ingredients, steps, estimatedCookingTime } = value;
-
-  if (
-    typeof title !== "string" ||
-    title.trim().length < 1 ||
-    title.length > 120 ||
-    typeof estimatedCookingTime !== "number" ||
-    !Number.isInteger(estimatedCookingTime) ||
-    estimatedCookingTime < 1 ||
-    estimatedCookingTime > 480 ||
-    !Array.isArray(steps) ||
-    steps.length < 1 ||
-    steps.length > 20 ||
-    !steps.every((s: unknown) =>
-      typeof s === "string" && s.trim().length > 0 && s.length <= 500
-    ) ||
-    !Array.isArray(ingredients) ||
-    ingredients.length < 1 ||
-    ingredients.length > inventory.length
-  ) {
-    return false;
-  }
-
-  const stock = new Map(inventory.map((item) => [item.id, item]));
-  const seen = new Set<number>();
-
-  for (const item of ingredients) {
-    if (!isObject(item) || !hasKeys(item, ["id", "quantity", "unit"])) {
-      return false;
-    }
-
-    const { id, quantity, unit } = item;
-
-    if (
-      typeof id !== "number" ||
-      !Number.isSafeInteger(id) ||
-      seen.has(id) ||
-      typeof quantity !== "number" ||
-      !Number.isFinite(quantity) ||
-      quantity <= 0 ||
-      !isUnit(unit)
-    ) {
-      return false;
-    }
-
-    const available = stock.get(id);
-
-    if (
-      !available ||
-      available.unit !== unit ||
-      quantity > available.quantity
-    ) {
-      return false;
-    }
-
-    seen.add(id);
-  }
-
-  return true;
-}
-
-type Fetcher = (url: string, options: RequestInit) => Promise<Response>;
+type Fetcher = (
+  url: string,
+  options: RequestInit,
+) => Promise<Response>;
 
 type GeminiOptions = {
   apiKey?: string;
@@ -210,14 +70,23 @@ export async function generateRecipe(
   ingredients: Ingredient[],
   options: GeminiOptions = {},
 ): Promise<unknown> {
-  const apiKey = options.apiKey ?? Deno.env.get("GEMINI_API_KEY");
-  const model = options.model ?? Deno.env.get("GEMINI_MODEL") ??
+  const apiKey = options.apiKey ?? Deno.env.get("GEMINI_API");
+
+  const model =
+    options.model ??
+    Deno.env.get("GEMINI_MODEL") ??
     "gemini-3.5-flash-lite";
-  const backupModel = options.backupModel ??
+
+  const backupModel =
+    options.backupModel ??
     Deno.env.get("GEMINI_BACKUP_MODEL");
 
   if (!apiKey) {
-    throw new ApiError("INTERNAL_ERROR", 500, "AI service not configured.");
+    throw new ApiError(
+      "INTERNAL_ERROR",
+      500,
+      "AI service not configured.",
+    );
   }
 
   const prompt = `
@@ -239,7 +108,11 @@ ${JSON.stringify(ingredients)}
 `;
 
   const requestBody = JSON.stringify({
-    contents: [{ parts: [{ text: prompt }] }],
+    contents: [
+      {
+        parts: [{ text: prompt }],
+      },
+    ],
     generationConfig: {
       responseMimeType: "application/json",
       responseJsonSchema: recipeSchema,
@@ -258,8 +131,11 @@ ${JSON.stringify(ingredients)}
   ];
 
   const fetcher = options.fetcher ?? fetch;
-  const delay = options.delay ??
-    ((ms: number) => new Promise<void>((resolve) => setTimeout(resolve, ms)));
+
+  const delay =
+    options.delay ??
+    ((ms: number) =>
+      new Promise<void>((resolve) => setTimeout(resolve, ms)));
 
   let lastError = new ApiError(
     "MODEL_UNAVAILABLE",
@@ -290,24 +166,42 @@ ${JSON.stringify(ingredients)}
         },
       );
     } catch (cause) {
-      const timedOut = cause instanceof Error &&
-        (cause.name === "TimeoutError" || cause.name === "AbortError");
+      const timedOut =
+        cause instanceof Error &&
+        (
+          cause.name === "TimeoutError" ||
+          cause.name === "AbortError"
+        );
 
       console.warn(
-        `Gemini attempt ${i + 1} ${timedOut ? "timed out" : "failed to connect"}`,
+        `Gemini attempt ${i + 1} ${
+          timedOut ? "timed out" : "failed to connect"
+        }`,
       );
 
       lastError = timedOut
-        ? new ApiError("TIMEOUT", 504, "Recipe generation timed out.")
-        : new ApiError("MODEL_UNAVAILABLE", 503, "Could not reach AI service.");
+        ? new ApiError(
+            "TIMEOUT",
+            504,
+            "Recipe generation timed out.",
+          )
+        : new ApiError(
+            "MODEL_UNAVAILABLE",
+            503,
+            "Could not reach AI service.",
+          );
     }
 
     if (response) {
       if (response.ok) {
         try {
           const data = await response.json();
+
           const text = data?.candidates?.[0]?.content?.parts
-            ?.find((part: { text?: string }) => typeof part.text === "string")
+            ?.find(
+              (part: { text?: string }) =>
+                typeof part.text === "string",
+            )
             ?.text;
 
           if (typeof text !== "string") {
@@ -328,7 +222,11 @@ ${JSON.stringify(ingredients)}
 
       // Quota errors and invalid requests are NOT retryable.
       if (response.status === 429) {
-        throw new ApiError("RATE_LIMITED", 429, "AI quota exceeded.");
+        throw new ApiError(
+          "RATE_LIMITED",
+          429,
+          "AI quota exceeded.",
+        );
       }
 
       if (!RETRYABLE_STATUSES.has(response.status)) {
