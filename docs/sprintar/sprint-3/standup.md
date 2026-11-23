@@ -1,68 +1,45 @@
-# Daily standup: sprint N
+# Daily standup: sprint 3
 
-<!--
-  INSTRUKTION
-  Håll standupen muntligt, max 15 minuter. Logga sedan kort här, en rad per person.
-  Det ska ta två minuter att fylla i. Stödord räcker.
-  Lägg till ett nytt avsnitt för varje dag, nyaste dagen längst ner.
-  Hinder löses inte på standupen. Skriv vem som hjälper till, och ta det efteråt.
-  Närvaro: Ja / Nej / Sen / Distans.
--->
+**Vecka:** 2026-11-23–2026-11-27
+**Team:** Benjamin Simmons, Leo Spenner
 
-> **Exempel (Sysslo, sprint 1):**
->
-> ### Tisdag 2026-11-03
->
-> | Namn | Närvaro | Igår | Idag | Hinder |
-> |---|---|---|---|---|
-> | Amir | Ja | Sprint planning | Projektskelett #9 | – |
-> | Sara | Ja | Sprint planning | Skapa hushåll #3, backend | – |
-> | Jonas | Distans | Sprint planning | Lista sysslor #7 | – |
-> | Lina | Ja | Sprint planning | Formulär ny syssla #4 | Vet inte hur datum ska skickas. Jonas hjälper efter standup. |
+> Fyll i en rad per person efter standupen. Måndagens rader bygger på aktivitet i GitHub, inte på en loggad muntlig standup. Närvaro och hinder skrivs in när de faktiskt rapporteras.
 
 ---
 
-## Måndag ÅÅÅÅ-MM-DD
+## Måndag 2026-11-23
 
 | Namn | Närvaro | Igår | Idag | Hinder |
 |---|---|---|---|---|
-| | | | | |
-| | | | | |
-| | | | | |
-| | | | | |
+| Benjamin | Ej loggat | – | US-07 (#28) lyftes igen; nya kort för omgenerering, AI-kvalitet och språk (#145–#148). Sprint 3 planeras. | Ej rapporterat |
+| Leo | Ej loggat | – | Kort #143 för generera recept-modal skapades. Planera kopplingen till receptvyn (#129). | Ej rapporterat |
 
-## Tisdag ÅÅÅÅ-MM-DD
+## Tisdag 2026-11-24
 
 | Namn | Närvaro | Igår | Idag | Hinder |
 |---|---|---|---|---|
-| | | | | |
-| | | | | |
-| | | | | |
-| | | | | |
+| Benjamin | | | | |
+| Leo | | | | |
 
-## Onsdag ÅÅÅÅ-MM-DD
+## Onsdag 2026-11-25
 
 | Namn | Närvaro | Igår | Idag | Hinder |
 |---|---|---|---|---|
-| | | | | |
-| | | | | |
-| | | | | |
-| | | | | |
+| Benjamin | | | | |
+| Leo | | | | |
 
-## Torsdag ÅÅÅÅ-MM-DD
+## Torsdag 2026-11-26
 
 | Namn | Närvaro | Igår | Idag | Hinder |
 |---|---|---|---|---|
-| | | | | |
-| | | | | |
-| | | | | |
-| | | | | |
+| Benjamin | | | | |
+| Leo | | | | |
 
-## Fredag ÅÅÅÅ-MM-DD
+## Fredag 2026-11-27
 
 | Namn | Närvaro | Igår | Idag | Hinder |
 |---|---|---|---|---|
-| | | | | |
-| | | | | |
-| | | | | |
-| | | | | |
+| Benjamin | | | | |
+| Leo | | | | |
+
+**Senast uppdaterad:** 2026-11-23.

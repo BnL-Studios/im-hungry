@@ -1,72 +1,46 @@
-# Retrospektiv: sprint N
+# Retrospektiv: sprint 3
 
-<!--
-  INSTRUKTION
-  Direkt efter reviewn, ungefär 15–20 minuter. Scrum Master leder.
-  1. Följ upp förra retrons åtgärder: blev de av? Hjälpte de?
-  2. Alla skriver tyst i 3 minuter: vad gick bra, vad gick mindre bra. Sedan går ni igenom det tillsammans.
-  3. Välj högst 2–3 åtgärder. Varje åtgärd ska vara konkret och ha en ansvarig.
-  4. Behöver Definition of Done eller gruppkontraktet ändras?
-  Retron handlar om HUR ni har jobbat, inte om vad ni byggt. Det tas på reviewn.
-  Skriv ärligt. Det här är bra underlag för er individuella reflektion.
--->
+**Datum:** 2026-11-27 (planerat, efter review)
+**Deltagare:** Benjamin Simmons, Leo Spenner
+**Leds av:** Leo (Scrum Master, enligt föreslagen rotation)
 
-**Datum:**
-**Deltagare:**
-**Leds av:**
+> **Status:** Retron är inte genomförd ännu. Detta är ett underlag för samtalet, inte påhittade slutsatser eller beslut från sprint 3.
 
 ## Förra retrons åtgärder
 
-> **Exempel:**
->
-> | Åtgärd | Blev den av? | Hjälpte den? |
-> |---|---|---|
-> | PR:er granskas inom 24 timmar | Ja, nästan alltid | Ja, mycket färre PR:er som låg och väntade |
+Sprint 2:s retro har inte någon dokumenterad uppföljning ännu. Vi behöver först bekräfta vilka beslut som togs där. Arbetssätten från sprint 1 är fortfarande värda att följa upp:
 
 | Åtgärd | Blev den av? | Hjälpte den? |
 |---|---|---|
-| | | |
+| Uppdatera README/docs i samma PR som koden. | Följs upp på retron | |
+| Logga standup varje dag, även kort. | Följs upp på retron | |
+| Testa nya flöden på native och webb. | Följs upp på retron | |
+| Håll PR:er avgränsade och granska varandras ändringar. | Följs upp på retron | |
 
 ## Vad gick bra?
 
-> **Exempel:**
-> - Standupen tog aldrig mer än 10 minuter.
-> - Lina och Jonas parprogrammerade API-kopplingen och båda förstår den nu.
+> Fylls i tillsammans på retron. Diskutera gärna om uppdelningen mellan recept-UI och AI-kvalitet gjorde parallellt arbete enklare.
 
--
 -
 
 ## Vad gick mindre bra?
 
-> **Exempel:**
-> - PR:er låg ogranskade i upp till två dagar.
-> - Vi tog in för mycket. Två stories blev inte klara.
-> - Ingen visste att Amir satt fast med Docker förrän torsdag.
+> Fylls i tillsammans på retron. Diskutera om vi tog in för mycket, om testfallen upptäckte dåliga AI-förslag och om beroenden mellan skärmar och Edge Function bromsade arbetet.
 
--
 -
 
 ## Åtgärder till nästa sprint
 
-<!-- Högst 2–3. Konkreta, med ansvarig. "Bli bättre på att kommunicera" är inte en åtgärd. -->
-
-> **Exempel:**
->
-> | Åtgärd | Ansvarig |
-> |---|---|
-> | PR:er granskas inom 24 timmar. | Amir påminner på standupen |
-> | Den som sitter fast mer än en timme säger till i Discord. | Alla |
-> | Vi tar in en story mindre än förra sprinten. | Sara (PO) |
+> Välj högst 2–3 konkreta åtgärder efter diskussionen och sätt en ansvarig på varje.
 
 | Åtgärd | Ansvarig |
 |---|---|
-| | |
-| | |
+| *Beslutas på retron* | |
 
 ## Ändringar i Definition of Done eller gruppkontrakt
 
-<!-- Om ni ändrar något: uppdatera dokumentet och skriv här vad och varför. -->
-
-> **Exempel:** Ny punkt i gruppkontraktet: "Pull requests granskas inom 24 timmar."
+> Om vi beslutar att ändra något ska rätt dokument också uppdateras.
 
 -
+
+**Senast uppdaterad:** 2026-11-23 (underlag inför sprint 3-retro).
