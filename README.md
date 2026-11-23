@@ -4,18 +4,18 @@
 
 Projektet byggs av **BnL Studios** inom en Scrum-kurs. Det är under utveckling, inte en färdig app.
 
-> **Aktuellt läge (2026-11-17, sprint 2):** Appen är en React Native-app med Expo och TypeScript. Matförrådet lagras **lokalt på telefonen** med **SQLite och Drizzle ORM**. Fliken **Råvaror** kan visa, lägga till, ändra mängd och ta bort råvaror. Första inventarieflödet mergades via PR #122; US-03/US-04, numeriskt tangentbord och skalor (mg/g/kg, ml/dl/L, st/dussin) är implementerade. **Supabase Edge Function, AI och receptflödet är ännu inte byggda.** Supabase används inte som matförrådsdatabas.
+> **Aktuellt läge (2026-11-23):** Appen är en React Native-app med Expo SDK 58, TypeScript och Expo Router. Matförrådet lagras **lokalt på telefonen** med **SQLite och Drizzle ORM** och kan visas, läggas till, ändras och tas bort. Home-fliken har knappen **Generera recept** och visar receptet på samma skärm. Receptflödet använder en **deployad Supabase Edge Function** och ett kontrakt som delas mellan mobil och server i `shared/recipe-contract.ts`. CI är grön (tre checks). **Ett riktigt Gemini-anrop med teamets nyckel är ännu inte verifierat**, och funktionen saknar auth/rate limiting (#138). Supabase används inte som matförrådsdatabas.
 
 ## Mål och MVP
 
 Målgrupp: studenter och andra som ofta har råvaror hemma men svårt att bestämma vad de kan laga med just de mängderna.
 
-| Ingår i MVP:n | Hur det ska fungera | Status (2026-11-17) |
+| Ingår i MVP:n | Hur det ska fungera | Status (2026-11-23) |
 |---|---|---|
 | Matförråd | Visa, lägga till, korrigera och ta bort råvaror med mängd och enhet. | Implementerat (US-01–US-04). Skalor räknas om till basenheterna g/ml/st. |
 | Lokal lagring | Inventariet finns kvar efter omstart och kan hanteras utan internet. | Implementerat med Expo SQLite + Drizzle. |
-| Ett receptförslag | Skicka en begäran till Edge Function och visa ett AI-genererat recept utifrån råvarorna som finns. | Inte påbörjat; Edge Function finns inte i repot. |
-| Resultat och fel | Visa recepttitel, tid, ingredienser, mängder och steg, eller ett begripligt felmeddelande. | Inte påbörjat. |
+| Ett receptförslag | Skicka en begäran till Edge Function och visa ett AI-genererat recept utifrån råvarorna som finns. | Implementerat (#140, #141, #142): Home skickar endast `ingredients` till den hostade funktionen och validerar svaret mot snapshot och aktuellt saldo. Riktigt AI-anrop ej verifierat. |
+| Resultat och fel | Visa recepttitel, tid, ingredienser, mängder och steg, eller ett begripligt felmeddelande. | Implementerat på Home: titel, tid, ingredienser med mängder och numrerade steg samt laddnings-, fel- och tom-lägen. |
 
 Utanför MVP:n: mat-humör, val av kök, användarkonton, molnsynkronisering, favoriter, recepthistorik, automatiska avdrag ur matförrådet, avancerade preferenser, inköpslistor och streckkodsskanning. **Inventariet fungerar offline; receptgenerering kräver internet.** Lokal data synkroniseras inte mellan enheter och kan förloras vid avinstallation.
 
@@ -26,14 +26,14 @@ Se [MVP](docs/mvp.md), [Product Backlog](docs/USER_STORIES.md), [sprint 1](docs/
 | Del | Val | Status |
 |---|---|---|
 | Mobilapp | React Native, Expo SDK 58, TypeScript och Expo Router | Implementerad i `mobile/` |
-| Navigation | Två flikar: Home (placeholder) och Råvaror; `add-ingredient` och `edit-ingredient` som modaler | Implementerad |
+| Navigation | Två flikar: Home (receptgenerator + receptvy) och Råvaror; `add-ingredient` och `edit-ingredient` som modaler | Implementerad |
 | Lokal databas | Expo SQLite | Implementerad |
 | ORM och migrationer | Drizzle ORM + Drizzle Kit | Implementerade; två migrationer |
 | Matförrådets UI | Lista från SQLite, lägga till/ändra/ta bort, skalor, validering och fel/empty-state | Implementerat (PR #122 + sprint 2) |
-| Recept-gateway | Supabase Edge Functions (Deno/TypeScript); [API-kontrakt v1](docs/ai-integration.md) med endast ingredienslista in och fyra receptfält ut | Vald design, ännu inte byggd |
-| AI-tjänst | **Gemini 3.8 Flash** (`gemini-3.8-flash`), Flash-Lite som utvärderad reserv | Modell/design fastställd 2026-11-19 (#125); nyckel och integration inte verifierade/byggda |
-| Test | Vitest: validering, skalor, enheter och riktiga SQL-migrationer | Implementerat; 4 testfiler |
-| CI | GitHub Actions för mobilapp | `npm ci`, Expo-konfiguration, `npm run lint`, `tsc --noEmit` och `npm test` |
+| Recept-gateway | Supabase Edge Functions (Deno/TypeScript); [API-kontrakt v1](docs/ai-integration.md) med endast ingredienslista in och fyra receptfält ut | Implementerad och deployad (#140, #142); kontraktet ligger i `shared/recipe-contract.ts` |
+| AI-tjänst | Gemini Flash; designen föreskriver `gemini-3.8-flash`, koden defaultar till `gemini-3.5-flash-lite` via `GEMINI_MODEL` | Edge Function anropar Gemini med serverhemlighet. Sätt `GEMINI_MODEL=gemini-3.8-flash` eller uppdatera designen; nyckel/konto ännu inte verifierat |
+| Test | Vitest: validering, skalor, enheter, migrationer och receptklienten | 5 testfiler, 31 tester |
+| CI | GitHub Actions: mobilapp, Edge Function och Supabase Preview | Gröna på `b6e14b6`: `Mobile (Node 22)`, `Recipe Edge Function`, `Supabase Preview` |
 | Process | Scrum, trunk-based development, granskade PR:er, squash merge | Dokumenterat |
 
 ```mermaid
@@ -44,15 +44,15 @@ flowchart TD
       DB[(Lokal SQLite)]
       App --> Logic --> DB
     end
-    App -.->|"planerad: HTTPS vid receptbegäran"| Edge[Supabase Edge Function]
-    Edge -.->|"planerad: serverlagrad API-nyckel"| AI[Gemini 3.8 Flash - vald]
-    AI -.->|"planerad: strukturerat recept"| Edge
-    Edge -.->|"planerad: validerat svar"| App
+    App -->|"HTTPS: endast ingredients"| Edge[Supabase Edge Function - deployad]
+    Edge -->|"serverlagrad API-nyckel"| AI[Gemini Flash - anrop ej verifierat med teamnyckel]
+    AI -->|"strukturerat recept"| Edge
+    Edge -->|"validerat 4-fältsrecept"| App
 ```
 
-Heldragna pilar är implementerade i sprint 1–2; streckade pilar är målarkitektur som återstår.
+Hela kedjan är implementerad och deployad. Det som återstår är verifiering med teamets riktiga Gemini-nyckel och ett medvetet modellval.
 
-**Viktig säkerhetsgräns:** När receptflödet byggs ska API-nyckeln bara ligga som hemlighet i Edge Function, aldrig i appen. Funktionens indata och AI-svar måste valideras. Utan användarinloggning behöver en publik Edge Function dessutom begränsa missbruk och kostnader (t.ex. rate limiting, kvoter och övervakning) innan den görs publikt tillgänglig. Klienten ska kontrollera receptets mängder mot sitt lokala inventarie; funktionens begäran är inte bevis för vad som faktiskt är lagrat på telefonen.
+**Viktig säkerhetsgräns:** API-nyckeln ligger bara som hemlighet i Edge Function, aldrig i appen. Funktionens indata och AI-svar valideras. Funktionen är i dagsläget publik utan användarautentisering eller rate limiting (#138 är öppen); begränsa missbruk och kostnader innan bred publicering. Klienten kontrollerar receptets mängder mot sitt lokala inventarie; funktionens begäran är inte bevis för vad som faktiskt är lagrat på telefonen.
 
 Läs [arkitekturen och dataintegritet](docs/arkitektur.md), [databasschemat](docs/databasschema.md) och [beslutsloggen](docs/beslutslogg.md).
 
@@ -80,35 +80,35 @@ npm run lint           # ESLint via expo lint
 npx expo-doctor        # kontrollera beroenden och konfiguration
 ```
 
-Testfilerna ligger i `mobile/src/features/inventory/`:
+Testfilerna ligger i `mobile/src/features/`:
 
-- `validation.test.ts` testar inmatningsreglerna, decimaler vid redigering och avrundning (300 mg → 0,3 g).
-- `scales.test.ts` testar skalornas omvandling till basenheter och flyttalsavrundning.
-- `units.test.ts` testar enheter och formatering.
-- `migrations.test.ts` kör de riktiga SQL-migrationerna mot en temporär SQLite-databas och kontrollerar att `CHECK`-begränsningarna stoppar ogiltiga rader.
+- `inventory/validation.test.ts` testar inmatningsreglerna, decimaler vid redigering och avrundning (300 mg → 0,3 g).
+- `inventory/scales.test.ts` testar skalornas omvandling till basenheter och flyttalsavrundning.
+- `inventory/units.test.ts` testar enheter och formatering.
+- `inventory/migrations.test.ts` kör de riktiga SQL-migrationerna mot en temporär SQLite-databas och kontrollerar att `CHECK`-begränsningarna stoppar ogiltiga rader.
+- `recipes/generate.test.ts` testar receptklientens anrop, endpoint-validering och felhantering.
 
-[GitHub Actions-CI](.github/workflows/ci.yml) installerar beroenden, validerar Expo-konfigurationen, kör `npm run lint`, typkontrollerar appkällkoden och kör `npm test` vid PR och push till `main`.
+[GitHub Actions-CI](.github/workflows/ci.yml) kör vid PR och push till `main` tre jobs: `Mobile (Node 22)` (installation, Expo-konfiguration, lint, typkontroll och Vitest), `Recipe Edge Function` (`deno test`) och `Supabase Preview`.
 
-**Branch protection:** CI-kontrollen heter **Mobile (Node 22)**. Om branch protection fortfarande kräver den gamla kontrollen **Backend (Java 21)** måste en GitHub-administratör byta till **Mobile (Node 22)** efter första gröna körningen. Detta sker inte automatiskt.
+**Branch protection:** kontrollerna heter **Mobile (Node 22)**, **Recipe Edge Function** och **Supabase Preview**. Om branch protection fortfarande kräver den gamla kontrollen **Backend (Java 21)** måste en GitHub-administratör byta till de nya kontrollerna. Detta sker inte automatiskt.
 
 [GitHub Actions](https://github.com/BnL-Studios/im-hungry/actions) · [Git-arbetsflöde](docs/git-workflow.md)
 
 ## Aktuellt läge
 
-Sprint 2 pågår (2026-11-16–2026-11-20). Det som är klart i koden:
+Läge 2026-11-23 (efter sprint 2, `main` = `b6e14b6`):
 
 - Flikarna Home och Råvaror; `add-ingredient` och `edit-ingredient` öppnas som modaler.
-- Råvarulistan läser från lokal SQLite via Drizzle och `useLiveQuery`.
-- **Lägg till råvara** använder numeriskt tangentbord och en skalväljare som sparar basenheter (g/ml/st).
-- **Ändra mängd** (US-03) och **ta bort råvara** med bekräftelse (US-04).
+- Råvarulistan läser från lokal SQLite via Drizzle och `useLiveQuery`; lägga till, ändra mängd och ta bort med bekräftelse fungerar.
 - Två Drizzle-migrationer med `CHECK`-begränsningar för positiv mängd och tillåtna enheter.
-- Fyra Vitest-testfiler: validering, skalor, enheter och migrationer.
-- CI kör lint, typkontroll och tester; appen är låst till ljust läge.
+- Home har **Generera recept** och visar titel, tid, ingrediensmängder och steg i samma vy: snapshot → Edge Function → validering mot nuvarande saldo. Tomt lager, nätverksfel och timeout visas som svenska meddelanden. Inget skrivs tillbaka till förrådet.
+- `shared/recipe-contract.ts` används av både mobilapp och Edge Function; 5 Vitest-testfiler (31 tester) och 3 gröna CI-jobb.
 
-Det som återstår:
+Återstår innan receptflödet kan kallas verifierat:
 
-- Supabase Edge Function, AI-integration och receptvy (US-05/US-68/US-67). Mat-humör skjuts upp till efter MVP.
-- Home-fliken är fortfarande Expos `Hello World`-placeholder.
+- Ett riktigt Gemini-anrop med teamets nyckel och bekräftad gratiskvot. Kontrollera att serverhemligheten har det namn koden läser (`GEMINI_API`) och sätt `GEMINI_MODEL` enligt det dokumenterade modellvalet.
+- Auth/rate limiting (#138) innan endpointen exponeras bredare.
+- Uppdatera boarden: #22, #23, #24 och #129 är öppna trots att koden finns på `main`. Mat-humör (US-06) skjuts upp till efter MVP.
 
 **Legacy:** Spring Boot-koden är borttagen. Ingen Java-server eller molndatabas behövs för matförrådet i målarkitekturen.
 
@@ -127,7 +127,7 @@ im-hungry/
 │   │   │   ├── edit-ingredient.tsx  # Modal route
 │   │   │   └── (tabs)/
 │   │   │       ├── _layout.tsx      # Home + Råvaror
-│   │   │       ├── index.tsx        # Home (placeholder)
+│   │   │       ├── index.tsx        # Home: generera recept + receptvy
 │   │   │       └── ingredients/
 │   │   │           └── index.tsx    # Tunn route till IngredientsScreen
 │   │   ├── screens/                 # Skärmkomponenter
@@ -135,10 +135,13 @@ im-hungry/
 │   │   │   ├── AddIngredientScreen.tsx
 │   │   │   └── EditIngredientScreen.tsx
 │   │   ├── features/inventory/      # Enheter, skalor, validering, repository + tester
+│   │   ├── features/recipes/        # Receptklient + tester
 │   │   └── db/                      # Drizzle-schema, client, provider
 │   └── ...
+├── shared/recipe-contract.ts        # API-kontrakt v1, delat med Edge Function
+├── supabase/functions/generate-recipe/  # Deno: index.ts, core.ts, tester
 ├── docs/
-│   ├── arkitektur.md                # Lokal SQLite + planerad Edge Function
+│   ├── arkitektur.md                # Lokal SQLite + implementerad Edge Function
 │   ├── databasschema.md             # Databasschema (SQLite)
 │   ├── databasschema.dbml           # Redigerbar DBML
 │   ├── mvp.md
@@ -156,7 +159,7 @@ im-hungry/
 └── README.md
 ```
 
-**Var kod hamnar:** `mobile/src/app/` innehåller endast routes; varje fil där blir en skärm. `mobile/src/screens/` har skärmkomponenter, `mobile/src/features/` domän- och datalager, `mobile/src/db/` Drizzle-schema och databasprovider, och `mobile/drizzle/` de genererade migrationerna. `supabase/functions/generate-recipe/` byggs när receptflödet startar.
+**Var kod hamnar:** `mobile/src/app/` innehåller endast routes; varje fil där blir en skärm. `mobile/src/screens/` har skärmkomponenter, `mobile/src/features/` domän- och datalager, `mobile/src/db/` Drizzle-schema och databasprovider, och `mobile/drizzle/` de genererade migrationerna. `shared/recipe-contract.ts` delas av mobil och server. `supabase/functions/generate-recipe/` innehåller den deployade Edge Functionen (`index.ts`, `core.ts`), lokala demo-/testhjälpare och Deno-tester.
 
 ## Team och arbetsflöde
 
@@ -185,4 +188,4 @@ Vi använder kortlivade branches från `main`, pull requests, minst en annan per
 | [Sprintdokumentation](docs/sprintar/) | Planning, standup, review, retro |
 | [Individuella reflektioner](docs/reflektioner/) | Kursreflektioner |
 
-**Senast uppdaterad:** 2026-11-19 (sprint 2; AI-modell/design fastställd, integration kvar).
+**Senast uppdaterad:** 2026-11-23 (receptflöde implementerat och deployat; riktigt AI-anrop och modellval att verifiera).

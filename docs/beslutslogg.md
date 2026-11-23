@@ -2,7 +2,7 @@
 
 Dokumentation av viktiga produkt- och teknikbeslut för **I'm Hungry!**. Varje beslut beskriver bakgrund, övervägda alternativ, motivering och konsekvenser.
 
-> **Aktuellt (2026-11-17, sprint 2):** Vi använder lokal Expo SQLite + Drizzle ORM för inventariet och en planerad Supabase Edge Function för AI. Spring Boot/PostgreSQL är ersatta teknikval. Första inventarieflödet är mergat via PR #122; ändra mängd, ta bort med bekräftelse, skalor och fyra Vitest-testfiler är implementerade. Receptflödet är inte byggt. Historiska beslut finns kvar nedan.
+> **Aktuellt (2026-11-23):** Vi använder lokal Expo SQLite + Drizzle ORM för inventariet och en deployad Supabase Edge Function för AI. Spring Boot/PostgreSQL är ersatta teknikval. Hela matförråds- och receptflödet är mergat via #122, #130 och #140–#142; fem Vitest-testfiler (31 tester) och tre gröna CI-jobb. Riktigt Gemini-anrop och modell/secret-konfiguration återstår. Historiska beslut finns kvar nedan.
 
 ## Översikt
 
@@ -10,7 +10,7 @@ Dokumentation av viktiga produkt- och teknikbeslut för **I'm Hungry!**. Varje b
 |:--:|---|---|---|
 | **01** | [App-idé och MVP](#beslut-01) | 2026-10-27 | **Gäller** |
 | **02** | [Tidigare teknikstack](#beslut-02) | 2026-10-27 | **Ersatt av 06** |
-| **03** | [AI-leverantör: Gemini Flash](#beslut-03) | 2026-10-27 | **Gäller; exakt modell vald 2026-11-19; integration ej byggd** |
+| **03** | [AI-leverantör: Gemini Flash](#beslut-03) | 2026-10-27 | **Gäller; modell vald, integration deployad; riktigt anrop att verifiera** |
 | **04** | [Databasleverantör: Supabase](#beslut-04) | 2026-10-27 | **Ersatt av 06** (Edge Function enligt 07) |
 | **05** | [Utvecklingsflöde: Trunk-Based Development](#beslut-05) | 2026-10-27 | **Gäller** |
 | **06** | [Lokal mobilarkitektur: Expo, SQLite och Drizzle](#beslut-06) | 2026-11-02 | **Gäller** |
@@ -50,7 +50,7 @@ Vi valde alternativ C för att det löser ett verkligt problem: man vet inte vad
 
 **Utanför MVP:n:** mat-humör (US-06; tidigare planerat för MVP), inloggning/konton, delning i hushåll, molnsynk, inköpslista, näringsberäkning, streckkodsskanning, favoriter, recepthistorik och automatiska avdrag. Dessa ligger i backloggen.
 
-**Status i sprint 2:** Visa/lägga till är mergat via PR #122; ändra/ta bort är implementerat på öppna PR #130. Receptintegration är inte byggd; mat-humör flyttat till efter MVP enligt förenkling 2026-11-19.
+**Status 2026-11-23:** Hela matförrådsflödet är mergat (#122, #130, #141). Receptintegration är implementerad och deployad (#140–#142): ett AI-förslag med fyra fält visas på Home; riktigt anrop med teamnyckel och modellval återstår. Mat-humör flyttat till efter MVP enligt förenkling 2026-11-19.
 
 ---
 
@@ -91,10 +91,10 @@ React Native ger en native mobilapp för både iOS och Android med samma kodbas,
 <a id="beslut-03"></a>
 ## 03 — AI-leverantör: Gemini Flash
 
-**Datum:** 2026-10-27 · **Uppdaterat:** 2026-11-19 · **Status:** Gäller för AI-valet; integrationen är inte byggd · **Ersätter:** tidigare DeepSeek-idé
+**Datum:** 2026-10-27 · **Uppdaterat:** 2026-11-23 · **Status:** Gäller för AI-valet; integrationen är byggd och deployad, modellvalet behöver verifieras · **Ersätter:** tidigare DeepSeek-idé
 
 > **Beslut**
-> Vi använder **Google Gemini 3.8 Flash** (API-ID `gemini-3.8-flash`) för receptgenereringen. Reserv för manuell utvärdering är **Gemini 3.5 Flash-Lite** (`gemini-3.5-flash-lite`). Integrationen är ännu inte byggd.
+> Vi använder **Google Gemini 3.8 Flash** (API-ID `gemini-3.8-flash`) för receptgenereringen. Reserv för manuell utvärdering är **Gemini 3.5 Flash-Lite** (`gemini-3.5-flash-lite`). Integrationen är byggd, men koden defaultar till Flash-Lite tills `GEMINI_MODEL` sätts.
 
 ### Bakgrund
 
@@ -114,12 +114,12 @@ Gemini 3.8 Flash har strukturerade JSON-svar och text-in/utdata som listas som k
 
 ### Konsekvenser
 
-- **API-nyckel:** `GEMINI_API_KEY` ska ligga i Supabase Edge Functionens hemlighetshantering, aldrig i React Native-appen, Git eller `EXPO_PUBLIC_*`. **Nyckel och åtkomst är ännu inte verifierade inom #127.**
+- **API-nyckel:** koden läser `Deno.env.get("GEMINI_API")` (tidigare dokumenterat som `GEMINI_API_KEY` — kontrollera vilket namn som är satt i Supabase). Nyckeln ska ligga i Edge Functionens hemlighetshantering, aldrig i React Native-appen, Git eller `EXPO_PUBLIC_*`. **Nyckel och åtkomst är ännu inte verifierade inom #127.**
 - **Begränsningar på gratisnivån:** Gratisnivån är hastighetsbegränsad och kontoberoende. Exakta RPM/TPM/RPD-siffror syns per projekt i Google AI Studios rate-limit-konsol. Hantera 429-svar, återförsök med gräns och slut på kvot; ingen fakturering aktiveras utan nytt beslut.
 - **Dataanvändning:** På gratisnivån får Google använda prompts och svar för att förbättra sina produkter. Vi skickar därför **inte** känsliga personuppgifter – bara livsmedelslistor. Vid behov av mer kapacitet eller dataskydd flyttar vi projektet till betald nivå.
 - **Utbytbar AI-tjänst:** AI-anropet läggs bakom Edge Functionen så att vi kan byta modell eller leverantör utan att röra mobilappen.
 - **Kontrakt:** Begäran och svar är specificerade i [AI-integrationsdesignen](ai-integration.md) (#125), inklusive inventarie-ID, mängdkontroll och fel.
-- **Status:** Modell och design valda; API-nyckel, Edge Function och verkligt anrop återstår (sprint 2). Källor: [modellkort](https://aistudio.google.com/docs/models/gemini-3.8-flash), [rate limits](https://aistudio.google.com/docs/rate-limits), [priser](https://aistudio.google.com/docs/pricing) och [villkor](https://ai.google.dev/gemini-api/terms).
+- **Status (2026-11-23):** Modell och design valda; Edge Function är implementerad och deployad. API-nyckel, secret-namn, modellinställning och ett verkligt anrop återstår. Källor: [modellkort](https://aistudio.google.com/docs/models/gemini-3.8-flash), [rate limits](https://aistudio.google.com/docs/rate-limits), [priser](https://aistudio.google.com/docs/pricing) och [villkor](https://ai.google.dev/gemini-api/terms).
 
 ---
 
@@ -273,3 +273,4 @@ Detaljer och API-kontrakt finns i [arkitekturdokumentet](arkitektur.md) och [AI-
 | 2026-11-17 | Status synkad med koden: PR #122 mergad, US-03/US-04, skalor och 4 testfiler implementerade. CI kör lint. | Dokumentationen ska spegla sprint 2. Inga nya arkitekturbeslut togs. |
 | 2026-11-19 | Beslut 03 preciserat till `gemini-3.8-flash` med Flash-Lite som reserv. AI-kontrakt, validering och säkerhetsgräns dokumenterade i `ai-integration.md`. | #125 design klar för review; #127 API-konto/nyckel inte ännu verifierat. |
 | 2026-11-19 | Beslut 01/07 och API v1 förenklade: endast ingredienslista in, fyra receptfält ut; US-06 flyttad utanför MVP. | Teamets beslut att minimera första vertikala receptflödet. |
+| 2026-11-23 | Status synkad med `main`: receptflödet implementerat/deployat (#140–#142). Dokumenterat att koden läser `GEMINI_API` och defaultar till Flash-Lite. | Inga nya teknikbeslut; beskrivningen ska matcha koden tills modell/secret verifierats. |

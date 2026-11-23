@@ -3,9 +3,9 @@
 > **Product goal:** Help home cooks answer *“What can I make with what I already have?”* quickly and reliably.  
 > **MVP definition:** [`mvp.md`](mvp.md)<br>
 > **Current delivery scope:** Two-person Scrum course; `Won't` means *not this time*, not rejected forever.  
-> **Updated:** 2026-11-19 (sprint 2; simplified MVP)
+> **Updated:** 2026-11-23 (MVP flow implemented and deployed; live AI call pending)
 
-> **Sprint 2 status (2026-11-17):** US-01 (View my inventory) and US-02 (Add an ingredient) were merged to `main` in sprint 1 via PR #122. On the sprint board, all five selected stories are now in the sprint: #22 (US-05, split into #125–#129), #26/#27 (US-03/US-04, In Progress) and #23/#24 (US-68/US-67, moved to Sprint Backlog). #123/#124 are also In Progress but outside the sprint goal. The backlog below remains the full product scope, not a status list.
+> **Status 2026-11-23:** US-01–US-04 (inventory) are merged to `main` (#122, #130, #141). The AI flow is implemented and deployed via #140–#142: US-05 (generation), US-68 (recipe view) and US-67 (errors/no-recipe) are present in `main` — generation and recipe view share the Home screen. Issues #22, #23, #24 and #129 are still open on the board and should be reviewed/closed after a real Gemini call is verified. #125–#128 are closed. #138 (auth/rate limiting) remains open. The backlog below remains the full product scope, not a status list.
 
 ## Priority and size overview
 

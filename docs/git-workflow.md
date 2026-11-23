@@ -54,11 +54,13 @@ CI-workflowen [`ci.yml`](../.github/workflows/ci.yml) kör på **Node 22** och g
 2. Validerar att `package.json` har `expo`/`expo-router` och att `app.json` är giltig JSON.
 3. `npm run lint` (`expo lint`).
 4. `npx tsc --noEmit`.
-5. `npm test` (Vitest: validering, skalor, enheter och riktiga SQL-migrationer).
+5. `npm test` (Vitest: validering, skalor, enheter, riktiga SQL-migrationer och receptklienten).
 
-**Inga Supabase- eller Gemini-hemligheter krävs för mobilkontrollerna.** AI-gatewayen är inte byggd; när den byggs ska den testas separat med mockat AI-svar och säker konfiguration. Lint (`npm run lint`) körs både lokalt och i CI.
+Dessutom kör CI `Recipe Edge Function` (`deno test`) och `Supabase Preview`. Alla tre jobb var gröna på `b6e14b6` (2026-11-23).
 
-**Branch protection:** PR #104 är mergad och legacy-Spring Boot är borttagen. CI-kontrollen heter **Mobile (Node 22)**. Om branch protection fortfarande kräver den gamla kontrollen **Backend (Java 21)** måste en GitHub-administratör byta till **Mobile (Node 22)**. Annars kan PR-merge blockeras trots grön ny CI. GitHub-inställningen uppdateras **inte** automatiskt av `ci.yml`.
+**Inga Supabase- eller Gemini-hemligheter krävs för mobilkontrollerna.** Edge Functionen testas separat med mockat AI-svar och säker konfiguration; ett riktigt anrop med teamnyckeln är ännu inte verifierat. Lint (`npm run lint`) körs både lokalt och i CI.
+
+**Branch protection:** PR #104 är mergad och legacy-Spring Boot är borttagen. CI-kontrollerna heter **Mobile (Node 22)**, **Recipe Edge Function** och **Supabase Preview**. Om branch protection fortfarande kräver den gamla kontrollen **Backend (Java 21)** måste en GitHub-administratör byta till de nya kontrollerna. Annars kan PR-merge blockeras trots grön ny CI. GitHub-inställningen uppdateras **inte** automatiskt av `ci.yml`.
 
 ## Kodgranskning
 
@@ -80,4 +82,4 @@ CI-workflowen [`ci.yml`](../.github/workflows/ci.yml) kör på **Node 22** och g
 
 Följ upp branchlivslängd, väntetid på PR-granskning och CI-problem vid retrospektivet.
 
-**Senast uppdaterad:** 2026-11-13 (sprint 1).
+**Senast uppdaterad:** 2026-11-23 (CI har tre jobb; Edge Function deployad).

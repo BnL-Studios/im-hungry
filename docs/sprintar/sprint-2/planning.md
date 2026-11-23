@@ -16,7 +16,9 @@
 **Product Owner denna sprint:** Leo Spenner
 **Scrum Master denna sprint:** Benjamin Simmons
 
-> **Status 2026-11-17 (efter board-sortering och kodstatus):** Sprint 2 pågår 2026-11-16–2026-11-20. US-01/US-02 är klara sedan sprint 1 (#122, mergad). **Sprint Backlog har 8 kort:** #22, #125–#129, #23 och #24. #26, #27, #123 och #124 ligger på boarden i **In Progress** (alla Leo), men koden är implementerad lokalt (commit `f160032`) och väntar på PR/granskning. Product Backlog är ner till 68 kort.
+> **Historisk status 2026-11-17 (efter board-sortering och kodstatus):** Sprint 2 pågick 2026-11-16–2026-11-20. US-01/US-02 var klara sedan sprint 1 (#122, mergad). Sprint Backlog hade 8 kort: #22, #125–#129, #23 och #24. #26, #27, #123 och #124 låg i **In Progress** (alla Leo) med koden implementerad lokalt (commit `f160032`). Product Backlog var ner till 68 kort.
+
+> **Uppdatering 2026-11-23 (läge på `main` = `b6e14b6`):** alla fyra inventory-korten är mergeade via #130/#141. Receptkorten #125, #126, #127 och #128 är stängda; kod och deployment kom via #140–#142. **Öppna kort:** #22, #23, #24, #129 (koden finns men boarden är inte uppdaterad) och #138 (auth/rate limiting). CI är grön på tre jobb. Ett riktigt Gemini-anrop med teamets nyckel samt kontroll av `GEMINI_API`/`GEMINI_MODEL` återstår innan US-05 kan markeras DoD-klar.
 
 ## Sprintmål
 
@@ -52,7 +54,7 @@ Stories från Must-backloggen (inventory + receptflöde). Issue-nummer och ansva
 
 **Totalt:** 2 S, 2 M, 1 L (fem stories). US-05 är nedbruten i fem implementationskort nedan.
 
-**Boardstatus 2026-11-17 (efter sortering):** #22, #125–#129, #23 och #24 ligger i **Sprint Backlog** (8 st). #26, #27, #123 och #124 ligger i **In Progress** (Leo). Product Backlog: 68 kort. Todo (#102/#103), Under Review (#19) och Done (27) är oförändrade.
+**Boardstatus 2026-11-17 (historisk):** #22, #125–#129, #23 och #24 låg i Sprint Backlog (8 st). #26, #27, #123 och #124 låg i In Progress (Leo). **Uppdatering 2026-11-23:** #26, #27, #123, #124, #125, #126, #127 och #128 är stängda. #22, #23, #24 och #129 är öppna trots implementerad kod; #138 är öppet. Boardens exakta kolumner för övriga kort har inte verifierats i denna uppdatering.
 
 ### Sprintbacklog: konkreta kort
 
@@ -60,16 +62,16 @@ Receptflödet ligger som delkort under US-05 (#22). Korten nedan är de som fakt
 
 | Kort | Vad | Koppling | Ansvarig | Beror på | Boardstatus |
 |---|---|---|---|---|---|
-| [#22](https://github.com/BnL-Studios/im-hungry/issues/22) | US-05-epic: samlar receptflödet | US-05 | Benjamin & Leo | – | Sprint Backlog (0/5 delkort klara) |
-| [#127](https://github.com/BnL-Studios/im-hungry/issues/127) | Välj AI-modell och sätt upp gratis API-prenumeration | US-05 | Benjamin | – | Sprint Backlog |
-| [#125](https://github.com/BnL-Studios/im-hungry/issues/125) | Besluta och designa AI-implementationen (flöde, verktyg, svarsformat) | US-05 | Benjamin | #127 | Sprint Backlog |
-| [#128](https://github.com/BnL-Studios/im-hungry/issues/128) | Koppla upp appen mot AI-API:t via Edge Function | US-05 | Benjamin | #125, #127 | Sprint Backlog |
-| [#126](https://github.com/BnL-Studios/im-hungry/issues/126) | Skapa "generera recept"-sida med enkel knapp | US-05 | Benjamin | #125 | Sprint Backlog |
-| [#129](https://github.com/BnL-Studios/im-hungry/issues/129) | Skapa receptskärm: titel, ingredienser och steg | US-68 | Leo | #128, #126 | Sprint Backlog |
-| [#23](https://github.com/BnL-Studios/im-hungry/issues/23) | US-68 – läsa ett komplett recept (storykort; implementation i #129) | US-68 | Leo | #129 | Sprint Backlog (nyflyttad) |
-| [#24](https://github.com/BnL-Studios/im-hungry/issues/24) | US-67 – förstå när inget giltigt recept kan erbjudas (implementation i PR för #126) | US-67 | Benjamin | #125, #128 | Sprint Backlog (nyflyttad, saknar delkort) |
+| [#22](https://github.com/BnL-Studios/im-hungry/issues/22) | US-05-epic: samlar receptflödet | US-05 | Benjamin & Leo | – | **Öppen** – kod mergad, väntar på verifiering |
+| [#127](https://github.com/BnL-Studios/im-hungry/issues/127) | Välj AI-modell och sätt upp gratis API-prenumeration | US-05 | Benjamin | – | **Stängd** – modellval dokumenterat; konto/secret att bekräfta |
+| [#125](https://github.com/BnL-Studios/im-hungry/issues/125) | Besluta och designa AI-implementationen (flöde, verktyg, svarsformat) | US-05 | Benjamin | #127 | **Stängd** (#132) |
+| [#128](https://github.com/BnL-Studios/im-hungry/issues/128) | Koppla upp appen mot AI-API:t via Edge Function | US-05 | Benjamin | #125, #127 | **Stängd** – implementerad/deployad (#140, #142) |
+| [#126](https://github.com/BnL-Studios/im-hungry/issues/126) | Skapa "generera recept"-sida med enkel knapp | US-05 | Benjamin | #125 | **Stängd** – knapp och fel-lägen på Home (#141) |
+| [#129](https://github.com/BnL-Studios/im-hungry/issues/129) | Skapa receptskärm: titel, ingredienser och steg | US-68 | Leo | #128, #126 | **Öppen** – receptvyn ligger på Home, ingen separat skärm |
+| [#23](https://github.com/BnL-Studios/im-hungry/issues/23) | US-68 – läsa ett komplett recept (storykort; implementation i #129) | US-68 | Leo | #129 | **Öppen** – kod finns på Home |
+| [#24](https://github.com/BnL-Studios/im-hungry/issues/24) | US-67 – förstå när inget giltigt recept kan erbjudas (implementation i PR för #126) | US-67 | Benjamin | #125, #128 | **Öppen** – fel/tomt-läge implementerat |
 
-### In Progress just nu (2026-11-17)
+### Kort som var In Progress 2026-11-17 (alla mergeade)
 
 | Kort | Vad | Koppling | Ansvarig |
 |---|---|---|---|
@@ -78,11 +80,11 @@ Receptflödet ligger som delkort under US-05 (#22). Korten nedan är de som fakt
 | [#123](https://github.com/BnL-Studios/im-hungry/issues/123) | Nummertangentbord för mängd i add-ingredient | US-02 (förbättring) | Leo |
 | [#124](https://github.com/BnL-Studios/im-hungry/issues/124) | Extra enhetsknappar i add-ingredient | US-36 (Could) | Leo |
 
-**Kodstatus 2026-11-17:** alla fyra kort är implementerade i koden — numeriskt tangentbord, skalor (mg/g/kg, ml/dl/L, st/dussin) som avrundas och sparas i basenheter, ändra mängd och borttagning med bekräftelse. Fyra Vitest-testfiler finns (validering, skalor, enheter, migrationer), CI kör nu `npm run lint`, typkontroll och tester. Inga nya PR:er eller branches är skapade utan tillåtelse.
+**Kodstatus 2026-11-23:** alla fyra korten är mergeade via #130/#141 — numeriskt tangentbord, skalor (mg/g/kg, ml/dl/L, st/dussin) som avrundas och sparas i basenheter, ändra mängd och borttagning med bekräftelse. Fem Vitest-testfiler (31 tester) täcker även receptklienten; CI kör tre gröna jobb.
 
-**Kapacitetsrisk (uppdaterad):** koden för de fyra korten är klar men boardstatusen är kvar i In Progress tills PR/granskning är gjord. #123/#124 är förbättringar utanför sprintmålet; receptspåret är det stora återstående arbetet.
+**Kapacitetsrisk (uppdaterad):** inventory-spåret är levererat. Återstående risk är verifiering av receptflödet med riktig Gemini-nyckel och #138 (auth/rate limiting).
 
-**Kvar att lösa:** #23 och #24 ligger nu i Sprint Backlog, men #24 saknar fortfarande ett eget implementationskort och #23 är inte explicit kopplad till #129 i GitHub. I förslaget nedan täcks #24 av PR:en för #126 och #23 av PR:en för #129 — bekräfta kopplingen eller skapa ett delkort för #24.
+**Kvar att lösa:** boarden är inte synkad med koden för #22, #23, #24 och #129. #24 saknar fortfarande ett eget implementationskort och #23 är inte explicit kopplad till #129 i GitHub — bekräfta kopplingen när korten stängs.
 
 *MVP-ändring 2026-11-19:* US-06 (välja mat-humör) flyttas till **Should/efter MVP**. Den ingår inte i sprint 2:s receptbegäran, som skickar endast ingredienslistan och returnerar `title`, `ingredients`, `steps` och `estimatedCookingTime`. Se [kontrakt v1](../../ai-integration.md).
 
@@ -90,11 +92,11 @@ Receptflödet ligger som delkort under US-05 (#22). Korten nedan är de som fakt
 
 ## Risker och osäkerheter
 
-- **Stor scope:** fem kort för receptflödet plus två inventory-stories och två sidokort på fem dagar för två utvecklare. US-03/US-04 och sidokorten är implementerade i koden; om AI-spåret drar ut på tiden flyttas receptdelar till sprint 3.
-- **AI-modell vald 2026-11-19, konto återstår:** `gemini-3.8-flash` är primär och `gemini-3.5-flash-lite` reserv enligt [AI-designen](../../ai-integration.md). #125 är dokumenterad och väntar på review/merge. #127 är **inte** färdig förrän teamets API-nyckel, modellåtkomst och verkliga gratiskvot har verifierats. #128 är ännu inte byggd.
-- **Ny infrastruktur:** ingen `supabase/`-kod finns ännu. Det förenklade JSON-kontraktet (**enbart `ingredients` in, fyra fält ut**) och valideringsregler finns i [AI-designen](../../ai-integration.md); Edge Function, hemlig AI-nyckel och verklig integration återstår i #127/#128.
-- **Kvalitet/säkerhet:** svar får inte föreslå recept som kräver mer/andra råvaror än lagret. #125 definierar schema, inventory-ID och summakontroll i [AI-designen](../../ai-integration.md); implementation och tester återstår.
-- **Fyra kort hos Leo (koden klar):** #26, #27, #123 och #124 ligger kvar i In Progress på boarden men väntar på granskning. #123/#124 är förbättringar utanför sprintmålet.
+- **Stor scope (historisk risk):** fem kort för receptflödet plus två inventory-stories och två sidokort på fem dagar för två utvecklare. Inventory och receptkod är levererade; kvar är verifiering och boardstädning.
+- **AI-modell/konto:** `gemini-3.8-flash` är dokumenterad som primär och `gemini-3.5-flash-lite` som reserv enligt [AI-designen](../../ai-integration.md). Koden defaultar ännu till Flash-Lite. #127 är **inte** fullt färdig förrän teamets API-nyckel, modellåtkomst, gratiskvot och secret-namn (`GEMINI_API`) är verifierade. #125/#128 är stängda.
+- **Ny infrastruktur:** `supabase/functions/generate-recipe/` finns och är deployad (#140, #142); kontraktet (**enbart `ingredients` in, fyra fält ut**) delas med mobilen via `shared/recipe-contract.ts`. Kvar är ett riktigt AI-anrop.
+- **Kvalitet/säkerhet:** svar får inte föreslå recept som kräver mer/andra råvaror än lagret. Kontraktet avvisar dubbla ID:n och fel enheter; klienten läser lagret igen före visning. Täckt av tester, men inte verifierat med riktig modell. #138 (auth/rate limiting) är öppen.
+- **Fyra kort hos Leo (klara):** #26, #27, #123 och #124 är stängda och mergeade. #123/#124 var förbättringar utanför sprintmålet.
 - **US-67 utan delkort:** #24 ligger nu i Sprint Backlog men har inget implementationskort. Fel-, timeout- och tomt-lager-flöden riskerar att bli bortglömda; lägg dem explicit i PR:en för #126 (eller skapa ett delkort).
 - **Delat datalager/UI:** US-03/US-04 rör samma inventory-skärmar och repository som tidigare; samordna för att undvika mergekonflikter.
 - **Validering:** samma regler som vid inmatning ska gälla vid ändring av mängd (mängd > 0, giltig enhet/mängdformat).
@@ -102,7 +104,7 @@ Receptflödet ligger som delkort under US-05 (#22). Korten nedan är de som fakt
 
 ## Förslag: PR-indelning och fördelning
 
-Ursprungligt förslag från planning 2026-11-17. **Status 2026-11-19:** PR #130 för inventory finns och en separat dokumentationsbranch `docs/ai-design-model-decision` har skapats för #125; detta avsnitt är alltså en historisk plan, inte aktuell lista över öppna PR:er. Enligt DoD granskas och mergas varje PR av den andra teammedlemmen.
+Ursprungligt förslag från planning 2026-11-17 — en historisk plan, inte en lista över öppna PR:er. **Läget 2026-11-23:** inga öppna PR:er i detta spår. Mergeade: #132 (dokument), #140 (Edge Function), #141 (mobil/receptvy), #142 (delat kontrakt). PR #139 och #131 stängdes utan merge och ersattes. Enligt DoD granskas och mergas varje PR av den andra teammedlemmen.
 
 | Ord | Branch / PR | Stänger | Ansvarig | Reviewer | Beror på |
 |---|---|---|---|---|---|
@@ -120,6 +122,6 @@ Ursprungligt förslag från planning 2026-11-17. **Status 2026-11-19:** PR #130 
 - **PR 2/3:** samma `repository.ts` och `IngredientsScreen.tsx` — gör dem sekventiellt.
 - **Fallback:** #123/#124 är nu implementerade tillsammans med #26/#27 i samma lokala kod; om granskningen drar ut på tiden prioriteras inventory-PR:erna före receptspåret.
 
-**Uppföljning 2026-11-19:** Exakt Gemini-modell och [API-kontrakt v1](../../ai-integration.md) (ingredienser in; titel, ingredienser, steg, uppskattad tid ut) är dokumenterade för #125 och väntar på PR-granskning. #127 har modellbeslut men **nyckel, projektaccess och gratiskvot är inte verifierade**. #128/#126/#129 saknar implementerad AI-integration. Inventory-arbetet ligger i öppna PR #130. Sprintmålet ska inte markeras som uppfyllt enbart på basis av designen.
+**Uppföljning 2026-11-23:** [API-kontrakt v1](../../ai-integration.md) är implementerat i hela kedjan och mergat via #140–#142. Receptgenerering och receptvy finns på Home och CI är grön. **Sprintmålet ska inte markeras som uppfyllt förrän ett riktigt Gemini-anrop är verifierat**, secret-namnet `GEMINI_API` och `GEMINI_MODEL` är bekräftade samt #22/#23/#24/#129 är uppdaterade på boarden. #138 måste lösas före bred publicering.
 
-**Senast uppdaterad:** 2026-11-19 (uppföljning till ursprunglig planning 2026-11-17).
+**Senast uppdaterad:** 2026-11-23 (status synkad med `main`; historisk planering behållen).

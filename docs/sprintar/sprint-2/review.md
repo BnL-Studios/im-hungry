@@ -29,6 +29,8 @@
 
 > Visa bara stories som uppfyller Definition of Done (granskad PR, mergad till `main`, accepterade kriterier uppfyllda).
 
+> **Kodstatus 2026-11-23 (inför ifyllnad):** inventory (US-01–US-04) och receptkedjan US-05/US-67/US-68 finns på `main` via #122, #130 och #140–#142; CI är grön. **Verifiera med ett riktigt Gemini-anrop** (secret `GEMINI_API`, modell `GEMINI_MODEL`, gratiskvot) innan något av receptkorten markeras som uppfyllt. #22/#23/#24/#129 är öppna på boarden trots implementerad kod, och #138 (auth/rate limiting) är öppen.
+
 | Issue | Story | Visas av |
 |---|---|---|
 | | | |

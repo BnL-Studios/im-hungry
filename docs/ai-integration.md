@@ -1,6 +1,6 @@
 # AI-integration — beslut och kontrakt (sprint 2)
 
-**Beslutad design:** 2026-11-19 · **Status:** Design för #125 klar för PR-granskning; **ingen AI-funktion är implementerad eller driftad ännu**. API-nyckel, verklig projektkvot och lyckat API-anrop återstår inom #127/#128.
+**Beslutad design:** 2026-11-19 · **Uppdaterad status 2026-11-23:** kontrakt v1 är implementerat i både mobilapp och Edge Function (#140, #141, #142); funktionen är deployad och CI är grön. **Inget riktigt Gemini-anrop med teamets nyckel är verifierat**, och modell-/secret-konfigurationen behöver stämmas av mot koden (se avsnitt 5). Endpointen saknar fortfarande auth/rate limiting (#138).
 
 Relaterade kort: [#125](https://github.com/BnL-Studios/im-hungry/issues/125) (design), [#127](https://github.com/BnL-Studios/im-hungry/issues/127) (modell och gratis API-åtkomst), [#128](https://github.com/BnL-Studios/im-hungry/issues/128) (integration), [#126](https://github.com/BnL-Studios/im-hungry/issues/126) (generera-sida), [#129](https://github.com/BnL-Studios/im-hungry/issues/129) (receptvy), [#22](https://github.com/BnL-Studios/im-hungry/issues/22) (US-05), [#23](https://github.com/BnL-Studios/im-hungry/issues/23) (US-68), [#24](https://github.com/BnL-Studios/im-hungry/issues/24) (US-67).
 
@@ -24,7 +24,7 @@ flowchart TD
   UI[Expo: Generera recept] --> SNAP[Inventory-snapshot via repository]
   DB[(Lokal SQLite + Drizzle)] --> SNAP
   SNAP -->|HTTPS: endast ingredients| EDGE[Supabase Edge Function: generate-recipe]
-  EDGE -->|GEMINI_API_KEY som serverhemlighet| GEM[Gemini 3.8 Flash]
+  EDGE -->|GEMINI_API som serverhemlighet| GEM[Gemini Flash - modell via GEMINI_MODEL]
   GEM -->|Strukturerad JSON| EDGE
   EDGE -->|4-fältsrecept eller HTTP-fel| CLIENT[features/recipes: schema- och lagerkontroll]
   CLIENT --> RESULT[Receptvy eller begripligt felläge]
@@ -73,7 +73,7 @@ Ingrediensposterna motsvarar befintliga SQLite-fält: positivt heltals-`id`, `na
 ```
 
 - `title`: receptets namn, icke-tom sträng.
-- `ingredients`: använda råvaror med `id` från requesten, positiv `quantity` och samma `unit` som i inventariet. Namnet hämtas från snapshoten i appen — AI behöver inte skapa det en gång till. Dubbletter summeras per ID innan kontroll.
+- `ingredients`: använda råvaror med `id` från requesten, positiv `quantity` och samma `unit` som i inventariet. Namnet hämtas från snapshoten i appen — AI behöver inte skapa det en gång till. Implementeringen tillåter **endast unika ID:n**; dubbletter avvisas i stället för att summeras.
 - `steps`: en icke-tom lista med tydliga, ordnade tillagningssteg.
 - `estimatedCookingTime`: uppskattad **total tillagningstid i minuter**, positivt heltal.
 
@@ -95,7 +95,7 @@ När inget rimligt recept kan genereras eller anropet misslyckas returneras ett 
 - `NO_RECIPE` (422): tillgängligt lager räcker inte till ett giltigt recept; visa begripligt meddelande.
 - `INVALID_REQUEST` (400): tom/ogiltig ingredienslista eller felaktig JSON.
 - `RATE_LIMITED` (429): API-kvot eller rate limit nådd.
-- `MODEL_UNAVAILABLE` (502/503), `INVALID_RECIPE` (502), `TIMEOUT` (504) och `INTERNAL_ERROR` (500): tekniska fel utan att exponera hemligheter eller leverantörens råa internfel.
+- `MODEL_UNAVAILABLE` (502/503), `MODEL_ERROR` (502), `INVALID_RECIPE` (502), `TIMEOUT` (504) och `INTERNAL_ERROR` (500): tekniska fel utan att exponera hemligheter eller leverantörens råa internfel. `METHOD_NOT_ALLOWED` (405) returneras för andra metoder än POST/OPTIONS.
 - Nätverksfel kan uppstå utan HTTP-svar och ska visas tydligt i appen. Inventariet ska fortfarande fungera offline.
 
 ## 4. Receptregler och validering
@@ -111,36 +111,39 @@ När inget rimligt recept kan genereras eller anropet misslyckas returneras ett 
 
 ## 5. API-nyckel, säkerhet och åtkomst
 
-- Generera en projekt-API-nyckel i [Google AI Studio](https://aistudio.google.com/api-keys). Testa sedan **ett verkligt** API-anrop med `gemini-3.8-flash` och kontrollera att projektet är på rätt gratiskvot. Detta är **inte ännu utfört** i repo/dokumentation.
-- Spara den privata nyckeln som `GEMINI_API_KEY` bland **Supabase Edge Function Secrets**. För lokal utveckling används `supabase/functions/.env` (ignoreras av Git); vid drift sätts secret i Supabase Dashboard/CLI. Lägg **aldrig** privat nyckel i Git eller `EXPO_PUBLIC_*`. Modell-ID kan lagras som icke-hemlig `GEMINI_MODEL` på servern.
+- Generera en projekt-API-nyckel i [Google AI Studio](https://aistudio.google.com/api-keys). Testa sedan **ett verkligt** API-anrop och kontrollera projektets gratiskvot. Detta är **fortfarande inte utfört**; funktionen är bara verifierad för indatavalidering (ogiltig request → 400 `INVALID_REQUEST`).
+- **Viktigt:** koden läser nyckeln från `Deno.env.get("GEMINI_API")` i `core.ts`, inte från `GEMINI_API_KEY` som tidigare dokumentation angav. Kontrollera vilket namn som faktiskt är satt bland **Supabase Edge Function Secrets** innan ett riktigt anrop görs; annars svarar funktionen 500 `AI service not configured`. För lokal körning används en ignorerad env-fil (`supabase/.env` enligt `supabase/.env.example`). Lägg **aldrig** privat nyckel i Git eller `EXPO_PUBLIC_*`.
+- **Modellval:** designen föreskriver `gemini-3.8-flash`, men koden defaultar till `gemini-3.5-flash-lite`. Sätt den icke-hemliga `GEMINI_MODEL=gemini-3.8-flash` i Supabase (eller uppdatera designen om Flash-Lite är det faktiska valet). `GEMINI_BACKUP_MODEL` aktiverar den manuella reserven.
 - En app utan inloggning kan inte säkra en publik funktion genom att endast skicka en publikt inbyggd nyckel. `verify_jwt = false` är **inte** ett missbruksskydd. Kräv före publik driftsättning konkreta request-begränsningar och serverbaserad rate limiting/kvot, övervakning samt ett medvetet åtkomstbeslut.
 - För sprintdemo: börja med en lokal eller åtkomstbegränsad testmiljö; exponera inte en oskyddad kostnadsdrivande endpoint. Logga aldrig fulla skafferi-payloads eller API-nycklar.
 - Se [Supabase Secrets](https://supabase.com/docs/guides/functions/secrets), [Securing Edge Functions](https://supabase.com/docs/guides/functions/auth) och [Rate limiting](https://supabase.com/docs/guides/functions/examples/rate-limiting).
 
 ## 6. Implementationsordning och acceptans
 
-- [x] **#125 — Designbeslut:** modell, gränser, ansvar, request/response, fel och valideringsstrategi definierade i dokument (väntar på review/merge).
-- [x] **#127 — Modellval:** primär `gemini-3.8-flash`, reserv `gemini-3.5-flash-lite`; båda dokumenterade mot officiella källor.
-- [ ] **#127 — Konto:** AI Studio-projekt/nyckel skapad, verklig gratisåtkomst och begränsningar verifierade av teamet; hemligheten säkert konfigurerad.
-- [ ] **#128:** Edge Function returnerar ett äkta, schemavaliderat recept och hanterar ogiltig input, 429, timeout och felaktigt AI-svar.
-- [ ] **#126:** Mobilen läser SQLite-snapshot, anropar tjänsten och visar laddning/tomt läge/fel.
-- [ ] **#129 / US-68:** Receptvy presenterar titel, tid, exakta råvaror/mängder och steg.
-- [ ] **US-05 / US-67:** Tests visar att lager inte ändras och att inga saknade eller överstora mängder presenteras som tillgängliga.
+- [x] **#125 — Designbeslut:** modell, gränser, ansvar, request/response, fel och valideringsstrategi dokumenterade och mergade via #132.
+- [x] **#127 — Modellval:** primär `gemini-3.8-flash`, reserv `gemini-3.5-flash-lite`; båda dokumenterade mot officiella källor. Koden defaultar ännu till Flash-Lite — se avsnitt 5.
+- [ ] **#127 — Konto:** AI Studio-projekt/nyckel, verklig gratisåtkomst, begränsningar och secret-namn verifierade av teamet. **Återstår.**
+- [x] **#128 — Kod:** Edge Function validerar indata/AI-svar, hanterar 429, timeout och fel; deployad via #140 och testad i CI. **Riktigt AI-anrop återstår att verifiera.**
+- [x] **#126 — Kod:** mobilen läser SQLite-snapshot, anropar tjänsten och visar laddning/tomt läge/fel (#141).
+- [x] **#129 / US-68 — Kod i väntan på egen skärm:** receptvy med titel, tid, råvaror/mängder och steg ligger på Home. Kortet är fortfarande öppet.
+- [x] **US-05 / US-67 — Kod:** klienten läser lagret igen och avvisar ändrade/otillräckliga mängder; genereringen skriver aldrig till SQLite. Täckt av `generate.test.ts` och kontraktstester.
 
 **Gräns för #125:** detta dokument är design, inte påstående om fungerande API, konfigurerad prenumeration eller färdigt sprintmål.
 
-## Lokal demo för #128 och #126
+## Kör receptflödet
 
-Den lokala demon använder `gemini-3.5-flash-lite`. Serverns `GEMINI_MODEL` kan ändras för att testa designens ursprungliga modellval. Ingen reservmodell är aktiverad som standard.
+**Hostat (normalt läge):** kopiera `mobile/.env.example` till `mobile/.env` och ange `EXPO_PUBLIC_SUPABASE_URL` samt `EXPO_PUBLIC_SUPABASE_ANON_KEY`. Klienten bygger själv URL:en `/functions/v1/generate-recipe`; alternativt kan hela URL:en sättas med `EXPO_PUBLIC_GENERATE_RECIPE_URL`. Starta om Expo, lägg till råvaror och tryck på **Generera recept** på Home. Receptet visas direkt under knappen.
 
-Installera Deno 2. Kopiera `supabase/.env.example` till `supabase/.env` och fyll i Gemini-nyckeln lokalt. Kör från repots rot:
+**Lokal demo (valfritt):** `supabase/functions/generate-recipe/index.ts` är den deployade entrypointen. `handler.ts` innehåller en local-demo-variant av `handle()` som kräver `RECIPE_LOCAL_DEMO=1`, loopback-origin och avsaknad av `DENO_DEPLOYMENT_ID`; den behöver en egen liten `Deno.serve`-wrapper (se `handler_test.ts` för exempel på anrop). Repot har ingen färdig lokal startkommando för demon, så den hostade funktionen är den enklaste vägen för manuell testning. Använd aldrig en tunnel/publik proxy för lokal demo.
+
+Installera Deno 2 för att köra Edge Function-testerna:
 
 ```sh
-RECIPE_LOCAL_DEMO=1 deno run --env-file=supabase/.env --allow-env=RECIPE_LOCAL_DEMO,DENO_DEPLOYMENT_ID,GEMINI_API_KEY,GEMINI_MODEL,GEMINI_BACKUP_MODEL --allow-net=127.0.0.1:8787,generativelanguage.googleapis.com supabase/functions/generate-recipe/index.ts
+deno test --allow-env=RECIPE_LOCAL_DEMO,DENO_DEPLOYMENT_ID supabase/functions/generate-recipe
 ```
 
-Sätt `EXPO_PUBLIC_RECIPE_URL=http://127.0.0.1:8787/functions/v1/generate-recipe` i `mobile/.env.local` och starta om Expo. Testa i webbläsaren på localhost eller i iOS-simulatorn. Lägg till råvaror, öppna Home och tryck på **Generera recept**. Android-emulatorn behöver portvidarebefordran med `adb reverse tcp:8787 tcp:8787`.
+Gemini-nyckeln används enbart på servern (`GEMINI_API`, se avsnitt 5). Innan bred publicering behövs åtkomstskydd och kvotbegränsning (#138).
 
-Funktionen lyssnar bara på loopback. Använd ingen tunnel eller publik proxy. Publik drift väntar på åtkomstskydd och kvotbegränsning. Gemini-nyckeln används enbart på servern.
+`generateFromInventory` returnerar en `RecipeResult` med `recipe` (de fyra API-fälten) och `snapshot` (namn per ingrediens-ID). Home visar både generering och receptvy i samma vy. Tjänsten läser lagret igen före visning och skriver aldrig till SQLite.
 
-För Leos receptvy (#129) returnerar `generateFromInventory` en `RecipeResult` med `recipe` (de fyra API-fälten) och `snapshot` (namn per ingrediens-ID). Home visar resultatet tills receptvyn är klar. Tjänsten läser lagret igen före visning och skriver aldrig till SQLite.
+**Senast uppdaterad:** 2026-11-23.
