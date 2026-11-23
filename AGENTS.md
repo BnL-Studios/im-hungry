@@ -41,12 +41,56 @@ Docs: https://docs.expo.dev/eas/index.md
 - Expo Go only includes its bundled native modules. After adding a library with native code, the app needs a development build: `npx expo run:ios|android` locally, or `eas build --profile development`.
 - Prefer recommended Expo modules over third-party libraries, and check your available skills before adding dependencies. Docs: https://docs.expo.dev/versions/latest/index.md
 
+## Git-hantering och PR-sammanfattning vid avslutad task
+
+- **Ingen automatisk push eller PR:** Kör aldrig `git push` och skapa aldrig en Pull Request automatiskt. Utvecklaren granskar alltid diffen, pushar och öppnar PR manuellt.
+- **Obligatorisk PR-mall i chatten:** När en implementation eller buggfix är klar och verifierad ska ditt allra sista stycke i chatten vara ett kopieringsbart `markdown`-kodblock med projektets PR-mall färdigifylld utifrån ändringarna som gjorts.
+- **Regler för ifyllnad:**
+  - **Vad gör den här pull requesten?:** Sammanfatta ändringen konkret i 2–4 korta punktlistor.
+  - **Kopplat issue:** Hämta issue-nummer från branchnamnet (t.ex. `feat/126-129-...` -> `#126, #129`) eller användarens prompt. Skriv `#<issue-nr>` om det saknas.
+  - **Hur testar man ändringen?:** Skriv numrerade, konkreta steg för hur granskaren testar flödet i appen eller via terminalen.
+  - **Checklista inför granskning:** Markera endast `[x]` på punkter du faktiskt har verifierat i sessionen (t.ex. lokala tester/lint/typecheck, inga hemligheter, uppdaterad dokumentation). Lämna punkter som kräver manuell kontroll av författaren (t.ex. *jag har läst min egen diff*, *testats manuellt* eller *GitHub Actions-CI*) som `[ ]`.
+
+Använd exakt denna struktur i det avslutande kodblocket:
+
+```markdown
+## Vad gör den här pull requesten?
+
+- <Konkret av sammanfattning ändringen>
+
+**Kopplat issue:** #<issue-nr>
+
+## Hur testar man ändringen?
+
+1. <Steg 1>
+2. <Steg 2>
+
+## Checklista inför granskning
+
+- [ ] Branchen utgår från uppdaterad `main` och PR:en har `main` som mål.
+- [ ] Ändringen är avgränsad, och jag har läst min egen diff.
+- [ ] Relevanta acceptanskriterier har testats manuellt.
+- [ ] Mobilappens CI och relevanta tester passerar (inklusive GitHub Actions-CI).
+- [ ] Ny eller ändrad logik har relevant testtäckning enligt vår Definition of Done.
+- [ ] Inga hemligheter, temporär felsökningskod eller oavsiktliga filer ingår.
+- [ ] Lokal SQLite-modell uppdateras med Drizzle-schema och migration när det är relevant.
+- [ ] README/`docs/` är uppdaterade om arbetssätt eller användning påverkas.
+
+Se hela vår [Definition of Done](https://github.com/BnL-Studios/im-hungry/blob/main/docs/definition-of-done.md) och [Git-arbetsflöde](https://github.com/BnL-Studios/im-hungry/blob/main/docs/git-workflow.md).
+
+## Till granskaren
+
+- Granska mot acceptanskriterierna och Definition of Done.
+- Kontrollera att CI är grön; begär ändringar om något behöver rättas.
+- **Minst en annan teammedlem ska godkänna.**
+- **PR-författaren mergar inte sin egen PR.** Granskaren använder normalt **Squash and merge** först efter godkännande och lyckade kontroller.
+```
+
 # Globala kodregler
 - Läs ALDRIG hela mappstrukturer eller node_modules/target/build. Använd riktade sökningar.
 - Svara kortfattat och koncist. Skippa långa förklaringar om jag inte uttryckligen ber om det.
 - Vid ändringar i befintliga filer, redigera endast berörda funktioner – skriv inte om hela filer i onödan.
 - Vid Git-kommandon, föreslå korta, beskrivande Conventional Commits (t.ex. `feat:`, `fix:`).
-- Pusha aldrig till GitHub utan uttrycklig tillåtelse.
 
 ## Kontext- och tokenvänligt arbetssätt
 
