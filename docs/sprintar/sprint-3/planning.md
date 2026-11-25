@@ -11,6 +11,8 @@
   Det är bättre att ta in för lite och plocka in mer än att ta in för mycket.
 -->
 
+> **Kodstatus 2026-11-25:** Branchen `screen-and-page-for-generate-recipe` innehåller #143 (genereringsmodalen `/generate-recipe`) och #129 (receptskärmen `/recipe`) med riktig Gemini-generering testad i appen. Dessa kort är fortfarande öppna på GitHub tills PR:en mergas. #25, #28, #29, #30, #31 och #135 i planen nedan är **inte implementerade**; API-kontrakt v1 tar bara emot `ingredients`. Se [sprint 2:s uppföljning](../sprint-2/planning.md).
+
 **Datum:**
 **Deltagare:**
 **Product Owner denna sprint:**

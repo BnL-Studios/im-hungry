@@ -54,13 +54,15 @@ CI-workflowen [`ci.yml`](../.github/workflows/ci.yml) kör på **Node 22** och g
 2. Validerar att `package.json` har `expo`/`expo-router` och att `app.json` är giltig JSON.
 3. `npm run lint` (`expo lint`).
 4. `npx tsc --noEmit`.
-5. `npm test` (Vitest: validering, skalor, enheter, riktiga SQL-migrationer och receptklienten).
+5. `npm test` (Vitest: validering, skalor, enheter, riktiga SQL-migrationer, receptklient och receptvy — 6 filer / 34 tester).
 
-Dessutom kör CI `Recipe Edge Function` (`deno test`) och `Supabase Preview`. Alla tre jobb var gröna på `b6e14b6` (2026-11-23).
+Dessutom kör CI `Recipe Edge Function` (`deno test`) och `Supabase Preview`. Jobben var gröna på `b6e14b6` (2026-11-23); status för den uppdaterade feature-branchen kontrolleras i PR-granskningen.
 
-**Inga Supabase- eller Gemini-hemligheter krävs för mobilkontrollerna.** Edge Functionen testas separat med mockat AI-svar och säker konfiguration; ett riktigt anrop med teamnyckeln är ännu inte verifierat. Lint (`npm run lint`) körs både lokalt och i CI.
+**Inga Supabase- eller Gemini-hemligheter krävs för mobilkontrollerna.** Edge Functionen testas separat med mockat AI-svar och säker konfiguration; riktig generering är testad manuellt i appen. Lint (`npm run lint`) körs både lokalt och i CI.
 
 **Branch protection:** PR #104 är mergad och legacy-Spring Boot är borttagen. CI-kontrollerna heter **Mobile (Node 22)**, **Recipe Edge Function** och **Supabase Preview**. Om branch protection fortfarande kräver den gamla kontrollen **Backend (Java 21)** måste en GitHub-administratör byta till de nya kontrollerna. Annars kan PR-merge blockeras trots grön ny CI. GitHub-inställningen uppdateras **inte** automatiskt av `ci.yml`.
+
+**Aktuell feature-branch:** `screen-and-page-for-generate-recipe` innehåller genereringsmodalen `/generate-recipe` och receptskärmen `/recipe`. #143 och #129 är öppna på GitHub trots koden — kod på branch, issue/PR-status separat; #135 är inte implementerat.
 
 ## Kodgranskning
 
@@ -82,4 +84,4 @@ Dessutom kör CI `Recipe Edge Function` (`deno test`) och `Supabase Preview`. Al
 
 Följ upp branchlivslängd, väntetid på PR-granskning och CI-problem vid retrospektivet.
 
-**Senast uppdaterad:** 2026-11-23 (CI har tre jobb; Edge Function deployad).
+**Senast uppdaterad:** 2026-11-25 (receptflöde med modal och egen skärm på feature-branch).

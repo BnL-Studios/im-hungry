@@ -1,6 +1,6 @@
 # Daily standup: sprint 1
 
-> **Status (2026-11-13):**
+> **Status (2026-11-25):** Sprinten avslutades 2026-11-16; standupraderna nedan är historiska.
 
 ## Måndag 2026-11-09
 
@@ -37,4 +37,4 @@ Inga commits i repot och ingen standup loggad.
 - Logga standup varje dag från sprint 2.
 - Uppdatera dokumentationen i samma PR som koden.
 
-**Senast uppdaterad:** 2026-11-13 (sprint 1).
+**Senast uppdaterad:** 2026-11-25 (status korrigerad; sprinten avslutad 2026-11-16).

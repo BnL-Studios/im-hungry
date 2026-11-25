@@ -3,9 +3,9 @@
 > **Product goal:** Help home cooks answer *“What can I make with what I already have?”* quickly and reliably.  
 > **MVP definition:** [`mvp.md`](mvp.md)<br>
 > **Current delivery scope:** Two-person Scrum course; `Won't` means *not this time*, not rejected forever.  
-> **Updated:** 2026-11-23 (MVP flow implemented and deployed; live AI call pending)
+> **Updated:** 2026-11-25 (MVP flow implemented; live AI call verified on the feature branch)
 
-> **Status 2026-11-23:** US-01–US-04 (inventory) are merged to `main` (#122, #130, #141). The AI flow is implemented and deployed via #140–#142: US-05 (generation), US-68 (recipe view) and US-67 (errors/no-recipe) are present in `main` — generation and recipe view share the Home screen. Issues #22, #23, #24 and #129 are still open on the board and should be reviewed/closed after a real Gemini call is verified. #125–#128 are closed. #138 (auth/rate limiting) remains open. The backlog below remains the full product scope, not a status list.
+> **Status 2026-11-25:** US-01–US-04 (inventory) are merged to `main` (#122, #130, #141). The AI flow from #140–#142 is implemented on `screen-and-page-for-generate-recipe` with a `/generate-recipe` modal and a separate `/recipe` screen: US-05 (generation), US-68 (recipe view) and US-67 (errors/no-recipe) are present in code. A real Gemini call has produced a recipe in the app. Issues #22, #23, #24, #143 and #129 are still open on GitHub until the PR is merged; #125–#128 are closed. #135 (amounts in the steps) and #138 (auth/rate limiting) remain open. The backlog below remains the full product scope, not a status list.
 
 ## Priority and size overview
 

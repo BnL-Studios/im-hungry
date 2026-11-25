@@ -12,6 +12,8 @@
 **Vecka:** 2026-11-16–2026-11-20  
 **Team:** Benjamin Simmons, Leo Spenner
 
+> **Status (2026-11-25):** Sprinten avslutades 2026-11-20. Raderna nedan är ofullständiga historiska noteringar; fyll inte i påhittade standuper.
+
 > Fyll i en rad per person varje dag. Även korta noteringar räcker.
 
 ---
@@ -51,4 +53,4 @@
 | Benjamin | | | | |
 | Leo | | | | |
 
-**Senast uppdaterad:** 2026-11-16 (vecka upplagd; sprintbacklog och issues kopplade).
+**Senast uppdaterad:** 2026-11-25 (sprinten avslutad 2026-11-20; standup TODO kvar).

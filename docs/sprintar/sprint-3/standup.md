@@ -15,6 +15,8 @@
 
 > Fyll i en rad per person varje dag. Även korta noteringar räcker.
 
+> **Kodstatus 2026-11-25:** #143/#129 finns på `screen-and-page-for-generate-recipe` men är öppna på GitHub tills PR:en mergas. Övriga sprint 3-kort är inte implementerade.
+
 ---
 
 ## Måndag 2026-11-23

@@ -11,11 +11,11 @@
   Skriv ärligt. Det här är bra underlag för er individuella reflektion.
 -->
 
-**Datum:** 2026-11-20 (planerat, direkt efter review)
+**Datum:** 2026-11-20 (sprinten avslutad)
 **Deltagare:** Benjamin Simmons, Leo Spenner
 **Leds av:** Benjamin Simmons (Scrum Master)
 
-> Retron är inte genomförd ännu. Fyll i under/efter retro-mötet.
+> **Status (2026-11-25):** Retron har inte dokumenterats här. Fyll i underlaget nedan tillsammans; koden är implementerad på branch, issue/PR-status separat (#143/#129 öppna, #135 ej implementerat).
 
 ## Förra retrons åtgärder
 
@@ -50,4 +50,4 @@
 
 -
 
-**Senast uppdaterad:** 2026-11-16 (mall förberedd).
+**Senast uppdaterad:** 2026-11-25 (status korrigerad; retroinnehåll kvar som [ ]).

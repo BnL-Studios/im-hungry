@@ -2,7 +2,7 @@
 
 Expo/React Native-projektet för [I'm Hungry!](../README.md).
 
-**Status (2026-11-23):** Matförrådet läses från lokal SQLite; ändring/borttagning och skalor är mergade via #130/#141. Home-fliken har **Generera recept** och visar titel, tid, ingredienser och steg på samma skärm. Klienten i `features/recipes/generate.ts` anropar en deployad Supabase Edge Function med [kontrakt v1](../docs/ai-integration.md) från `shared/recipe-contract.ts`. **Ett riktigt Gemini-anrop med teamets nyckel är inte verifierat**; endpointen saknar ännu auth/rate limiting (#138). 5 Vitest-testfiler, 31 tester och tre gröna CI-jobb.
+**Status (2026-11-25):** Matförrådet läses från lokal SQLite; ändring/borttagning och skalor är mergade via #130/#141. Flikarna är **Hem**, **Generate Recipe** och **Råvaror**; Generate öppnar modalen `/generate-recipe` och ett lyckat recept visas på `/recipe`. Klienten i `features/recipes/generate.ts` anropar en deployad Supabase Edge Function med [kontrakt v1](../docs/ai-integration.md) från `shared/recipe-contract.ts`. Riktig generering är testad i appen; endpointen saknar ännu auth/rate limiting (#138). Koden ligger på branchen `screen-and-page-for-generate-recipe`; #143/#129 är öppna på GitHub tills PR:en mergas. 6 Vitest-testfiler, 34 tester.
 
 ## Starta utvecklingsmiljön
 
@@ -12,7 +12,7 @@ npm ci
 npx expo start
 ```
 
-För receptflödet behövs `mobile/.env` (kopiera `mobile/.env.example`): `EXPO_PUBLIC_SUPABASE_URL` pekar på projektet och `EXPO_PUBLIC_SUPABASE_ANON_KEY` är den publika nyckeln. Hela funktions-URL:en kan anges separat med `EXPO_PUBLIC_GENERATE_RECIPE_URL`. Privata Gemini-nycklar hör aldrig hemma i `EXPO_PUBLIC_*`.
+För receptflödet behövs `mobile/.env` (kopiera `mobile/.env.example`): `EXPO_PUBLIC_SUPABASE_URL` pekar på projektet och `EXPO_PUBLIC_SUPABASE_ANON_KEY` är den publika nyckeln. `EXPO_PUBLIC_GENERATE_RECIPE_URL` är valfri och overridear URL:en som härleds från projekt-URL:en (t.ex. `http://127.0.0.1:8787/functions/v1/generate-recipe` för lokal demo). Privata Gemini-nycklar hör aldrig hemma i `EXPO_PUBLIC_*`; Edge Functionen läser `GEMINI_API`.
 
 Starta i simulator/emulator, på en mobil eller med `npm run web`. En development build kan behövas när native-beroenden introduceras. Projektet använder [Expo SDK 58](https://docs.expo.dev/versions/v58.0.0/) och [Expo Router](https://docs.expo.dev/router/introduction/). Node 22+ krävs för migrationstestet, som använder `node:sqlite`.
 
@@ -21,17 +21,22 @@ Starta i simulator/emulator, på en mobil eller med `npm run web`. En developmen
 ```text
 src/
   app/                         # Routes (Expo Router)
-    _layout.tsx                # Rot-Stack + DatabaseProvider, modaler
+    _layout.tsx                # Rot-Stack + DatabaseProvider + RecipeProvider
     add-ingredient.tsx         # Modal route
     edit-ingredient.tsx        # Modal route
+    generate-recipe.tsx        # Tunn modal route
+    recipe.tsx                 # Tunn receptroute
     (tabs)/
-      _layout.tsx              # Home + Råvaror
-      index.tsx                # Home: generera recept + receptvy
+      _layout.tsx              # Hem + Generate Recipe + Råvaror
+      index.tsx                # Hem: Im hungry + instruktioner
+      generate.tsx             # Web-fallback till modalen
       ingredients/index.tsx    # Tunn route till IngredientsScreen
   screens/
     IngredientsScreen.tsx      # Lista, ändra, ta bort med bekräftelse
     AddIngredientScreen.tsx    # Formulär för ny råvara + skalväljare
     EditIngredientScreen.tsx   # Formulär för ny mängd
+    GenerateRecipeModalScreen.tsx  # Inställningsyta + genereringsknapp
+    GeneratedRecipeScreen.tsx  # De fyra kontraktfälten + empty state
   features/
     inventory/
       units.ts                 # g, ml, qty; qty visas som st
@@ -40,8 +45,11 @@ src/
       repository.ts            # useInventoryItems, add/update/remove-hooks
       *.test.ts                # Vitest (4 filer)
     recipes/
-      generate.ts              # Endpoint, anrop och svarskontroll
-      generate.test.ts         # Vitest: klient och felhantering
+      generate.ts              # Snapshot, anrop och re-check mot lagret
+      recipe-context.tsx       # In-memory RecipeResult mellan modal och receptvy
+      useGenerateRecipe.ts     # Laddning/fel för modalen
+      view-model.ts            # Filtrerar giltiga råvaror för visning
+      *.test.ts                # Vitest (2 filer)
   db/
     client.ts                  # Memoiserad Drizzle-instans (useDatabase)
     provider.tsx               # SQLiteProvider, kör migrationer vid start
@@ -53,13 +61,13 @@ Routes i `src/app/` hålls tunna och importerar skärmar och logik från `src/sc
 
 ## Arkitektur
 
-- **UI och navigation:** Expo Router + React Native/TypeScript. Rot-layouten har en Stack med flikarna och modal routes för lägg till/ändra. Appen är låst till ljust läge (`userInterfaceStyle: "light"`).
+- **UI och navigation:** Expo Router + React Native/TypeScript. Tre flikar: Hem, Generate Recipe och Råvaror. Rot-layouten har en Stack med modal routes för lägg till/ändra och receptgenerering; lyckad generering navigerar till `/recipe`. Appen är låst till ljust läge (`userInterfaceStyle: "light"`).
 - **Matförråd:** SQLite på telefonen via `expo-sqlite` och **Drizzle ORM**. Fungerar offline.
 - **Listan:** `IngredientsScreen` använder `useInventoryItems`, som kör en Drizzle `useLiveQuery` mot `inventory_items`. Listan uppdateras automatiskt när en rad infogas, ändras eller tas bort.
 - **Lägga till:** `AddIngredientScreen` använder numeriskt tangentbord, validerar med `parseIngredientInput` och sparar med `useAddIngredient`. Ingen SQL och ingen duplicerad validering i skärmen.
 - **Ändra och ta bort:** `EditIngredientScreen` validerar med `parseQuantityInput` och skriver med `useUpdateIngredient`. Borttagning sker via `useRemoveIngredient` först efter bekräftelse (`Alert.alert` på native, `window.confirm` på webb).
 - **Migrationer:** Drizzle Kit-genererade, versionshanterade filer i `drizzle/`. De körs vid appstart innan databasfrågor utförs.
-- **Recept:** Endast vid receptbegäran skickas **ingredienserna** (ID, namn, mängd, basenhet) via HTTPS till den deployade **Supabase Edge Function** som anropar **Gemini Flash** med serverlagrad hemlig nyckel. Vid framgång returneras exakt fyra toppnivåfält: `title`, `ingredients`, `steps` och `estimatedCookingTime` (minuter). Klienten validerar svaret mot snapshoten och läser lagret igen innan receptet visas. Mat-humör tillkommer efter MVP och ingår inte i request v1. Se [kontrakt v1, fel och validering](../docs/ai-integration.md).
+- **Recept:** Vid receptbegäran skickas **ingredienserna** (ID, namn, mängd, basenhet) via HTTPS till den deployade **Supabase Edge Function** `generate-recipe`, som anropar Gemini med serverhemligheten `GEMINI_API`. Koden defaultar till `gemini-3.5-flash-lite`; `GEMINI_MODEL` och `GEMINI_BACKUP_MODEL` kan sättas på servern. Vid framgång returneras exakt fyra toppnivåfält: `title`, `ingredients`, `steps` och `estimatedCookingTime` (minuter). Klienten validerar svaret mot snapshoten, läser lagret igen och filtrerar bort råvaror utan giltigt namn/positiv mängd innan visning på `/recipe`. Mat-humör tillkommer efter MVP och ingår inte i request v1. Se [kontrakt v1, fel och validering](../docs/ai-integration.md).
 - **Enheter och skalor:** `g`, `ml` och `qty` (visas som `st`). `scales.ts` erbjuder mg/g/kg, ml/dl/L och st/dussin och räknar om med flyttalsavrundning innan värdet sparas i basenhet. Databasen stoppar mängder som inte är positiva och enheter utanför listan.
 
 ## Flödet för att lägga till en råvara
@@ -102,7 +110,8 @@ npx expo install --check  # visa SDK-avvikande paket
 - `units.test.ts` testar enheter och formatering (`qty` → `st`).
 - `migrations.test.ts` kör de riktiga SQL-migrationerna mot en temporär SQLite-databas och kontrollerar att `CHECK`-begränsningarna stoppar ogiltiga rader.
 - `features/recipes/generate.test.ts` testar att klienten skickar endast `ingredients`, väljer endpoint och mappar HTTP-fel till användarmeddelanden.
+- `features/recipes/view-model.test.ts` testar att receptvyn bara visar råvaror med giltigt namn och positiv mängd.
 
-Lägg aldrig hemliga API-nycklar i Expo-miljövariabler som skickas till appen, särskilt inte `EXPO_PUBLIC_*`.
+Totalt 6 testfiler / 34 tester. CI kör även `deno test` för Edge Function. Lägg aldrig hemliga API-nycklar i Expo-miljövariabler som skickas till appen, särskilt inte `EXPO_PUBLIC_*`.
 
-**Senast uppdaterad:** 2026-11-23 (receptflöde implementerat; riktigt AI-anrop att verifiera).
+**Senast uppdaterad:** 2026-11-25 (receptflöde med modal och egen receptskärm på feature-branch).

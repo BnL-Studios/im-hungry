@@ -14,6 +14,8 @@
   Demot ska köras på riktigt, inte med skärmdumpar. Testa det innan.
 -->
 
+> **Kodstatus 2026-11-25:** Branchen `screen-and-page-for-generate-recipe` har #143/#129 i kod: Generate Recipe-fliken öppnar `/generate-recipe`, och receptet visas på `/recipe` med titel, ingredienser, steg och uppskattad tid. Riktig Gemini-generering är testad i appen. Korten är öppna på GitHub tills PR:en mergas. Mat-humör, kök, maxtid, portioner, ett nytt förslag (#25, #28–#31) och mängder i stegen (#135) är inte implementerade.
+
 **Datum:**
 **Deltagare:**
 
@@ -46,12 +48,12 @@
 
 <!-- I vilken ordning visar ni? Vem gör vad? Berätta det som en användares väg genom appen, inte story för story. -->
 
-Visa de delar som uppfyller [Definition of Done](../../definition-of-done.md).
+Visa de delar som uppfyller [Definition of Done](../../definition-of-done.md). Planen nedan är det ursprungliga sprintmålet; nuvarande kod på branchen stöder bara receptgenerering och receptskärm.
 
-1. Öppna receptmodalen från knappen i navigeringen (#143).
-2. Välj mat-humör och matstil (#25, #29). Sätt en maxtid och välj antal portioner (#30, #31).
-3. Generera receptet. Visa titel, ingredienser, steg och tillagningstid på receptskärmen (#129). Följ ett steg där mängd och enhet står direkt i instruktionen (#135).
-4. Be om ett annat förslag med samma råvaror och val (#28).
+1. Öppna receptmodalen från fliken **Generate Recipe** i navigeringen (#143).
+2. Kontrollera att modalen använder råvarorna i lagret; inga preferensval finns ännu (#25, #29–#31 är öppna).
+3. Generera receptet. Visa titel, ingredienser, steg och tillagningstid på receptskärmen (#129). Mängderna visas i ingredienslistan, inte i stegen (#135 är öppet).
+4. Ett nytt förslag med samma val finns ännu inte (#28 är öppet).
 
 ### Frågor till läraren
 

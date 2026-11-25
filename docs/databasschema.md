@@ -1,6 +1,6 @@
 # Databasschema
 
-> **Status (2026-11-23):** Implementerad i `mobile/src/db/schema.ts` med två versionshanterade Drizzle-migrationer i `mobile/drizzle/`. **SQLite finns på telefonen**, inte i Supabase. Matförrådslistan och formulären för att lägga till/ändra/ta bort råvaror använder tabellen. Receptflödet läser samma tabell via en snapshot och skriver aldrig till den; det finns därför inga nya tabeller i schemat.
+> **Status (2026-11-25):** Implementerad i `mobile/src/db/schema.ts` med två versionshanterade Drizzle-migrationer i `mobile/drizzle/`. **SQLite finns på telefonen**, inte i Supabase. Matförrådslistan och formulären för att lägga till/ändra/ta bort råvaror använder tabellen. Genereringsmodalen läser samma tabell via en snapshot och receptskärmen visar resultatet utan att skriva till den; det finns därför inga nya tabeller i schemat.
 
 ## Diagram
 
@@ -55,4 +55,4 @@ Ingen `users`-tabell behövs eftersom varje appinstallation har sitt eget matfö
 
 `mobile/src/db/schema.ts` och de versionshanterade migrationerna i `mobile/drizzle/` är den tekniska sanningskällan. Uppdatera diagrammet när modellen ändras.
 
-**Senast uppdaterad:** 2026-11-23 (receptflödet är read-only mot samma schema).
+**Senast uppdaterad:** 2026-11-25 (receptflödet är read-only mot samma schema).

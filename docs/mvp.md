@@ -12,20 +12,21 @@ Användaren har mat hemma men vet inte **vad hen kan laga av just de råvaror oc
 
 **I'm Hungry!** är en mobilapp där användaren registrerar sina råvaror och mängder i ett digitalt matförråd. Matförrådet sparas **lokalt i SQLite på telefonen** med Expo SQLite och Drizzle ORM och kan hanteras utan nätverk. Användaren begär **ett** recept från AI genom att skicka **endast inventariets ingredienslista** (ID, namn, mängd, basenhet) via HTTPS till en **Supabase Edge Function**, som validerar begäran och anropar AI med en hemlig nyckel som aldrig finns i mobilappen. Vid framgång kommer exakt fyra fält tillbaka: receptnamn (`title`), använda råvaror (`ingredients`), tillagningssteg (`steps`) och uppskattad tid i minuter (`estimatedCookingTime`). Receptet visas i appen och sparas inte permanent i MVP:n.
 
-## Status (uppföljt 2026-11-23)
+## Status (uppföljt 2026-11-25)
 
-Sprint 1 avslutades 2026-11-16 och sprint 2 2026-11-20. Hela MVP-kedjan finns nu på `main` (`b6e14b6`); matförrådets första del kom via #122 och resten via #130, #140, #141 och #142:
+Sprint 1 avslutades 2026-11-16 och sprint 2 2026-11-20. Hela MVP-kedjan finns på `main` (`b6e14b6`); matförrådets första del kom via #122 och resten via #130, #140, #141 och #142. På branchen `screen-and-page-for-generate-recipe` är receptflödet dessutom ombyggt till en genereringsmodal och en egen receptskärm; #143/#129 är öppna på GitHub tills PR:en mergas.
 
 | Område | Status |
 |---|---|
 | Se matförrådet (US-01) | Klar: listan läser från lokal SQLite, visar tomt läge och fel (mergad via #122). |
 | Lägga till råvara (US-02) | Klar: modal, validering och sparning via det delade inventory-lagret (mergad via #122). |
 | Korrigera/ta bort (US-03/US-04) | Klar: implementerat och mergat via #130/#141. |
+| Recept via Edge Function/AI (US-05 m.fl.) | Implementerat på branchen: `/generate-recipe`-modal, Edge Function och `/recipe`-vy. [Kontrakt v1](ai-integration.md) delas mellan mobil och server. Riktiga anrop ger recept i appen. |
+| Resultat och fel (US-67/US-68) | Egen receptskärm med titel, tid, råvaror och steg; laddnings-, fel- och tom-lägen i modalen. boardkorten #23/#24/#129 är öppna. |
+| Mängder i stegen (#135) | **Öppet**, inte implementerat. |
 | Mat-humör (US-06) | **Efter MVP**; påverkar inte API-request v1. |
-| Recept via Edge Function/AI (US-05 m.fl.) | Kod och deployment klara (#140, #141, #142); [kontrakt v1](ai-integration.md) delas mellan mobil och server. **Riktigt AI-anrop, secret-namn och modellval återstår att verifiera.** |
-| Resultat och fel (US-67/US-68) | Receptvy, laddning, tomt lager och felmeddelanden finns på Home; boardkorten #23/#24/#129 är ännu öppna. |
 
-Se [sprint 2](sprintar/sprint-2/planning.md), [arkitekturen](arkitektur.md) och [AI-integrationsdesignen](ai-integration.md).
+Se [sprint 2](sprintar/sprint-2/planning.md), [sprint 3](sprintar/sprint-3/planning.md), [arkitekturen](arkitektur.md) och [AI-integrationsdesignen](ai-integration.md).
 
 ## Ingår i MVP:n
 
@@ -39,7 +40,7 @@ Se [sprint 2](sprintar/sprint-2/planning.md), [arkitekturen](arkitektur.md) och 
 
 - Registrering, inloggning, kontoinställningar eller lösenordshantering.
 - Synkronisering mellan enheter, delade hushåll eller automatisk molnbackup.
-- Separat startsida/dashboard och avancerad navigering.
+- Avancerad startsida/dashboard och avancerad navigering.
 - Smart sökning, sortering, kategorier, streckkodsskanning och utgångsdatum.
 - Flera receptförslag i följd, recepthistorik, favoriter och sparade recept.
 - Starta matlagning, bekräfta tillagning eller automatiskt dra av ingredienser.
@@ -60,3 +61,4 @@ Se [sprint 2](sprintar/sprint-2/planning.md), [arkitekturen](arkitektur.md) och 
 | 2026-11-19 | Status för PR #130 och AI-val/kontrakt (#125/#127) förtydligad. | Skilj beslutad design från implementerad funktion. |
 | 2026-11-19 | MVP-kontrakt förenklat till ingredients-in och fyra receptfält ut. US-06 skjuts upp. | Kortare vertikal leverans utan preferenser. |
 | 2026-11-23 | Status uppdaterad: hela receptflödet implementerat och deployat (#140–#142); riktigt AI-anrop och modell/secret-konfiguration kvar att verifiera. | Dokumentationen ska spegla `main` i stället för tidigare planer. |
+| 2026-11-25 | Receptflödet dokumenterat med genereringsmodal och egen `/recipe`-skärm på feature-branch; #135 och #138 kvar. | Dokumentationen ska spegla koden och skilja kodstatus från issue-status. |

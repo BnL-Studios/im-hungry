@@ -1,6 +1,6 @@
 # Arkitektur — lokal databas och implementerad AI-gateway
 
-**Status (2026-11-23):** Datalagret och matförrådets UI är mergade till `main` (#122, #130, #141). US-03/US-04, numeriskt tangentbord och skalor fungerar. Receptflödet är implementerat och deployat: Home skickar en ingredients-snapshot till Supabase Edge Function (#140, #142), får ett fältvaliderat recept och visar det på samma skärm. Kontraktet delas i `shared/recipe-contract.ts`. **Riktigt Gemini-anrop med teamets nyckel och modell/secret-konfiguration är inte verifierade.** #138 (auth/rate limiting) samt boardkorten #22, #23, #24 och #129 är öppna.
+**Status (2026-11-25):** Datalagret och matförrådets UI är mergade till `main` (#122, #130, #141). US-03/US-04, numeriskt tangentbord och skalor fungerar. Receptflödet finns i kod på branchen `screen-and-page-for-generate-recipe`: fliken **Generate Recipe** öppnar modalen `/generate-recipe`, och ett lyckat recept visas på `/recipe`. Kontraktet delas i `shared/recipe-contract.ts`. Receptgenerering är testad med riktig Gemini-nyckel. #143/#129 är öppna på GitHub tills PR:en mergas; #135 (mängder i stegen) och #138 (auth/rate limiting) är kvar.
 
 ## Översikt
 
@@ -20,14 +20,14 @@ flowchart TD
     DB -->|"ändringshändelse"| R
   end
   S -->|"HTTPS: endast ingredients"| Edge[Supabase Edge Function - deployad, Deno/TypeScript]
-  Edge -->|"API-nyckel från serverhemlighet GEMINI_API"| AI[Gemini Flash - modell via GEMINI_MODEL]
+  Edge -->|"GEMINI_API som serverhemlighet"| AI[Gemini - standard gemini-3.5-flash-lite]
   AI -->|"strukturerat recept"| Edge
-  Edge -->|"validerat 4-fältsrecept"| S
+  Edge -->|"validerat 4-fältsrecept"| Recipe[/recipe]
 ```
 
-Hela kedjan finns i koden och är deployad. Det återstår verifiering med riktig API-nyckel, ett medvetet modellval och missbruksskydd (#138).
+Hela kedjan finns i koden och är deployad. Kvar är ett medvetet modellval och missbruksskydd (#138).
 
-**Två olika ansvar:** SQLite lagrar *data på telefonen*. Supabase ska **endast** användas för att köra en Edge Function som säkert anropar AI; ingen Supabase PostgreSQL-databas krävs för MVP:n.
+**Två olika ansvar:** SQLite lagrar *data på telefonen*. Supabase används **endast** för att köra en Edge Function som säkert anropar AI; ingen Supabase PostgreSQL-databas krävs för MVP:n.
 
 ## 1. Matförrådet: helt lokalt
 
@@ -49,13 +49,13 @@ Implementerat i sprint 1–2:
 
 ## 2. Receptbegäran: implementerad och deployad
 
-**Beslut 2026-11-19:** Använd `gemini-3.8-flash` som primär modell och `gemini-3.5-flash-lite` som manuell reserv. API-request v1 innehåller **endast `ingredients`**, och lyckat svar innehåller exakt **`title`, `ingredients`, `steps`, `estimatedCookingTime`**. Se [AI-integrationsdesignen och kontrakt v1](ai-integration.md) för exakta JSON-fält, tillåtna basenheter (`g`, `ml`, `qty`), felkoder, mängdkontroll och verifiering av gratis API-åtkomst. Flödet är byggt ner till den deployade Edge Functionen; koden defaultar dock till Flash-Lite och behöver `GEMINI_MODEL` satt för att följa beslutet:
+**Beslut 2026-11-19:** `gemini-3.8-flash` är designvalet. Koden defaultar till `gemini-3.5-flash-lite`; `GEMINI_MODEL` och `GEMINI_BACKUP_MODEL` kan sättas på servern. API-request v1 innehåller **endast `ingredients`**, och lyckat svar innehåller exakt **`title`, `ingredients`, `steps`, `estimatedCookingTime`**. Se [AI-integrationsdesignen och kontrakt v1](ai-integration.md) för JSON-fält, basenheter (`g`, `ml`, `qty`), felkoder och mängdkontroll. Flödet fungerar så här:
 
-1. Användaren trycker på knappen för receptförslag; inga preferensval krävs i MVP.
+1. Användaren trycker på fliken **Generate Recipe**, som öppnar modalen `/generate-recipe`; inga preferensval krävs i MVP.
 2. Mobilappen hämtar ett **ögonblicksutdrag** ur lokal SQLite. **Endast ingredienslistan** (ID, namn, mängd och basenhet) skickas över HTTPS.
 3. Supabase Edge Function (Deno/TypeScript) validerar indata, begränsar tillåtna fält och rimlig storlek och anropar AI-leverantören med API-nyckel från serverlagrad hemlighet.
 4. Funktionen validerar AI-svarets struktur och grundläggande receptbegränsningar. Den skickar tillbaka ett JSON-resultat eller ett tydligt fel (t.ex. timeout, tjänsten otillgänglig, kvot nådd).
-5. Appen validerar att föreslagna ingredienser refererar till **befintliga inventory-ID:n med korrekta basenheter och tillgängliga sammanlagda mängder**, först mot snapshoten och sedan mot aktuellt lager om något hunnit ändras. Om receptet inte är giltigt visas en begriplig fel-/alternativvy. Ingenting dras automatiskt från lagret.
+5. Appen validerar att föreslagna ingredienser refererar till **befintliga inventory-ID:n med korrekta basenheter och tillgängliga mängder per unikt ID**, först mot snapshoten och sedan mot aktuellt lager om något hunnit ändras. Dubblett-ID avvisas. Om receptet inte är giltigt visas en begriplig fel-/alternativvy. Ingenting dras automatiskt från lagret.
 
 **Begränsning:** Edge Function har ingen direkt insyn i SQLite och kan därför **inte oberoende verifiera telefonens verkliga saldo**. Den kan validera mot den inskickade listan. Appen ansvarar för kontrollen mot lagret på enheten och eventuell förändring sedan begäran gjordes.
 
@@ -65,7 +65,7 @@ Implementerat i sprint 1–2:
 - **Serverhemligheter:** Lagra AI-nyckeln via Supabases hantering av Edge Function-secrets.
 - **Ingen inloggning i MVP:n:** funktionen är i dagsläget deployad och anropsbar utan användarautentisering. En publik/`verify_jwt = false`-konfiguration är **inte** ett missbruksskydd; #138 (auth, rate limiting, övervakning) är öppen. Begränsa exponeringen tills skydden finns. En publik/anon-nyckel i appen är inte hemlig.
 - **Indatavalidering:** Begränsa antal råvaror, namn- och textlängder samt mängder; avvisa oväntade fält och osäkert stora anrop. Request v1 har inget `mood`-fält.
-- **Svar:** Begär strukturerat JSON från Gemini och validera mot [kontrakt v1](ai-integration.md). Kontrollera ID, enhet och totalmängd mot lagerdata; modellens resultat är opålitligt tills det verifierats.
+- **Svar:** Begär strukturerat JSON från Gemini och validera mot [kontrakt v1](ai-integration.md). Kontrollera ID, enhet och mängd per unikt ID mot lagerdata; modellens resultat är opålitligt tills det verifierats.
 - **Dataminimering:** Skicka inte identitet, enhets-ID eller andra personuppgifter för receptbegäran när det inte behövs.
 - **Offline-fel:** Visa tydligt när AI-funktionen inte kan nås. Matförrådet ska fortsätta fungera.
 
@@ -75,20 +75,25 @@ Implementerat i sprint 1–2:
 mobile/
   src/
     app/                       # Expo Router: endast routes
-      _layout.tsx              # Rot-Stack + DatabaseProvider
+      _layout.tsx              # Rot-Stack + DatabaseProvider + RecipeProvider
       add-ingredient.tsx       # Modal route
       edit-ingredient.tsx      # Modal route
+      generate-recipe.tsx      # Tunn modal route
+      recipe.tsx               # Tunn receptroute
       (tabs)/
-        _layout.tsx            # Home + Råvaror
-        index.tsx              # Home: generera recept + receptvy
+        _layout.tsx            # Hem + Generate Recipe + Råvaror
+        index.tsx              # Hem: Im hungry + instruktioner
+        generate.tsx           # Web-fallback till modalen
         ingredients/index.tsx  # Tunn route
     screens/                   # Skärmkomponenter
       IngredientsScreen.tsx
       AddIngredientScreen.tsx
       EditIngredientScreen.tsx
+      GenerateRecipeModalScreen.tsx
+      GeneratedRecipeScreen.tsx
     features/
       inventory/               # Enheter, skalor, validering, repository, 4 tester
-      recipes/                 # Anropsklient, endpoint och svarskontroll + test
+      recipes/                 # generate, context, view-model, 2 tester
     db/
       client.ts                # Memoiserad Drizzle-instans (useDatabase)
       provider.tsx             # SQLiteProvider + migrationer vid start
@@ -96,42 +101,42 @@ mobile/
   drizzle/                     # Genererade SQL-migrationer och metadata
 shared/recipe-contract.ts      # API-kontrakt v1, delat med servern
 supabase/functions/
-  generate-recipe/             # Deployad Deno-funktion: index.ts, core.ts, tester
+  generate-recipe/             # Deployad Deno-funktion: index.ts, handler.ts, core.ts, tester
 ```
 
-Routes i `src/app/` hålls tunna: de importerar skärmar från `src/screens/` och domänlogik från `src/features/`. `db/` innehåller allt som rör databasen, så skärmar och features slipper SQL. `features/inventory/` har det delade datalagret för matförrådet, `features/recipes/` receptklienten och `shared/` kontraktet som både mobil och Edge Function använder.
+Routes i `src/app/` hålls tunna: de importerar skärmar från `src/screens/` och domänlogik från `src/features/`. `db/` innehåller allt som rör databasen, så skärmar och features slipper SQL. `features/inventory/` har det delade datalagret för matförrådet, `features/recipes/` receptanrop, context och visningslogik, och `shared/` kontraktet som både mobil och Edge Function använder.
 
 ## 5. Teknisk verifiering
 
-**Implementerat i sprint 1–2:**
+**Implementerat:**
 
 - Lista, tomt läge och felvy är implementerade mot lokal SQLite.
 - Lägga till, ändra mängd och bekräftad borttagning är implementerade med delad validering och repository-hooks.
-- Skalor räknas om och avrundas till basenheter; fem Vitest-testfiler (31 tester) täcker validering, skalor, enheter, migrationer och receptklienten.
+- Skalor räknas om och avrundas till basenheter.
+- Receptflödet har modal, laddning/fel, snapshot och re-check mot lagret; `/recipe` visar de fyra kontraktfälten.
 
 **Automatiskt verifierat:**
 
-- Ogiltig mängd/enhet stoppas av validering och av SQLite `CHECK`-begränsningar (täcks av `validation.test.ts` och `migrations.test.ts`); skalor och flyttalsavrundning täcks av `scales.test.ts`.
-- Migration från tom installation och från föregående databasversion bevarar existerande data (testas av `migrations.test.ts`).
-- `npx tsc --noEmit`, `npm run lint` och `npx vitest run` passerar; CI kör samma kontroller.
+- Ogiltig mängd/enhet stoppas av validering och SQLite `CHECK`-begränsningar; skalor och flyttalsavrundning täcks av egna tester.
+- Migration från tom installation och från föregående databasversion bevarar existerande data.
+- Receptkontrakt, dubblettavvisning, lagerkontroll och visningsfiltrering täcks av `generate.test.ts`, `view-model.test.ts` och Edge Function-tester.
+- Sex Vitest-testfiler / 34 tester. CI kör lint, typkontroll, Vitest och `deno test`.
 
-**Manuellt att verifiera i samband med review:**
+**Manuellt verifierat i sessionen:**
+
+- Receptgenerering med riktig Gemini-nyckel ger ett recept i appen.
+
+**Att kontrollera i samband med PR-granskning:**
 
 - Att listan uppdateras direkt efter save och att datan finns kvar efter appomstart.
 - Att flödet fungerar på både native och webb, inklusive modalens stängning och tangentbord.
-
-**Verifierat i kod/CI:** ogiltiga JSON-requests, felkoder, timeout/429 och felaktigt AI-svar täcks av Edge Function-tester och klienttester; kontraktet kontrollerar ID, enhet och mängd mot snapshoten och mobilen läser lagret igen före visning.
-
-**Återstår att verifiera med riktig nyckel/miljö:**
-
-- Ett äkta Gemini-anrop med `gemini-3.8-flash` (eller ett dokumenterat byte till Flash-Lite) och teamets gratiskvot.
-- Att secret-namnet (`GEMINI_API`) är satt i Supabase och att inga hemligheter finns i mobilappens byggda kod eller Git.
-- Att flödet fungerar på både native och webb med nätverksfel och ändrat saldo.
+- Att GitHub Actions är grönt på den uppdaterade branchen och att inga hemligheter förekommer i byggd kod eller Git.
+- Att flödet fungerar med nätverksfel och ändrat saldo.
 
 ## Beslut och externa referenser
 
 - [Beslutsloggen](beslutslogg.md), beslut 03, 06–07 · [AI-integrationsdesign och API-kontrakt](ai-integration.md) (#125).
-- [MVP](mvp.md) · [Databasschema](databasschema.md) · [Sprint 1](sprintar/sprint-1/planning.md).
+- [MVP](mvp.md) · [Databasschema](databasschema.md) · [Sprint 1](sprintar/sprint-1/planning.md) · [Sprint 3](sprintar/sprint-3/planning.md).
 - [Expo SQLite](https://docs.expo.dev/versions/v58.0.0/sdk/sqlite/) · [Drizzle / Expo SQLite](https://orm.drizzle.team/docs/sqlite/connect-expo-sqlite) · [Supabase Edge Functions](https://supabase.com/docs/guides/functions).
 
-**Senast uppdaterad:** 2026-11-23 (receptflöde deployat; riktigt AI-anrop och modellval att verifiera).
+**Senast uppdaterad:** 2026-11-25 (receptflöde med modal och egen receptskärm på feature-branch).

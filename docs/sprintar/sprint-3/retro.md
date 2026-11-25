@@ -11,6 +11,8 @@
   Skriv ärligt. Det här är bra underlag för er individuella reflektion.
 -->
 
+> **Kodstatus 2026-11-25:** Retron är ännu inte genomförd. På `screen-and-page-for-generate-recipe` finns #143/#129 i kod (modal + egen receptskärm, testad med riktig Gemini), men korten är öppna tills PR:en mergas. #25, #28–#31 och #135 saknas.
+
 **Datum:**
 **Deltagare:**
 **Leds av:**

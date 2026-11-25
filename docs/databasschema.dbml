@@ -3,7 +3,7 @@
 // är den tekniska sanningskällan. Uppdatera den här filen när modellen ändras.
 Project im_hungry {
   database_type: 'SQLite'
-  Note: 'Lokalt matförråd i MVP. En tabell per appinstallation. Supabase Edge Function är planerad som AI-gateway och lagrar inte inventariet.'
+  Note: 'Lokalt matförråd i MVP. En tabell per appinstallation. Supabase Edge Function är implementerad som AI-gateway och lagrar inte inventariet.'
 }
 
 Table inventory_items {
