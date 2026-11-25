@@ -1,10 +1,10 @@
 # Retrospektiv: sprint 1
 
-**Datum:** 2026-11-16 (planerat)
+**Datum:** 2026-11-16 (genomfört)
 **Deltagare:** Benjamin Simmons, Leo Spenner
 **Leds av:** Leo (Scrum Master)
 
-> **Status:** Retron är inte genomförd ännu. Underlaget nedan är preliminära observationer och ska beslutas tillsammans på retron.
+> **Status (korrigerad 2026-11-25):** Retron hölls 2026-11-16. Underlaget nedan är observationer från sprint 1; förra retrons åtgärder fördes till sprint 2.
 
 ## Förra retrons åtgärder
 
@@ -39,4 +39,4 @@
 
 -
 
-**Senast uppdaterad:** 2026-11-16 
+**Senast uppdaterad:** 2026-11-25 (status korrigerad) 

@@ -14,8 +14,8 @@
   Demot ska köras på riktigt, inte med skärmdumpar. Testa det innan.
 -->
 
-**Datum:** 2026-11-16 (planerat)
-**Deltagare:** Benjamin Simmons, Leo Spenner och läraren (planerat)
+**Datum:** 2026-11-16 (genomfört)
+**Deltagare:** Benjamin Simmons, Leo Spenner och läraren
 
 ## Del 1: Förberedelse
 
@@ -43,17 +43,17 @@ Användaren kan navigera mellan **Home** och **Råvaror**, se sitt matförråd f
 | [#22](https://github.com/BnL-Studios/im-hungry/issues/22) m.fl. | US-05/US-68/US-67 – Receptflödet | Kräver Edge Function, AI-nyckel och validering av AI-svar. | Sprint 2 som #22 (delkort #125–#129), #23 och #24. |
 | [#25](https://github.com/BnL-Studios/im-hungry/issues/25) | US-06 – Mat-humör | Inte påbörjad. | Backloggen; utanför sprint 2. |
 
-**Kvarvarande arbete:** Home-fliken är fortfarande en `Hello World`-placeholder. Verifiera US-01/US-02 manuellt på en riktig enhet om det inte gjordes före merge, och uppdatera README/docs i sprint 2.
+**Kvarvarande arbete då:** `Home` var vid sprint 1 en `Hello World`-placeholder; i dag visar startsidan **Im hungry** och tre steg och appen har tre flikar (Hem / Generate Recipe / Råvaror). Verifiera US-01/US-02 manuellt på en riktig enhet om det inte gjordes före merge, och uppdatera README/docs i sprint 2.
 
 ### Demoplan
 
-1. Starta appen och visa flikarna **Home** och **Råvaror**.
+1. Starta appen och visa flikarna **Home** och **Råvaror** (sprint 1 hade två flikar; nu Hem / Generate Recipe / Råvaror).
 2. Öppna **Råvaror** och visa tomt läge.
 3. Tryck **+ Lägg till**, visa modalens fält för namn, mängd och enhet.
 4. Försök spara tomt namn, ogiltig mängd och noll/negativ mängd; visa fälten.
 5. Spara en giltig råvara (t.ex. `Mjöl`, `500`, `g`) och visa att den syns direkt i listan.
 6. Stäng och öppna appen igen och visa att råvaran finns kvar.
-7. Visa kort att datan ligger i lokal SQLite och att receptflödet ännu inte är byggt.
+7. Visa kort att datan ligger i lokal SQLite. Receptflödet byggdes senare och är i dag implementerat på branch — implementerat på branch, issue/PR-status separat (#143/#129 öppna).
 
 ### Frågor till läraren
 
@@ -62,7 +62,7 @@ Användaren kan navigera mellan **Home** och **Råvaror**, se sitt matförråd f
 
 ## Del 2: Efter reviewn
 
-> Fylls i efter reviewn 2026-11-16.
+> Reviewn hölls 2026-11-16; komplettera feedbacken här om den saknas.
 
 ### Feedback
 

@@ -6,14 +6,15 @@ Varje sprint får en egen mapp med fyra filer.
 
 | Sprint | Period | Status | Dokument |
 |---|---|---|---|
-| Sprint 1 | 2026-11-09 – 2026-11-16 | **Avslutas** (review & retro 2026-11-16) | [planning](sprint-1/planning.md) · [standup](sprint-1/standup.md) · [review](sprint-1/review.md) · [retro](sprint-1/retro.md) |
-| Sprint 2 | 2026-11-16 – 2026-11-20 | **Pågår** | [planning](sprint-2/planning.md) · [standup](sprint-2/standup.md) · [review](sprint-2/review.md) · [retro](sprint-2/retro.md) |
+| Sprint 1 | 2026-11-09 – 2026-11-16 | **Avslutad** 2026-11-16 | [planning](sprint-1/planning.md) · [standup](sprint-1/standup.md) · [review](sprint-1/review.md) · [retro](sprint-1/retro.md) |
+| Sprint 2 | 2026-11-16 – 2026-11-20 | **Avslutad** 2026-11-20 | [planning](sprint-2/planning.md) · [standup](sprint-2/standup.md) · [review](sprint-2/review.md) · [retro](sprint-2/retro.md) |
+| Sprint 3 | 2026-11-23 – 2026-11-27 | **Pågår** | Planeras; ingen egen sprintmapp ännu |
 
-`sprint-mall/` är generiska mallar och ska inte fyllas i; kopiera mallen till nästa sprintmapp. Sprint 2-dokumenten utgår från sprint 1 och aktuell backlog: US-03 (#26), US-04 (#27) samt receptflödet US-05 (#22 med delkort #125–#129), US-68 (#23) och US-67 (#24). Uppdatera ansvariga och dagliga standups löpande.
+`sprint-mall/` är generiska mallar och ska inte fyllas i; kopiera mallen till nästa sprintmapp. Sprint 2 avslutades 2026-11-20 och dokumenten utgår från sprint 1 och backloggen: US-03 (#26), US-04 (#27) samt receptflödet US-05 (#22 med delkort #125–#129), US-68 (#23) och US-67 (#24). I sprint 3 (2026-11-23–27) är receptflödet **implementerat på branch, issue/PR-status separat**: #143 och #129 är fortfarande öppna på GitHub trots koden, och #135 (mängder i tillagningsstegen) är inte implementerat. Uppdatera ansvariga och dagliga standups löpande.
 
 ## Så gör ni vid varje ny sprint
 
-1. Kopiera mappen `sprint-mall/` och döp kopian till nästa lediga sprintnummer, t.ex. `sprint-2/`.
+1. Kopiera mappen `sprint-mall/` och döp kopian till nästa lediga sprintnummer, t.ex. `sprint-3/`.
 2. Fyll i `planning.md` under sprint planning på måndagen.
 3. Fyll i `standup.md` varje dag.
 4. Fyll i `review.md` inför reviewn med läraren, och komplettera efteråt med feedbacken.

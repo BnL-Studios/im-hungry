@@ -5,7 +5,7 @@
 **Product Owner denna sprint:** Benjamin
 **Scrum Master denna sprint:** Leo
 
-> **Status 2026-11-16:** Sprinten avslutas i dag. Listan och formuläret är mergade till `main` via PR #122 (2026-11-13). Review och retro hålls 2026-11-16.
+> **Status (korrigerad 2026-11-25):** Sprinten avslutades 2026-11-16. Listan och formuläret är mergade till `main` via PR #122 (2026-11-13). Review och retro hölls 2026-11-16.
 
 ## Sprintmål
 
@@ -39,4 +39,4 @@ Sprint 1 är första sprinten; det finns ingen föregående retro.
 
 Se [Definition of Done](../../definition-of-done.md). En story räknas inte som klar förrän den är granskad och mergad till `main`.
 
-**Senast uppdaterad:** 2026-11-13 (sprint 1).
+**Senast uppdaterad:** 2026-11-25 (status korrigerad; sprinten avslutad 2026-11-16).
