@@ -17,7 +17,7 @@ Körs från `mobile/`:
 
 ```bash
 npx tsc --noEmit       # typkontroll
-npm test               # Vitest: 6 testfiler / 34 tester (validering, skalor, enheter och SQL-migrationer)
+npm test               # Vitest: 6 testfiler / 34 tester (validering, skalor, enheter, migrationer, receptklient och receptvy)
 npm run lint           # ESLint via expo lint (körs lokalt och i CI)
 ```
 
@@ -27,7 +27,7 @@ Lokalt är typkontroll (`npx tsc --noEmit`), lint och Vitest gröna på branchen
 
 Manuell kontroll i sprint 2: öppna fliken **Råvaror**, lägg till en råvara med giltig och ogiltig input (inklusive skalor), ändra mängden, ta bort en råvara och bekräfta dialogrutan. Kontrollera att listan uppdateras direkt och att datan finns kvar efter omstart. Testa både native och webb.
 
-Manuell kontroll i sprint 3: öppna appen och visa de tre flikarna **Hem / Generate Recipe / Råvaror**; startsidan visar **Im hungry** och tre steg. Öppna **Generate Recipe**, som visar modalen `/generate-recipe`, begär ett recept och kontrollera att lyckad generation navigerar till `/recipe` och att receptet innehåller `title`, `ingredients`, `steps` och `estimatedCookingTime`. Kontrollera att dubbletter av ingredient-ID avvisas, att mängder inte överskrider lagersaldot, att salt/olja/vatten kan vara basvaror utan ID och att ogiltiga råvaror filtreras bort i receptvyn. Användaren har manuellt testat end-to-end mot riktig Gemini och fått recept. Koden är implementerad på branch — implementerat på branch, issue/PR-status separat (#143/#129 öppna, #135 ej implementerat).
+Manuell kontroll i sprint 3: öppna appen och visa de tre flikarna **Hem / Generate Recipe / Råvaror**; startsidan visar **Im hungry** och tre steg. Öppna **Generate Recipe**, som visar modalen `/generate-recipe`, begär ett recept och kontrollera att lyckad generation navigerar till `/recipe` och att receptet innehåller `title`, `ingredients`, `steps` och `estimatedCookingTime`. Kontrollera att dubbletter av ingredient-ID avvisas, att mängder inte överskrider lagersaldot, att salt/olja/vatten kan vara basvaror utan ID och att ogiltiga råvaror filtreras bort i receptvyn. Användaren har manuellt testat end-to-end mot riktig Gemini och fått recept. Koden är implementerad på branch — kod på branch, issue/PR-status separat (#143/#129 öppna, #135 ej implementerat).
 
 ## Versioner
 

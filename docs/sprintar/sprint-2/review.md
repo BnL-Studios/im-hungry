@@ -29,6 +29,8 @@
 
 > Enligt DoD krävs granskad PR och merge till `main`. Tabellen nedan skiljer därför på kod på branch och mergat läge; markera inte något som DoD-klart utan verifierad PR/merge.
 
+> **Kodstatus 2026-11-25:** inventory (US-01–US-04) och receptkedjan US-05/US-67/US-68 finns på `main` via #122, #130 och #140–#142. På `screen-and-page-for-generate-recipe` är receptflödet ombyggt till modalen `/generate-recipe` och skärmen `/recipe`. Riktig Gemini-generering är testad i appen med hemligheten `GEMINI_API`; lokala tsc/lint/Vitest är gröna. #22/#23/#24/#143/#129 är öppna på GitHub trots implementerad kod, och #138 (auth/rate limiting) är öppen.
+
 | Issue | Story | Visas av |
 |---|---|---|
 | Kod på `screen-and-page-for-generate-recipe` | US-05/US-68/US-67 – receptflöde: tre flikar, modal `/generate-recipe`, navigering till `/recipe` | Manuell E2E av användaren; issue/PR-status separat |
@@ -49,7 +51,7 @@
 5. Öppna fliken **Generate Recipe**, visa modalen `/generate-recipe` och begär ett recept från lagret (US-05); kontrollera att inventory inte ändras.
 6. Vid lyckad generation: navigera till `/recipe` och visa titel, ingredienser, steg och uppskattad tid (US-68). På webben finns fallbacken i `(tabs)/generate.tsx`.
 7. Visa tydliga fel/tom-läge-meddelanden när recept inte kan erbjudas (US-67), t.ex. `NO_RECIPE`, `INVALID_REQUEST`, `INVALID_RECIPE`, `RATE_LIMITED`, `TIMEOUT` och `MODEL_ERROR`.
-8. Kontrollera att dubbletter av ingredient-ID avvisas, att mängder inte överskrider lagersaldot och att ogiltiga råvaror filtreras bort i receptvyn.
+8. Kontrollera att dubbletter av ingredient-ID avvisas, att mängder inte överskrider lagersaldot och att ogiltiga råvaror filtreras bort i receptvyn.
 
 ### Frågor till läraren
 

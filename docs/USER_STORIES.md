@@ -3,9 +3,9 @@
 > **Product goal:** Help home cooks answer *“What can I make with what I already have?”* quickly and reliably.  
 > **MVP definition:** [`mvp.md`](mvp.md)<br>
 > **Current delivery scope:** Two-person Scrum course; `Won't` means *not this time*, not rejected forever.  
-> **Updated:** 2026-11-25 (sprint 3; simplified MVP)
+> **Updated:** 2026-11-25 (MVP flow implemented; live AI call verified on the feature branch)
 
-> **Sprint 3 status (2026-11-25):** Sprint 2 ended 2026-11-20. US-01/US-02 were merged to `main` in sprint 1 via PR #122. The recipe flow is implemented on the branch `screen-and-page-for-generate-recipe`: three tabs Hem / Generate Recipe / Råvaror, the Generate tab opens the modal `/generate-recipe`, and a successful generation navigates to `/recipe`; a web fallback lives in `(tabs)/generate.tsx`. **#143 and #129 are still open on GitHub although the code is on the branch — code on branch, issue/PR status tracked separately.** #135 (amounts in the cooking steps) is not implemented. The backlog below remains the full product scope, not a status list.
+> **Status 2026-11-25:** US-01–US-04 (inventory) are merged to `main` (#122, #130, #141). The AI flow from #140–#142 is implemented on `screen-and-page-for-generate-recipe` with a `/generate-recipe` modal and a separate `/recipe` screen: US-05 (generation), US-68 (recipe view) and US-67 (errors/no-recipe) are present in code. A real Gemini call has produced a recipe in the app. Issues #22, #23, #24, #143 and #129 are still open on GitHub until the PR is merged; #125–#128 are closed. #135 (amounts in the steps) and #138 (auth/rate limiting) remain open. The backlog below remains the full product scope, not a status list.
 
 ## Priority and size overview
 
@@ -93,7 +93,7 @@ A small working journey: save ingredients → request a genuinely feasible AI re
 
 ### 03 · US-05 — Get a basic AI recipe from my inventory
 
-**Must · L · Recipe discovery · Implemented on branch, issue/PR status tracked separately (#22, #125–#129, #143)**
+**Must · L · Recipe discovery · In sprint 2 (#22, sub-issues #125–#129)**
 
 > As a home cook, I want a real AI-generated meal idea based on my recorded ingredients, so that I can find something feasible to cook without buying more food.
 
@@ -112,7 +112,7 @@ A small working journey: save ingredients → request a genuinely feasible AI re
 
 ### 04 · US-68 — Read a complete recipe in the app
 
-**Must · S · Recipe discovery · Implemented on branch, issue/PR status tracked separately (#23/#129; #135 amounts in the steps is not implemented)**
+**Must · S · Recipe discovery · In sprint 2 (#23)**
 
 > As a home cook, I want to read a recipe’s quantities, estimated time and ordered cooking steps, so that I can prepare the suggested meal.
 
@@ -130,7 +130,7 @@ A small working journey: save ingredients → request a genuinely feasible AI re
 
 ### 05 · US-67 — Understand when no valid recipe can be offered
 
-**Must · M · Recipe discovery · Implementerat på branch, issue/PR-status separat (#24)**
+**Must · M · Recipe discovery · In sprint 2 (#24)**
 
 > As a home cook, I want a clear explanation when the app cannot generate a feasible recipe, so that I do not mistakenly trust an unavailable ingredient or a failed request.
 
@@ -1383,7 +1383,7 @@ These are **proposed** sizes. If your chosen AI/authentication technology or tea
 ## Dependencies, estimation and review
 
 - **First prove the key risk.** US-05 (real AI using actual stock) is near the top, immediately after entering and viewing food. Don't postpone AI integration until the end of the course.
-- **MVP traceability (updated 2026-11-25).** Seven Must stories cover view (**US-01**), add (**US-02**), correct/delete (**US-03/04**), generate one feasible recipe with **only ingredients in the request** (**US-05**) and view results/handle failures (**US-68/67**). **US-06 cooking mood moved to Should (after MVP).** Successful AI response has exactly `title`, `ingredients`, `steps` and `estimatedCookingTime`; duplicate ingredient IDs are rejected and each unique ID's amount may not exceed the recorded stock. Salt/oil/water may be pantry staples without an ID, and invalid ingredients are filtered out in the recipe view. Error codes include `NO_RECIPE`, `INVALID_REQUEST`, `INVALID_RECIPE`, `RATE_LIMITED`, `TIMEOUT` and `MODEL_ERROR`. The recipe flow is implemented on the branch — code on branch, issue/PR status tracked separately; #135 (amounts in the steps) remains open. Sync the GitHub Project MoSCoW field for US-06 at backlog refinement.
+- **MVP traceability (updated 2026-11-19).** Seven Must stories cover view (**US-01**), add (**US-02**), correct/delete (**US-03/04**), generate one feasible recipe with **only ingredients in the request** (**US-05**) and view results/handle failures (**US-68/67**). **US-06 cooking mood moved to Should (after MVP).** Successful AI response has exactly title, ingredients, steps and estimated cooking time. Sync the GitHub Project MoSCoW field for US-06 at backlog refinement.
 - **Check dependencies.** US-10 needs US-69; US-11 needs US-10; US-09 needs US-08; US-31 needs completion; US-18/19/20/21/22/23/29/30 need accounts and user data separation. US-38 needs expiry-date data; US-42 needs the missing-ingredient mode; household membership needs account permissions.
 - **Refine together.** Compare every proposed size with **US-02 = M**, let both developers explain disagreements and revise uncertainty after technical spikes or sprint reviews. A new size is not a conversion to hours.
 - **Use real completed work.** In subsequent sprint planning, compare the team's recent completed S/M/L stories against current capacity. Don't assume all 75 stories are deliverable during the course.

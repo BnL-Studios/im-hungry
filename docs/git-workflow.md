@@ -54,14 +54,15 @@ CI-workflowen [`ci.yml`](../.github/workflows/ci.yml) kör på **Node 22** och g
 2. Validerar att `package.json` har `expo`/`expo-router` och att `app.json` är giltig JSON.
 3. `npm run lint` (`expo lint`).
 4. `npx tsc --noEmit`.
-5. `npm test` (Vitest: **6 testfiler / 34 tester** för validering, skalor, enheter och riktiga SQL-migrationer).
-6. CI har även ett edge-jobb som kör `deno test` för `supabase/functions/generate-recipe/`.
+5. `npm test` (Vitest: validering, skalor, enheter, riktiga SQL-migrationer, receptklient och receptvy — 6 filer / 34 tester).
 
-**Inga Supabase- eller Gemini-hemligheter krävs för mobilkontrollerna.** AI-gatewayen är implementerad i `supabase/functions/generate-recipe/`; hemligheten i Edge Functionen är `GEMINI_API` (inte `GEMINI_API_KEY`). Mobilen läser `EXPO_PUBLIC_SUPABASE_URL`, `EXPO_PUBLIC_SUPABASE_ANON_KEY` och valfritt `EXPO_PUBLIC_GENERATE_RECIPE_URL`. Lokalt är typkontroll, lint och 34 tester gröna på branchen. GitHub Actions-CI för den uppdaterade branchen är inte verifierad här och kontrolleras i samband med PR-granskningen.
+Dessutom kör CI `Recipe Edge Function` (`deno test`) och `Supabase Preview`. Jobben var gröna på `b6e14b6` (2026-11-23); status för den uppdaterade feature-branchen kontrolleras i PR-granskningen.
 
-**Branch protection:** PR #104 är mergad och legacy-Spring Boot är borttagen. CI-kontrollen heter **Mobile (Node 22)**. Om branch protection fortfarande kräver den gamla kontrollen **Backend (Java 21)** måste en GitHub-administratör byta till **Mobile (Node 22)**. Annars kan PR-merge blockeras trots grön ny CI. GitHub-inställningen uppdateras **inte** automatiskt av `ci.yml`.
+**Inga Supabase- eller Gemini-hemligheter krävs för mobilkontrollerna.** Edge Functionen testas separat med mockat AI-svar och säker konfiguration; riktig generering är testad manuellt i appen. Lint (`npm run lint`) körs både lokalt och i CI.
 
-Aktuell branch i arbetet är `screen-and-page-for-generate-recipe` med receptflödet: tre flikar Hem / Generate Recipe / Råvaror, modalen `/generate-recipe` och navigering till `/recipe`. #143 och #129 är öppna på GitHub trots koden — implementerat på branch, issue/PR-status separat; #135 är inte implementerat.
+**Branch protection:** PR #104 är mergad och legacy-Spring Boot är borttagen. CI-kontrollerna heter **Mobile (Node 22)**, **Recipe Edge Function** och **Supabase Preview**. Om branch protection fortfarande kräver den gamla kontrollen **Backend (Java 21)** måste en GitHub-administratör byta till de nya kontrollerna. Annars kan PR-merge blockeras trots grön ny CI. GitHub-inställningen uppdateras **inte** automatiskt av `ci.yml`.
+
+**Aktuell feature-branch:** `screen-and-page-for-generate-recipe` innehåller genereringsmodalen `/generate-recipe` och receptskärmen `/recipe`. #143 och #129 är öppna på GitHub trots koden — kod på branch, issue/PR-status separat; #135 är inte implementerat.
 
 ## Kodgranskning
 
@@ -83,4 +84,4 @@ Aktuell branch i arbetet är `screen-and-page-for-generate-recipe` med receptfl�
 
 Följ upp branchlivslängd, väntetid på PR-granskning och CI-problem vid retrospektivet.
 
-**Senast uppdaterad:** 2026-11-25 (sprint 3).
+**Senast uppdaterad:** 2026-11-25 (receptflöde med modal och egen skärm på feature-branch).
